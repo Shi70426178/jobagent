@@ -3,13 +3,18 @@ from google_auth_oauthlib.flow import Flow
 import os
 from sqlalchemy.orm import Session
 from fastapi import Depends
-
+from app.schemas.email import EmailRequest
+from app.services.gmail_service import send_test_email
 from app.db.database import get_db
 from app.services.gmail_service import (
     save_gmail_account,
     get_gmail_profile
 )
+from app.services.gmail_service import get_user_account
+
 from google.oauth2.credentials import Credentials
+from app.models.user import User
+from app.core.dependencies import get_current_user
 from googleapiclient.discovery import build
 # from app.services.gmail_service import save_gmail_account
 print("LOADING GMAIL FILE")
@@ -27,7 +32,9 @@ CODE_VERIFIER = None
 
 
 @router.get("/connect")
-def connect_gmail():
+def connect_gmail(
+    current_user: User = Depends(get_current_user)
+):
 
     global CODE_VERIFIER
 
@@ -50,7 +57,8 @@ def connect_gmail():
     auth_url, state = flow.authorization_url(
         access_type="offline",
         prompt="consent",
-        include_granted_scopes="true"
+        include_granted_scopes="true",
+        state=str(current_user.id)
     )
 
     CODE_VERIFIER = flow.code_verifier
@@ -124,15 +132,21 @@ def gmail_callback(
     )
 
     email = profile["emailAddress"]
+    user_id = int(
+    request.query_params.get("state")
+)
+
+    print("USER ID:", user_id)
 
     print("EMAIL:", email)
 
     save_gmail_account(
-    db=db,
-    email=email,
-    access_token=credentials.token,
-    refresh_token=credentials.refresh_token
-)
+        db=db,
+        user_id=user_id,
+        email=email,
+        access_token=credentials.token,
+        refresh_token=credentials.refresh_token
+    )
 
     return {
         "success": True,
@@ -142,9 +156,30 @@ def gmail_callback(
 
 @router.get("/profile")
 def gmail_profile(
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
-    return get_gmail_profile(db)
+
+    print("CURRENT USER ID:", current_user.id)
+
+    profile = get_gmail_profile(
+        db,
+        current_user.id
+    )
+
+    print("PROFILE:", profile)
+
+    if not profile:
+        return {
+            "connected": False
+        }
+
+    return {
+        "connected": True,
+        "emailAddress": profile["emailAddress"]
+    }
+
+    return profile
 
 
 @router.get("/hello")
@@ -152,3 +187,37 @@ def hello():
     return {
         "msg": "gmail loaded"
     }
+
+@router.post("/send-test")
+def send_test(
+    request: EmailRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    return send_test_email(
+        db=db,
+        user_id=current_user.id,
+        to_email=request.to,
+        subject=request.subject,
+        body=request.body
+    )
+
+@router.get("/accounts")
+def get_accounts(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+
+    account = get_user_account(
+        db,
+        current_user.id
+    )
+
+    if not account:
+        return []
+
+    return [
+        {
+            "email": account.email
+        }
+    ]

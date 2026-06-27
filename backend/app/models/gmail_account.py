@@ -8,6 +8,8 @@ class GmailAccount(Base):
 
     id = Column(Integer, primary_key=True, index=True)
 
+    user_id = Column(Integer)
+
     email = Column(String, unique=True)
 
     access_token = Column(String)
