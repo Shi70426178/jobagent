@@ -9,6 +9,7 @@ from app.models.user import User
 from app.core.dependencies import get_current_user
 from app.db.database import get_db
 from app.services.job_service import save_jobs
+from app.services.gmail_service import get_user_account
 from pydantic import BaseModel
 class AgentRequest(BaseModel):
     keywords: str
@@ -21,6 +22,8 @@ def start_agent(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
+    
+    
     search_jobs(
         db,
         current_user.id,

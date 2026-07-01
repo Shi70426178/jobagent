@@ -1,7 +1,7 @@
 from passlib.context import CryptContext
 from jose import jwt, JWTError
 from datetime import datetime, timedelta
-SECRET_KEY = "project22-secret-key"
+SECRET_KEY = "TalentifyX-secret-key"
 ALGORITHM = "HS256"
 pwd_context = CryptContext(
     schemes=["bcrypt"],

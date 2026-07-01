@@ -77,7 +77,7 @@ export default function ResumePage() {
     <div className="flex">
       <Sidebar />
 
-      <main className="flex-1 bg-zinc-950 min-h-screen text-white p-10">
+      <main className="flex-1 bg-black/40 backdrop-blur-xl min-h-screen text-white p-10">
 
         <div className="mb-12">
 
@@ -93,7 +93,7 @@ export default function ResumePage() {
 
         </div>
 
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-8 mb-10">
+        <div className="bg-zinc-900/60 backdrop-blur-xl border border-zinc-800 rounded-2xl p-8 mb-10">
 
           <h2 className="text-2xl font-semibold mb-6">
             Upload Resume
@@ -145,7 +145,7 @@ export default function ResumePage() {
           <>
             <div className="grid md:grid-cols-3 gap-6 mb-10">
 
-              <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
+              <div className="bg-zinc-900/60 backdrop-blur-xl border border-zinc-800 rounded-2xl p-6">
 
                 <p className="text-zinc-500 text-sm">
                   Education
@@ -158,7 +158,7 @@ export default function ResumePage() {
 
               </div>
 
-              <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
+              <div className="bg-zinc-900/60 backdrop-blur-xl border border-zinc-800 rounded-2xl p-6">
 
                 <p className="text-zinc-500 text-sm">
                   Experience
@@ -171,7 +171,7 @@ export default function ResumePage() {
 
               </div>
 
-              <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
+              <div className="bg-zinc-900/60 backdrop-blur-xl border border-zinc-800 rounded-2xl p-6">
 
                 <p className="text-zinc-500 text-sm">
                   Skills Count
@@ -189,7 +189,7 @@ export default function ResumePage() {
 
             </div>
 
-            <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-8">
+            <div className="bg-zinc-900/60 backdrop-blur-xl border border-zinc-800 rounded-2xl p-8">
 
               <h2 className="text-2xl font-semibold mb-6">
                 Extracted Skills
@@ -207,7 +207,7 @@ export default function ResumePage() {
                       <span
                         key={index}
                         className="
-                          bg-zinc-800
+                          bg-zinc-900/60 backdrop-blur-xl
                           border
                           border-zinc-700
                           px-4

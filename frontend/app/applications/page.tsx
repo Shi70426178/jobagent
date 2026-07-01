@@ -8,9 +8,12 @@ import { api } from "@/lib/axios";
 interface Application {
   id: number;
   company: string;
-  role: string;
+  job_title: string;
+  recruiter_name: string;
+  email: string;
   status: string;
-  created_at?: string;
+  generated_email: string;
+  match_score: number;
 }
 
 export default function ApplicationsPage() {
@@ -27,7 +30,7 @@ export default function ApplicationsPage() {
   const loadApplications = async () => {
     try {
       const response =
-        await api.get("/applications");
+        await api.get("/linkedin/applications");
 
       setApplications(response.data);
     } catch (error) {
@@ -62,7 +65,7 @@ export default function ApplicationsPage() {
       <div className="flex">
         <Sidebar />
 
-        <main className="flex-1 bg-zinc-950 min-h-screen text-white p-10">
+        <main className="flex-1 bg-black/40 backdrop-blur-xl min-h-screen text-white p-10">
 
           <div className="mb-12">
 
@@ -78,7 +81,7 @@ export default function ApplicationsPage() {
 
           <div className="grid md:grid-cols-3 gap-6 mb-10">
 
-            <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
+            <div className="bg-zinc-900/60 backdrop-blur-xl border border-zinc-800 rounded-2xl p-6">
 
               <p className="text-zinc-500 text-sm">
                 Total Applications
@@ -90,7 +93,7 @@ export default function ApplicationsPage() {
 
             </div>
 
-            <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
+            <div className="bg-zinc-900/60 backdrop-blur-xl border border-zinc-800 rounded-2xl p-6">
 
               <p className="text-zinc-500 text-sm">
                 Interviews
@@ -108,7 +111,7 @@ export default function ApplicationsPage() {
 
             </div>
 
-            <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
+            <div className="bg-zinc-900/60 backdrop-blur-xl border border-zinc-800 rounded-2xl p-6">
 
               <p className="text-zinc-500 text-sm">
                 Applied
@@ -136,7 +139,7 @@ export default function ApplicationsPage() {
 
           ) : (
 
-            <div className="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden">
+            <div className="bg-zinc-900/60 backdrop-blur-xl border border-zinc-800 rounded-2xl overflow-hidden">
 
               <table className="w-full">
 
@@ -177,7 +180,7 @@ export default function ApplicationsPage() {
                         className="
                           border-b
                           border-zinc-800
-                          hover:bg-zinc-800/40
+                          hover:bg-zinc-900/60 backdrop-blur-xl/40
                           transition
                         "
                       >
@@ -190,7 +193,7 @@ export default function ApplicationsPage() {
                         </td>
 
                         <td className="p-4">
-                          {application.role}
+                          {application.job_title}
                         </td>
 
                         <td className="p-4">

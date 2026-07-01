@@ -18,6 +18,8 @@ from app.api.stats import router as stats_router
 from app.models.hackernews_post import HackerNewsPost
 from app.api.hackernews import router as hackernews_router
 from app.api import admin_hackernews
+# from app.api import auth, gmail, resume, application, users
+# from app.api.users import router as users_router
 app = FastAPI()
 
 Base.metadata.create_all(bind=engine)
@@ -37,11 +39,11 @@ app.include_router(
     prefix="/applications",
     tags=["Applications"]
 )
-app.include_router(
-    application_router,
-    prefix="/applications",
-    tags=["Applications"]
-)
+# app.include_router(
+#     application_router,
+#     prefix="/applications",
+#     tags=["Applications"]
+# )
 app.include_router(
     agent_router,
     prefix="/agent",
@@ -75,6 +77,11 @@ app.include_router(
     prefix="/admin/hackernews",
     tags=["Admin HackerNews"],
 )
+# app.include_router(
+#     users_router,
+#     prefix="/users",
+#     tags=["Users"],
+# )
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[

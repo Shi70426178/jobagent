@@ -1,3 +1,3 @@
-# Project22
+# TalentifyX
 
 AI JobCopilot scaffold.

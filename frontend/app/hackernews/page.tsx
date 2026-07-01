@@ -81,7 +81,7 @@ const applyLead = async (
     <div className="flex">
       <Sidebar />
 
-      <main className="flex-1 bg-zinc-950 min-h-screen text-white p-10">
+      <main className="flex-1 bg-black/40 backdrop-blur-xl min-h-screen text-white p-10">
 
         <div className="flex justify-between items-center mb-12">
 
@@ -115,7 +115,7 @@ const applyLead = async (
 
         <div className="grid md:grid-cols-3 gap-6 mb-10">
 
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
+          <div className="bg-zinc-900/60 backdrop-blur-xl border border-zinc-800 rounded-2xl p-6">
 
             <p className="text-zinc-500 text-sm">
               Total Leads
@@ -127,7 +127,7 @@ const applyLead = async (
 
           </div>
 
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
+          <div className="bg-zinc-900/60 backdrop-blur-xl border border-zinc-800 rounded-2xl p-6">
 
             <p className="text-zinc-500 text-sm">
               Emails Found
@@ -143,7 +143,7 @@ const applyLead = async (
 
           </div>
 
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
+          <div className="bg-zinc-900/60 backdrop-blur-xl border border-zinc-800 rounded-2xl p-6">
 
           <p className="text-zinc-500 text-sm">
   High Match
@@ -165,7 +165,7 @@ const applyLead = async (
         <div className="space-y-6">
 
           {posts.length === 0 && (
-  <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-10 text-center">
+  <div className="bg-zinc-900/60 backdrop-blur-xl border border-zinc-800 rounded-2xl p-10 text-center">
     <h2 className="text-2xl font-semibold">
       No Jobs Yet
     </h2>
@@ -181,7 +181,7 @@ const applyLead = async (
             <div
               key={post.comment_id}
               className="
-                bg-zinc-900
+                bg-zinc-900/60 backdrop-blur-xl
                 border
                 border-zinc-800
                 rounded-2xl
@@ -255,7 +255,7 @@ const applyLead = async (
                     View Generated Email
                   </summary>
 
-                  <div className="mt-3 bg-zinc-950 border border-zinc-800 rounded-xl p-4 whitespace-pre-wrap text-zinc-300">
+                  <div className="mt-3 bg-black/40 backdrop-blur-xl border border-zinc-800 rounded-xl p-4 whitespace-pre-wrap text-zinc-300">
                     {post.generated_email}
                   </div>
 
@@ -292,7 +292,7 @@ const applyLead = async (
   )
 }
                     className="
-                      bg-zinc-800
+                      bg-zinc-900/60 backdrop-blur-xl
                       hover:bg-zinc-700
                       px-4
                       py-2

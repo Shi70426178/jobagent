@@ -36,19 +36,28 @@ async def upload_resume(
     file_path = f"{UPLOAD_DIR}/{file.filename}"
 
     with open(file_path, "wb") as buffer:
-
         buffer.write(
             await file.read()
         )
 
-    text = extract_resume_text(
-        file_path
-    )
+    # Debug
+    print("\n========== FILE SAVED ==========")
+    print("File Path:", file_path)
+    print("File Exists:", os.path.exists(file_path))
+    print("File Size:", os.path.getsize(file_path))
 
+    text = extract_resume_text(file_path)
+
+    # Debug
     print("\n========== RESUME TEXT ==========")
-    print(text[:2000])
+    print("Text Length:", len(text))
+    print(text[:1000])
 
     data = extract_resume_data(text)
+
+    # Debug
+    print("\n========== EXTRACTED DATA ==========")
+    print(data)
 
     resume = save_resume(
         db=db,

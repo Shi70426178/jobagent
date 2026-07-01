@@ -3,8 +3,9 @@
 import { useEffect, useState } from "react";
 import { api } from "@/lib/axios";
 import Sidebar from "@/components/Sidebar";
-
+import { useRouter } from "next/navigation";
 export default function LinkedinPage() {
+  const router = useRouter();
   const [posts, setPosts] =
     useState<any[]>([]);
 
@@ -31,19 +32,46 @@ const [editedEmail, setEditedEmail] =
     }
   };
 
-  const applyLead = async (
-    id: number
-  ) => {
-    try {
-      await api.post(
-        `/linkedin/apply/${id}`
-      );
+const generateMail = async (
+  id: number
+) => {
+  try {
 
-      loadPosts();
-    } catch (error) {
-      console.error(error);
+    await api.post(
+      `/linkedin/generate-email/${id}`
+    );
+
+    await loadPosts();
+
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+const applyLead = async (
+  id: number
+) => {
+  try {
+
+    const response = await api.post(
+      `/linkedin/apply/${id}`
+    );
+
+    if (response.data.gmail_connected === false) {
+
+      alert(response.data.message);
+
+      router.push("/gmail");
+
+      return;
     }
-  };
+
+    await loadPosts();
+
+  } catch (error) {
+    console.error(error);
+  }
+};
 
   const getScoreColor = (
     score: number
@@ -61,12 +89,12 @@ const [editedEmail, setEditedEmail] =
     <div className="flex">
       <Sidebar />
 
-      <main className="flex-1 bg-zinc-950 min-h-screen text-white p-10">
+      <main className="flex-1 bg-black/40 backdrop-blur-xl min-h-screen text-white p-10">
 
         <div className="mb-12">
 
           <h1 className="text-5xl font-semibold tracking-tight">
-            LinkedIn Leads
+            New Leads
           </h1>
 
           <p className="text-zinc-500 mt-3">
@@ -78,7 +106,7 @@ const [editedEmail, setEditedEmail] =
 
         <div className="grid md:grid-cols-3 gap-6 mb-10">
 
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
+          <div className="bg-zinc-900/60 backdrop-blur-xl border border-zinc-800 rounded-2xl p-6">
 
             <p className="text-zinc-500 text-sm">
               Total Leads
@@ -90,7 +118,7 @@ const [editedEmail, setEditedEmail] =
 
           </div>
 
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
+          <div className="bg-zinc-900/60 backdrop-blur-xl border border-zinc-800 rounded-2xl p-6">
 
             <p className="text-zinc-500 text-sm">
               Emails Found
@@ -106,7 +134,7 @@ const [editedEmail, setEditedEmail] =
 
           </div>
 
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
+          <div className="bg-zinc-900/60 backdrop-blur-xl border border-zinc-800 rounded-2xl p-6">
 
             <p className="text-zinc-500 text-sm">
               Applied
@@ -133,7 +161,7 @@ const [editedEmail, setEditedEmail] =
             <div
               key={post.id}
               className="
-                bg-zinc-900
+                bg-zinc-900/60 backdrop-blur-xl
                 border
                 border-zinc-800
                 rounded-2xl
@@ -211,7 +239,7 @@ const [editedEmail, setEditedEmail] =
           View Generated Email
         </summary>
 
-        <div className="mt-3 bg-zinc-950 border border-zinc-800 rounded-xl p-4 whitespace-pre-wrap text-zinc-300">
+        <div className="mt-3 bg-black/40 backdrop-blur-xl border border-zinc-800 rounded-xl p-4 whitespace-pre-wrap text-zinc-300">
           {post.generated_email}
         </div>
 
@@ -227,7 +255,7 @@ const [editedEmail, setEditedEmail] =
         className="
           w-full
           h-64
-          bg-zinc-950
+          bg-black/40 backdrop-blur-xl
           border
           border-zinc-800
           rounded-xl
@@ -269,7 +297,7 @@ const [editedEmail, setEditedEmail] =
       alert(post.post_text)
     }
     className="
-      bg-zinc-800
+      bg-zinc-900/60 backdrop-blur-xl
       hover:bg-zinc-700
       px-4
       py-2
@@ -279,22 +307,42 @@ const [editedEmail, setEditedEmail] =
     View Post
   </button>
 
+  {!post.generated_email && (
+
+  <button
+    onClick={() =>
+      generateMail(post.id)
+    }
+    className="
+      bg-purple-600
+      hover:bg-purple-700
+      px-4
+      py-2
+      rounded-xl
+      text-white
+    "
+  >
+    Generate Mail
+  </button>
+
+)}
+
   {editingId === post.id ? (
 
     <>
       <button
         onClick={async () => {
 
-          await api.put(
-            `/linkedin/email/${post.id}`,
-            {
-              generated_email: editedEmail
-            }
-          );
+        await api.put(
+  `/linkedin/email/${post.id}`,
+  {
+    generated_email: editedEmail
+  }
+);
 
-          loadPosts();
+setEditingId(null);
 
-          setEditingId(null);
+await loadPosts();
 
         }}
         className="
@@ -326,6 +374,8 @@ const [editedEmail, setEditedEmail] =
 
   ) : (
 
+  post.generated_email && (
+
     <button
       onClick={() => {
 
@@ -347,21 +397,26 @@ const [editedEmail, setEditedEmail] =
       Edit
     </button>
 
-  )}
+  )
 
-  <button
-    onClick={() =>
-      applyLead(post.id)
-    }
-    className="
-      bg-white
-      text-black
-      hover:bg-zinc-200
-      px-4
-      py-2
-      rounded-xl
-      font-medium
-    "
+)}
+
+<button
+  disabled={!post.generated_email}
+  onClick={() =>
+    applyLead(post.id)
+  }
+   className={`
+  px-4
+  py-2
+  rounded-xl
+  font-medium
+  ${
+    post.generated_email
+      ? "bg-white text-black hover:bg-zinc-200"
+      : "bg-zinc-700 text-zinc-400 cursor-not-allowed"
+  }
+`}
   >
     Apply
   </button>

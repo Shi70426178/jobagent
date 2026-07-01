@@ -8,30 +8,20 @@ import { api } from "@/lib/axios";
 export default function RegisterPage() {
   const router = useRouter();
 
-  const [fullName, setFullName] =
-    useState("");
-
-  const [email, setEmail] =
-    useState("");
-
-  const [password, setPassword] =
-    useState("");
-
-  const [loading, setLoading] =
-    useState(false);
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const register = async () => {
     try {
       setLoading(true);
 
-      await api.post(
-        "/auth/register",
-        {
-          email,
-          full_name: fullName,
-          password,
-        }
-      );
+      await api.post("/auth/register", {
+        email,
+        full_name: fullName,
+        password,
+      });
 
       router.push("/login");
     } catch (error) {
@@ -42,204 +32,346 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-950 flex">
+    <div
+      className="relative min-h-screen overflow-hidden bg-cover bg-center bg-no-repeat"
+      style={{
+        backgroundImage: "url('/Login_BG.png')",
+      }}
+    >
+      {/* Overlay */}
 
-      <div className="hidden lg:flex w-1/2 border-r border-zinc-800 items-center justify-center">
+      <div className="absolute inset-0 bg-gradient-to-r from-black/65 via-black/35 to-black/50" />
 
-        <div className="max-w-md">
+      <div className="relative z-10 flex min-h-screen">
+        {/* ================= LEFT PANEL ================= */}
 
-          <div className="mb-8">
+        <div className="hidden lg:flex w-[58%] items-center justify-center px-6 xl:px-8">
+          <div className="max-w-md">
+            <div className="inline-flex rounded-full border border-violet-500/30 bg-violet-500/10 px-3 py-1 text-[11px] font-medium text-violet-300">
+              🚀 Join thousands of successful job seekers
+            </div>
 
-            <h1 className="text-5xl font-bold text-white">
-              Project22
+            <h1
+              className="
+                mt-5
+                text-4xl
+                xl:text-5xl
+                2xl:text-6xl
+                font-black
+                tracking-tight
+                text-white
+              "
+            >
+              TalentifyX
             </h1>
 
-            <p className="text-zinc-500 mt-3">
-              AI Job Agent
-            </p>
-
-          </div>
-
-          <div className="space-y-4 text-zinc-400">
-
-            <p>
-              • Automated job discovery
-            </p>
-
-            <p>
-              • AI generated emails
-            </p>
-
-            <p>
-              • Resume matching
-            </p>
-
-            <p>
-              • Recruiter tracking
-            </p>
-
-          </div>
-
-        </div>
-
-      </div>
-
-      <div className="flex-1 flex items-center justify-center p-6">
-
-        <div className="w-full max-w-md">
-
-          <div className="mb-10">
-
-            <h2 className="text-3xl font-semibold text-white">
-              Create account
+            <h2
+              className="
+                mt-3
+                text-xl
+                xl:text-2xl
+                font-bold
+                text-white
+              "
+            >
+              Build Your Career With AI
             </h2>
 
-            <p className="text-zinc-500 mt-2">
-              Start using Project22 today.
+            <p
+              className="
+                mt-5
+                max-w-md
+                text-[14px]
+                leading-7
+                text-zinc-300
+              "
+            >
+              Create your free account and let AI discover jobs, personalize
+              recruiter emails, optimize your resume, and help you land more
+              interviews.
             </p>
 
+            <div className="mt-7 space-y-3">
+              {[
+                "Automated job discovery",
+                "AI generated recruiter emails",
+                "Resume match score",
+              ].map((item) => (
+                <div
+                  key={item}
+                  className="
+                    flex
+                    items-center
+                    gap-3
+                    rounded-xl
+                    border
+                    border-white/10
+                    bg-white/5
+                    px-4
+                    py-3
+                    backdrop-blur-xl
+                    transition-all
+                    duration-300
+                    hover:translate-x-1
+                    hover:border-violet-500/40
+                    hover:bg-white/10
+                  "
+                >
+                  <div
+                    className="
+                      flex
+                      h-9
+                      w-9
+                      items-center
+                      justify-center
+                      rounded-full
+                      bg-gradient-to-r
+                      from-violet-600
+                      to-cyan-500
+                      text-sm
+                      font-bold
+                      text-white
+                    "
+                  >
+                    ✓
+                  </div>
+
+                  <div>
+                    <p className="text-sm font-semibold text-white">{item}</p>
+
+                    <p className="text-[11px] text-zinc-400">
+                      Powered by advanced AI
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-
-          <div className="space-y-5">
-
-            <div>
-
-              <label className="block text-sm text-zinc-400 mb-2">
-                Full Name
-              </label>
-
-              <input
-                value={fullName}
-                onChange={(e) =>
-                  setFullName(
-                    e.target.value
-                  )
-                }
-                placeholder="Shivam Kumar"
-                className="
-                  w-full
-                  bg-zinc-900
-                  border
-                  border-zinc-800
-                  rounded-xl
-                  px-4
-                  py-3
-                  text-white
-                  outline-none
-                  focus:border-zinc-600
-                "
-              />
-
-            </div>
-
-            <div>
-
-              <label className="block text-sm text-zinc-400 mb-2">
-                Email
-              </label>
-
-              <input
-                type="email"
-                value={email}
-                onChange={(e) =>
-                  setEmail(
-                    e.target.value
-                  )
-                }
-                placeholder="you@example.com"
-                className="
-                  w-full
-                  bg-zinc-900
-                  border
-                  border-zinc-800
-                  rounded-xl
-                  px-4
-                  py-3
-                  text-white
-                  outline-none
-                  focus:border-zinc-600
-                "
-              />
-
-            </div>
-
-            <div>
-
-              <label className="block text-sm text-zinc-400 mb-2">
-                Password
-              </label>
-
-              <input
-                type="password"
-                value={password}
-                onChange={(e) =>
-                  setPassword(
-                    e.target.value
-                  )
-                }
-                placeholder="••••••••"
-                className="
-                  w-full
-                  bg-zinc-900
-                  border
-                  border-zinc-800
-                  rounded-xl
-                  px-4
-                  py-3
-                  text-white
-                  outline-none
-                  focus:border-zinc-600
-                "
-              />
-
-            </div>
-
-            <button
-              onClick={register}
-              disabled={loading}
-              className="
-                w-full
-                bg-white
-                text-black
-                py-3
-                rounded-xl
-                font-medium
-                hover:bg-zinc-200
-                transition
-                disabled:opacity-50
-              "
-            >
-              {loading
-                ? "Creating Account..."
-                : "Register"}
-            </button>
-
-          </div>
-
-          <p className="text-center text-zinc-500 mt-8">
-
-            Already have an account?
-
-            <span
-              onClick={() =>
-                router.push("/login")
-              }
-              className="
-                ml-2
-                text-white
-                cursor-pointer
-                hover:text-zinc-300
-              "
-            >
-              Login
-            </span>
-
-          </p>
-
         </div>
 
-      </div>
+        {/* ================= RIGHT PANEL ================= */}
 
+        <div className="flex flex-1 items-center justify-center px-3 py-4">
+          <div className="w-full max-w-[330px]">
+            {/* MOBILE HEADER */}
+
+            <div className="mb-6 text-center lg:hidden">
+              <div className="inline-flex rounded-full border border-violet-500/30 bg-violet-500/10 px-3 py-1 text-[11px] text-violet-300">
+                AI Career Assistant
+              </div>
+
+              <h1 className="mt-3 text-3xl font-black text-white">
+                TalentifyX
+              </h1>
+
+              <p className="mt-2 text-sm text-zinc-300">
+                Start your AI-powered career journey.
+              </p>
+            </div>
+
+            {/* REGISTER CARD */}
+
+            <div
+              className="
+        rounded-2xl
+        border
+        border-white/10
+        bg-black/45
+        p-4
+        shadow-[0_12px_35px_rgba(0,0,0,.55)]
+        backdrop-blur-2xl
+      "
+            >
+              <h2 className="text-lg font-bold text-white">
+                Create Your Account
+              </h2>
+
+              <p className="mt-2 text-[12px] leading-5 text-zinc-400">
+                Join TalentifyX and accelerate your job search with AI.
+              </p>
+
+              <div className="mt-4 space-y-3">
+                {/* Full Name */}
+
+                <div>
+                  <label className="mb-1 block text-[11px] text-zinc-300">
+                    Full Name
+                  </label>
+
+                  <input
+                    value={fullName}
+                    onChange={(e) => setFullName(e.target.value)}
+                    placeholder="Shivam Kumar"
+                    className="
+              w-full
+              rounded-lg
+              border
+              border-white/10
+              bg-white/5
+              px-3
+              py-2
+              text-sm
+              text-white
+              placeholder:text-zinc-500
+              outline-none
+              transition
+              focus:border-violet-500
+              focus:ring-2
+              focus:ring-violet-500/30
+            "
+                  />
+                </div>
+
+                {/* Email */}
+
+                <div>
+                  <label className="mb-1 block text-[11px] text-zinc-300">
+                    Email Address
+                  </label>
+
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@example.com"
+                    className="
+              w-full
+              rounded-lg
+              border
+              border-white/10
+              bg-white/5
+              px-3
+              py-2
+              text-sm
+              text-white
+              placeholder:text-zinc-500
+              outline-none
+              transition
+              focus:border-violet-500
+              focus:ring-2
+              focus:ring-violet-500/30
+            "
+                  />
+                </div>
+
+                {/* Password */}
+
+                <div>
+                  <label className="mb-1 block text-[11px] text-zinc-300">
+                    Password
+                  </label>
+
+                  <input
+                    type="password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className="
+              w-full
+              rounded-lg
+              border
+              border-white/10
+              bg-white/5
+              px-3
+              py-2
+              text-sm
+              text-white
+              placeholder:text-zinc-500
+              outline-none
+              transition
+              focus:border-violet-500
+              focus:ring-2
+              focus:ring-violet-500/30
+            "
+                  />
+
+                  <p className="mt-1 text-[10px] leading-4 text-zinc-500">
+                    Use at least 8 characters with letters and numbers.
+                  </p>
+                </div>
+
+                {/* Register Button */}
+
+                <button
+                  onClick={register}
+                  disabled={loading}
+                  className="
+            w-full
+            rounded-lg
+            bg-gradient-to-r
+            from-violet-600
+            via-indigo-600
+            to-cyan-500
+            py-2.5
+            text-sm
+            font-semibold
+            text-white
+            transition-all
+            duration-300
+            hover:scale-[1.01]
+            hover:shadow-[0_0_20px_rgba(99,102,241,.35)]
+          "
+                >
+                  {loading ? "Creating..." : "Create Account"}
+                </button>
+              </div>
+
+              {/* Divider */}
+
+              <div className="my-4 flex items-center">
+                <div className="h-px flex-1 bg-white/10" />
+
+                <span className="px-3 text-[10px] text-zinc-500">
+                  Start Your Career
+                </span>
+
+                <div className="h-px flex-1 bg-white/10" />
+              </div>
+
+              {/* Login Link */}
+
+              <div className="text-center">
+                <p className="text-sm text-zinc-400">
+                  Already have an account?
+                </p>
+
+                <button
+                  onClick={() => router.push("/login")}
+                  className="
+            mt-2
+            text-sm
+            font-semibold
+            text-violet-400
+            hover:text-violet-300
+          "
+                >
+                  Sign In →
+                </button>
+              </div>
+            </div>
+
+            {/* Footer */}
+
+            <div className="mt-5 text-center">
+              <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1">
+                <div className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></div>
+
+                <span className="text-[11px] text-emerald-300">
+                  Secure Registration
+                </span>
+              </div>
+
+              <p className="mt-3 text-[11px] leading-5 text-zinc-400">
+                🔒 Your information is encrypted and protected.
+              </p>
+
+              <p className="mt-2 text-[10px] text-zinc-500">
+                © {new Date().getFullYear()} TalentifyX. All rights reserved.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

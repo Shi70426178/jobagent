@@ -67,7 +67,7 @@ export default function JobsPage() {
       <div className="flex">
         <Sidebar />
 
-        <main className="flex-1 bg-zinc-950 min-h-screen text-white p-10">
+        <main className="flex-1 bg-black/40 backdrop-blur-xl min-h-screen text-white p-10">
 
           <div className="flex justify-between items-center mb-12">
 
@@ -103,7 +103,7 @@ export default function JobsPage() {
 
           <div className="grid md:grid-cols-3 gap-6 mb-10">
 
-            <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
+            <div className="bg-zinc-900/60 backdrop-blur-xl border border-zinc-800 rounded-2xl p-6">
 
               <p className="text-zinc-500 text-sm">
                 Total Jobs
@@ -115,7 +115,7 @@ export default function JobsPage() {
 
             </div>
 
-            <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
+            <div className="bg-zinc-900/60 backdrop-blur-xl border border-zinc-800 rounded-2xl p-6">
 
               <p className="text-zinc-500 text-sm">
                 Applied
@@ -133,7 +133,7 @@ export default function JobsPage() {
 
             </div>
 
-            <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
+            <div className="bg-zinc-900/60 backdrop-blur-xl border border-zinc-800 rounded-2xl p-6">
 
               <p className="text-zinc-500 text-sm">
                 Pending
@@ -161,7 +161,7 @@ export default function JobsPage() {
 
           ) : jobs.length === 0 ? (
 
-            <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-12 text-center">
+            <div className="bg-zinc-900/60 backdrop-blur-xl border border-zinc-800 rounded-2xl p-12 text-center">
 
               <p className="text-zinc-500">
                 No jobs found.
@@ -178,7 +178,7 @@ export default function JobsPage() {
                 <div
                   key={job.id}
                   className="
-                    bg-zinc-900
+                    bg-zinc-900/60 backdrop-blur-xl
                     border
                     border-zinc-800
                     rounded-2xl

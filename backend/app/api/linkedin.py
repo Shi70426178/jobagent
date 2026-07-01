@@ -1,6 +1,9 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from app.services.gmail_service import send_test_email
+from app.services.gmail_service import (
+    send_test_email,
+    get_user_account
+)
 from app.db.database import get_db
 from app.models.linkedin_post import LinkedInPost
 from app.services.linkedin_service import open_linkedin
@@ -8,6 +11,7 @@ from app.models.user import User
 from app.core.dependencies import get_current_user
 from app.models.resume import Resume
 from app.schemas.linkedin import UpdateEmailRequest
+from app.services.email_generator_service import generate_email
 router = APIRouter()
 
 
@@ -37,6 +41,74 @@ def get_posts(
         .order_by(LinkedInPost.id.desc())
         .all()
     )
+
+@router.get("/applications")
+def get_applications(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+
+    return (
+        db.query(LinkedInPost)
+        .filter(
+            LinkedInPost.user_id == current_user.id,
+            LinkedInPost.status == "applied"
+        )
+        .order_by(LinkedInPost.id.desc())
+        .all()
+    )
+@router.post("/generate-email/{post_id}")
+def generate_mail(
+    post_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+
+    post = (
+        db.query(LinkedInPost)
+        .filter(
+            LinkedInPost.id == post_id,
+            LinkedInPost.user_id == current_user.id
+        )
+        .first()
+    )
+
+    if not post:
+        return {
+            "success": False,
+            "message": "Post not found"
+        }
+
+    resume = (
+        db.query(Resume)
+        .filter(
+            Resume.user_id == current_user.id
+        )
+        .order_by(Resume.id.desc())
+        .first()
+    )
+
+    if not resume:
+        return {
+            "success": False,
+            "message": "Resume not found"
+        }
+
+    email = generate_email(
+        resume=resume,
+        job_title=post.job_title,
+        company=post.company,
+        post_text=post.post_text
+    )
+
+    post.generated_email = email
+
+    db.commit()
+
+    return {
+        "success": True,
+        "generated_email": email
+    }
 
 @router.post("/apply/{post_id}")
 def apply_post(
@@ -72,6 +144,17 @@ def apply_post(
         .order_by(Resume.id.desc())
         .first()
     )
+    account = get_user_account(
+    db,
+    current_user.id
+)
+
+    if not account:
+        return {
+            "success": False,
+            "gmail_connected": False,
+            "message": "Please connect your Gmail account before applying."
+        }
 
     send_test_email(
         db=db,

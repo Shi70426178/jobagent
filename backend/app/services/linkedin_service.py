@@ -121,15 +121,6 @@ def open_linkedin(
                             post
                         )
 
-                        if match["score"] >= 5:
-
-                            email_text = generate_email(
-                                resume=resume,
-                                job_title=job_data.get("job_title", ""),
-                                company=job_data.get("company", ""),
-                                post_text=post
-                            )
-
                     print(
                         f"Match Score: {match['score']}"
                     )

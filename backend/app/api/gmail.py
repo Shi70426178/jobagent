@@ -1,33 +1,38 @@
-from fastapi import APIRouter, Request
-from google_auth_oauthlib.flow import Flow
-import os
+from fastapi import APIRouter, Request, Depends
+from fastapi.responses import RedirectResponse
+
 from sqlalchemy.orm import Session
-from fastapi import Depends
-from app.schemas.email import EmailRequest
-from app.services.gmail_service import send_test_email
+
+from google_auth_oauthlib.flow import Flow
+from google.oauth2.credentials import Credentials
+from googleapiclient.discovery import build
+
+import os
+
 from app.db.database import get_db
+
+from app.models.user import User
+
+from app.core.dependencies import get_current_user
+
+from app.schemas.email import EmailRequest
+
 from app.services.gmail_service import (
     save_gmail_account,
-    get_gmail_profile
+    get_gmail_profile,
+    send_test_email,
+    get_user_account,
 )
-from app.services.gmail_service import get_user_account
 
-from google.oauth2.credentials import Credentials
-from app.models.user import User
-from app.core.dependencies import get_current_user
-from googleapiclient.discovery import build
-# from app.services.gmail_service import save_gmail_account
 print("LOADING GMAIL FILE")
 
 router = APIRouter()
 
 SCOPES = [
     "https://www.googleapis.com/auth/gmail.send",
-    "https://www.googleapis.com/auth/gmail.readonly"
+    "https://www.googleapis.com/auth/gmail.readonly",
 ]
 
-# TEMPORARY FOR TESTING
-# Later we'll store this in DB/session
 CODE_VERIFIER = None
 
 
@@ -41,13 +46,19 @@ def connect_gmail(
     flow = Flow.from_client_config(
         {
             "web": {
-                "client_id": os.getenv("GOOGLE_CLIENT_ID"),
-                "client_secret": os.getenv("GOOGLE_CLIENT_SECRET"),
-                "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-                "token_uri": "https://oauth2.googleapis.com/token"
+                "client_id": os.getenv(
+                    "GOOGLE_CLIENT_ID"
+                ),
+                "client_secret": os.getenv(
+                    "GOOGLE_CLIENT_SECRET"
+                ),
+                "auth_uri":
+                    "https://accounts.google.com/o/oauth2/auth",
+                "token_uri":
+                    "https://oauth2.googleapis.com/token",
             }
         },
-        scopes=SCOPES
+        scopes=SCOPES,
     )
 
     flow.redirect_uri = os.getenv(
@@ -58,13 +69,12 @@ def connect_gmail(
         access_type="offline",
         prompt="consent",
         include_granted_scopes="true",
-        state=str(current_user.id)
+        state=str(current_user.id),
     )
 
     CODE_VERIFIER = flow.code_verifier
 
     print("CODE VERIFIER SAVED")
-    print(CODE_VERIFIER)
 
     return {
         "auth_url": auth_url
@@ -74,7 +84,7 @@ def connect_gmail(
 @router.get("/callback")
 def gmail_callback(
     request: Request,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
 
     global CODE_VERIFIER
@@ -83,41 +93,40 @@ def gmail_callback(
 
     code = request.query_params.get("code")
 
-    print("CODE:", code)
-
     flow = Flow.from_client_config(
         {
             "web": {
-                "client_id": os.getenv("GOOGLE_CLIENT_ID"),
-                "client_secret": os.getenv("GOOGLE_CLIENT_SECRET"),
-                "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-                "token_uri": "https://oauth2.googleapis.com/token"
+                "client_id": os.getenv(
+                    "GOOGLE_CLIENT_ID"
+                ),
+                "client_secret": os.getenv(
+                    "GOOGLE_CLIENT_SECRET"
+                ),
+                "auth_uri":
+                    "https://accounts.google.com/o/oauth2/auth",
+                "token_uri":
+                    "https://oauth2.googleapis.com/token",
             }
         },
-        scopes=SCOPES
+        scopes=SCOPES,
     )
 
     flow.redirect_uri = os.getenv(
         "GOOGLE_REDIRECT_URI"
     )
 
-    # Restore verifier
     flow.code_verifier = CODE_VERIFIER
 
-    print("USING VERIFIER")
-    print(flow.code_verifier)
-
-    flow.fetch_token(code=code)
+    flow.fetch_token(
+        code=code
+    )
 
     credentials = flow.credentials
-
     print("TOKEN FETCHED")
-    print("ACCESS TOKEN:", credentials.token)
-    print("REFRESH TOKEN:", credentials.refresh_token)
 
     creds = Credentials(
-    token=credentials.token
-)
+        token=credentials.token
+    )
 
     service = build(
         "gmail",
@@ -132,12 +141,12 @@ def gmail_callback(
     )
 
     email = profile["emailAddress"]
+
     user_id = int(
-    request.query_params.get("state")
-)
+        request.query_params.get("state")
+    )
 
     print("USER ID:", user_id)
-
     print("EMAIL:", email)
 
     save_gmail_account(
@@ -145,13 +154,17 @@ def gmail_callback(
         user_id=user_id,
         email=email,
         access_token=credentials.token,
-        refresh_token=credentials.refresh_token
+        refresh_token=credentials.refresh_token,
     )
 
-    return {
-        "success": True,
-        "email": email
-    }
+    frontend_url = os.getenv(
+        "FRONTEND_URL",
+        "http://localhost:3000"
+    )
+
+    return RedirectResponse(
+        url=f"{frontend_url}/dashboard/gmail"
+    )
 
 
 @router.get("/profile")
@@ -162,31 +175,52 @@ def gmail_profile(
 
     print("CURRENT USER ID:", current_user.id)
 
-    profile = get_gmail_profile(
+    account = get_user_account(
         db,
         current_user.id
     )
 
-    print("PROFILE:", profile)
-
-    if not profile:
+    if not account:
         return {
             "connected": False
         }
 
-    return {
-        "connected": True,
-        "emailAddress": profile["emailAddress"]
-    }
+    try:
 
-    return profile
+        profile = get_gmail_profile(
+            db,
+            current_user.id
+        )
 
+        if not profile:
+            return {
+                "connected": False
+            }
 
+        return {
+            "connected": True,
+            "emailAddress": profile[
+                "emailAddress"
+            ]
+        }
+
+    except Exception as e:
+
+        print(
+            "PROFILE ERROR:",
+            e
+        )
+
+        return {
+            "connected": False
+        }
 @router.get("/hello")
 def hello():
+
     return {
         "msg": "gmail loaded"
     }
+
 
 @router.post("/send-test")
 def send_test(
@@ -194,13 +228,32 @@ def send_test(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    return send_test_email(
-        db=db,
-        user_id=current_user.id,
-        to_email=request.to,
-        subject=request.subject,
-        body=request.body
-    )
+
+    try:
+
+        result = send_test_email(
+            db=db,
+            user_id=current_user.id,
+            to_email=request.to,
+            subject=request.subject,
+            body=request.body
+        )
+
+        return {
+            "success": True,
+            "message": "Email sent successfully.",
+            "gmail_response": result
+        }
+
+    except Exception as e:
+
+        print("SEND TEST ERROR:", e)
+
+        return {
+            "success": False,
+            "message": str(e)
+        }
+
 
 @router.get("/accounts")
 def get_accounts(
@@ -214,10 +267,17 @@ def get_accounts(
     )
 
     if not account:
-        return []
 
-    return [
-        {
-            "email": account.email
+        return {
+            "connected": False,
+            "accounts": []
         }
-    ]
+
+    return {
+        "connected": True,
+        "accounts": [
+            {
+                "email": account.email
+            }
+        ]
+    }

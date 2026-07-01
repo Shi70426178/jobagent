@@ -1,14 +1,54 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { api } from "@/lib/axios";
 import Sidebar from "@/components/Sidebar";
 
 export default function GmailPage() {
+  const [connected, setConnected] =
+    useState(false);
+
+  const [email, setEmail] =
+    useState("");
+
+  const [emailsSent] =
+    useState(0);
+
+  const [replies] =
+    useState(0);
+
+  const [loading, setLoading] =
+    useState(true);
+
+  useEffect(() => {
+    loadProfile();
+  }, []);
+
+  const loadProfile = async () => {
+    try {
+      const response =
+        await api.get("/gmail/profile");
+
+      if (response.data.connected) {
+        setConnected(true);
+        setEmail(
+          response.data.emailAddress
+        );
+      } else {
+        setConnected(false);
+        setEmail("");
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const connectGmail = async () => {
     try {
-      const response = await api.get(
-        "/gmail/connect"
-      );
+      const response =
+        await api.get("/gmail/connect");
 
       window.location.href =
         response.data.auth_url;
@@ -21,9 +61,10 @@ export default function GmailPage() {
 
   return (
     <div className="flex">
+
       <Sidebar />
 
-      <main className="flex-1 bg-zinc-950 min-h-screen text-white p-10">
+      <main className="flex-1 min-h-screen bg-black/40 backdrop-blur-xl text-white p-10">
 
         <div className="mb-12">
 
@@ -32,109 +73,169 @@ export default function GmailPage() {
           </h1>
 
           <p className="text-zinc-500 mt-3">
-            Connect Gmail so your AI agent can
-            send personalized job applications.
+            Connect Gmail so your AI Agent can
+            send personalized job applications,
+            recruiter follow-ups and monitor
+            responses.
           </p>
 
         </div>
 
         <div className="grid md:grid-cols-3 gap-6 mb-10">
 
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
+          <div className="bg-zinc-900/60 backdrop-blur-xl border border-zinc-800 rounded-2xl p-6">
 
             <p className="text-zinc-500 text-sm">
               Gmail Status
             </p>
 
-            <h2 className="text-2xl font-semibold mt-3 text-yellow-500">
-              Not Connected
+            <h2
+              className={`text-2xl font-semibold mt-3 ${
+                connected
+                  ? "text-green-500"
+                  : "text-yellow-500"
+              }`}
+            >
+              {loading
+                ? "Loading..."
+                : connected
+                ? "Connected"
+                : "Not Connected"}
             </h2>
+
+            {connected && (
+              <p className="text-zinc-400 mt-2 break-all">
+                {email}
+              </p>
+            )}
 
           </div>
 
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
+          <div className="bg-zinc-900/60 backdrop-blur-xl border border-zinc-800 rounded-2xl p-6">
 
             <p className="text-zinc-500 text-sm">
               Emails Sent
             </p>
 
             <h2 className="text-2xl font-semibold mt-3">
-              0
+              {emailsSent}
             </h2>
 
           </div>
 
-          <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6">
+          <div className="bg-zinc-900/60 backdrop-blur-xl border border-zinc-800 rounded-2xl p-6">
 
             <p className="text-zinc-500 text-sm">
               Replies Received
             </p>
 
             <h2 className="text-2xl font-semibold mt-3">
-              0
+              {replies}
             </h2>
 
           </div>
 
         </div>
 
-        <div className="max-w-4xl bg-zinc-900 border border-zinc-800 rounded-2xl p-8">
+        <div className="max-w-5xl bg-zinc-900/60 backdrop-blur-xl border border-zinc-800 rounded-2xl p-8">
 
           <h2 className="text-2xl font-semibold mb-4">
-            Connect Gmail
+            Gmail Account
           </h2>
 
           <p className="text-zinc-500 leading-relaxed mb-8">
             Securely connect your Gmail account
-            using Google OAuth. Project22 will
-            use this account to send job
-            applications, recruiter follow-ups,
-            and track responses automatically.
+            using Google OAuth. TalentifyX only
+            uses your Gmail account to send
+            personalized job applications,
+            recruiter follow-ups and monitor
+            recruiter replies.
           </p>
 
-          <div className="bg-zinc-950 border border-zinc-800 rounded-xl p-5 mb-8">
+          <div className="bg-black/40 border border-zinc-800 rounded-xl p-5 mb-8">
 
-            <h3 className="font-medium mb-3">
+            <h3 className="font-medium mb-4">
               Permissions Required
             </h3>
 
-            <ul className="space-y-2 text-zinc-400 text-sm">
+            <ul className="space-y-3 text-zinc-400 text-sm">
 
               <li>
-                • Send job application emails
+                ✅ Send job application emails
               </li>
 
               <li>
-                • Read recruiter replies
+                ✅ Read recruiter replies
               </li>
 
               <li>
-                • Track application status
+                ✅ Track application status
               </li>
 
             </ul>
 
           </div>
 
-          <button
-            onClick={connectGmail}
-            className="
-              bg-white
-              text-black
-              px-6
-              py-3
-              rounded-xl
-              font-medium
-              hover:bg-zinc-200
-              transition
-            "
-          >
-            Connect Gmail
-          </button>
+          {connected ? (
+
+            <div>
+
+              <div className="bg-green-900/20 border border-green-700 rounded-xl p-5 mb-6">
+
+                <h3 className="text-green-400 font-semibold">
+                  Gmail Connected Successfully
+                </h3>
+
+                <p className="text-zinc-300 mt-2">
+                  Connected account:
+                </p>
+
+                <p className="text-white font-medium mt-1 break-all">
+                  {email}
+                </p>
+
+              </div>
+
+              <button
+                disabled
+                className="
+                  bg-green-600
+                  text-white
+                  px-6
+                  py-3
+                  rounded-xl
+                  cursor-not-allowed
+                "
+              >
+                Gmail Connected
+              </button>
+
+            </div>
+
+          ) : (
+
+            <button
+              onClick={connectGmail}
+              className="
+                bg-white
+                text-black
+                px-6
+                py-3
+                rounded-xl
+                font-medium
+                hover:bg-zinc-200
+                transition
+              "
+            >
+              Connect Gmail
+            </button>
+
+          )}
 
         </div>
 
       </main>
+
     </div>
   );
 }
