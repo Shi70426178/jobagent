@@ -145,7 +145,7 @@ export default function GmailPage() {
 
           <p className="text-zinc-500 leading-relaxed mb-8">
             Securely connect your Gmail account
-            using Google OAuth. TalentifyX only
+            using Google OAuth. oneXjob only
             uses your Gmail account to send
             personalized job applications,
             recruiter follow-ups and monitor

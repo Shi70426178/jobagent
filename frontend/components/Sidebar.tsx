@@ -80,9 +80,25 @@ export default function Sidebar() {
     },
   ];
  return (
-
-  <aside className="relative w-72 min-h-screen overflow-hidden border-r border-white/10 bg-black/35 backdrop-blur-2xl">
-
+<aside
+className="
+fixed
+top-0
+left-0
+z-50
+hidden
+lg:flex
+w-72
+h-screen
+overflow-y-auto
+overflow-x-hidden
+border-r
+border-white/10
+bg-black/35
+backdrop-blur-2xl
+flex-col
+"
+>
     {/* Background Glow */}
 
     <div className="absolute -top-20 -left-20 h-72 w-72 rounded-full bg-cyan-500/10 blur-[140px]" />
@@ -107,7 +123,7 @@ export default function Sidebar() {
 
             <h1 className="text-2xl font-extrabold bg-gradient-to-r from-cyan-300 via-blue-400 to-purple-500 bg-clip-text text-transparent">
 
-              TalentifyX
+              oneXjob
 
             </h1>
 
@@ -280,7 +296,7 @@ export default function Sidebar() {
       <div>
 
         <h3 className="font-semibold text-white">
-          TalentifyX AI
+          oneXjob AI
         </h3>
 
         <p className="text-xs text-zinc-400">

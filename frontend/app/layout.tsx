@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import AppLayout from "@/components/AppLayout";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -25,11 +26,18 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${inter.variable} ${geistMono.variable} h-full scroll-smooth antialiased`}
     >
-      <body className="relative min-h-screen overflow-x-hidden font-sans text-white">
-
-        {/* Background Image */}
+      <body
+        className="
+          relative
+          min-h-screen
+          overflow-x-hidden
+          font-sans
+          text-white
+        "
+      >
+        {/* Background */}
         <div
           className="
             fixed
@@ -40,18 +48,18 @@ export default function RootLayout({
             bg-center
             bg-no-repeat
             scale-110
-            blur-[1px]
+            blur-md
+            brightness-50
+            saturate-75
+            will-change-transform
           "
         />
 
         {/* Dark Overlay */}
         <div className="fixed inset-0 -z-10 bg-black/40" />
 
-        {/* Page Content */}
-        <div className="relative z-10 min-h-screen overflow-x-hidden">
-          {children}
-        </div>
-
+        {/* Application */}
+        <AppLayout>{children}</AppLayout>
       </body>
     </html>
   );

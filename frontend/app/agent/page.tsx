@@ -3,8 +3,8 @@
 import { api } from "@/lib/axios";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Sidebar from "@/components/Sidebar";
-
+// import Sidebar from "@/components/Sidebar";
+import { Search, MapPin, Rocket,Activity,BriefcaseBusiness,  Send, } from "lucide-react";
 export default function AgentPage() {
   const router = useRouter();
 
@@ -40,16 +40,14 @@ export default function AgentPage() {
     setLoading(true);
 
     try {
-const response = await api.post("/agent/start", {
-  keywords,
-  location,
-});
+      const response = await api.post("/agent/start", {
+        keywords,
+        location,
+      });
 
+      alert(response.data.message);
 
-
-alert(response.data.message);
-
-router.push("/new-jobs");
+      router.push("/new-jobs");
     } catch (error) {
       console.error(error);
 
@@ -59,151 +57,361 @@ router.push("/new-jobs");
     }
   };
 
-  return (
-    <div className="flex">
-      <Sidebar />
-
-      <main className="flex-1 bg-black/40 backdrop-blur-xl min-h-screen text-white p-10">
-        <div className="mb-12">
-          <h1 className="text-5xl font-semibold tracking-tight">
+ return (
+  <main
+    className="
+      min-h-screen
+      bg-transparent
+      text-white
+      px-5
+      sm:px-6
+      lg:px-8
+      xl:px-10
+      py-6
+      sm:py-8
+      lg:py-10
+    "
+  >
+        {" "}
+        <div className="mb-8">
+          <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-5 py-2 mb-6">
+            <span>🤖</span>
+            <span className="text-xs tracking-wide text-cyan-300">
+              AI Powered Automation
+            </span>
+          </div>
+          <h1 className="text-2xl
+sm:text-3xl
+sm:text-4xl
+xl:text-5xl font-black tracking-[-0.05em] leading-none">
             AI Job Agent
           </h1>
 
-          <p className="text-zinc-500 mt-3">
+          <p className="mt-6 max-w-3xl
+lg:max-w-4xl text-base leading-7 font-medium text-zinc-300">
             Configure and run your automated job search assistant.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6 mb-10">
-          <div className="bg-zinc-900/60 backdrop-blur-xl border border-zinc-800 rounded-2xl p-6">
-            <p className="text-zinc-500 text-sm">Status</p>
+      <div className="grid
+grid-cols-1
+sm:grid-cols-2
+xl:grid-cols-3 gap-6 mb-10">
 
-            <h2
-              className={`text-2xl font-semibold mt-3 ${
-                loading ? "text-yellow-500" : "text-green-500"
-              }`}
-            >
-              {loading ? "Running" : "Ready"}
-            </h2>
-          </div>
+  {/* Status */}
 
-          <div className="bg-zinc-900/60 backdrop-blur-xl border border-zinc-800 rounded-2xl p-6">
-            <p className="text-zinc-500 text-sm">Jobs Found</p>
+  <div
+    className="
+      group
+      rounded-2xl
+      border
+      border-white/10
+      bg-white/[0.03]
+      backdrop-blur-xl
+      p-5
+sm:p-6
+      transition-all
+      duration-300
+      md:hover:-translate-y-1
+      hover:border-green-500/30
+      hover:shadow-[0_0_20px_rgba(34,197,94,0.12)]
+    "
+  >
+    <div className="flex items-start justify-between">
 
-            <h2 className="text-2xl font-semibold mt-3">{jobsFound}</h2>
-          </div>
+      <div>
+        <p className="text-xs uppercase tracking-wider text-zinc-400">
+          Agent Status
+        </p>
 
-          <div className="bg-zinc-900/60 backdrop-blur-xl border border-zinc-800 rounded-2xl p-6">
-            <p className="text-zinc-500 text-sm">Applications Sent</p>
+        <h2
+          className={`mt-4 text-2xl
+sm:text-3xl font-bold ${
+            loading ? "text-yellow-400" : "text-green-400"
+          }`}
+        >
+          {loading ? "Running" : "Ready"}
+        </h2>
 
-            <h2 className="text-2xl font-semibold mt-3">{applicationsSent}</h2>
-          </div>
-        </div>
+        <p className="mt-2 text-xs text-zinc-500">
+          AI Automation Engine
+        </p>
+      </div>
 
-        <div className="bg-zinc-900/60 backdrop-blur-xl border border-zinc-800 rounded-2xl p-8 max-w-3xl">
-          <h2 className="text-2xl font-semibold mb-8">Agent Configuration</h2>
+      <div className="flex h-12
+sm:h-14 w-12 items-center justify-center rounded-xl bg-green-500/10">
+        <Activity className="h-6 w-6 text-green-400" />
+      </div>
 
-          <div className="space-y-6">
-            <div>
-              <label className="block text-sm text-zinc-400 mb-2">
-                Keywords
-              </label>
-
-              <input
-                value={keywords}
-                onChange={(e) => setKeywords(e.target.value)}
-                placeholder="Enter Job Title"
-                className="
-    w-full
-    bg-black/40 backdrop-blur-xl
-    border
-    border-zinc-800
-    rounded-xl
-    px-4
-    py-3
-    text-white
-    placeholder:text-zinc-500
-    outline-none
-    focus:border-zinc-600
-  "
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm text-zinc-400 mb-2">
-                Location
-              </label>
-
-              <input
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                placeholder="Enter Location"
-                className="
-    w-full
-    bg-black/40 backdrop-blur-xl
-    border
-    border-zinc-800
-    rounded-xl
-    px-4
-    py-3
-    text-white
-    placeholder:text-zinc-500
-    outline-none
-    focus:border-zinc-600
-  "
-              />
-            </div>
-
-            {/* <div>
-
-              <label className="block text-sm text-zinc-400 mb-2">
-                Daily Limit
-              </label>
-
-              <input
-                type="number"
-                value={dailyLimit}
-                onChange={(e) =>
-                  setDailyLimit(
-                    Number(e.target.value)
-                  )
-                }
-                className="
-                  w-full
-                  bg-black/40 backdrop-blur-xl
-                  border
-                  border-zinc-800
-                  rounded-xl
-                  px-4
-                  py-3
-                  text-white
-                  outline-none
-                  focus:border-zinc-600
-                "
-              />
-
-            </div> */}
-
-            <button
-              onClick={startAgent}
-              disabled={loading}
-              className="
-    bg-white
-    text-black
-    px-6
-    py-3
-    rounded-xl
-    font-medium
-    hover:bg-zinc-200
-    transition
-    disabled:opacity-50
-  "
-            >
-              {loading ? "Searching New Jobs..." : "Start Agent"}
-            </button>
-          </div>
-        </div>
-      </main>
     </div>
+  </div>
+
+  {/* Jobs Found */}
+
+  <div
+    className="
+      group
+      rounded-2xl
+      border
+      border-white/10
+      bg-white/[0.03]
+      backdrop-blur-xl
+      p-5
+sm:p-6
+      transition-all
+      duration-300
+      md:hover:-translate-y-1
+      hover:border-cyan-500/30
+      hover:shadow-[0_0_20px_rgba(6,182,212,0.12)]
+    "
+  >
+    <div className="flex items-start justify-between">
+
+      <div>
+
+        <p className="text-xs uppercase tracking-wider text-zinc-400">
+          Jobs Found
+        </p>
+
+        <h2 className="mt-4 text-2xl
+sm:text-3xl font-bold">
+          {jobsFound}
+        </h2>
+
+        <p className="mt-2 text-xs text-cyan-400">
+          AI Discovered Jobs
+        </p>
+
+      </div>
+
+      <div className="flex h-12
+sm:h-14 w-12 items-center justify-center rounded-xl bg-cyan-500/10">
+        <BriefcaseBusiness className="h-6 w-6 text-cyan-400" />
+      </div>
+
+    </div>
+  </div>
+
+  {/* Applications */}
+
+  <div
+    className="
+      group
+      rounded-2xl
+      border
+      border-white/10
+      bg-white/[0.03]
+      backdrop-blur-xl
+      p-5
+sm:p-6
+      transition-all
+      duration-300
+      md:hover:-translate-y-1
+      hover:border-purple-500/30
+      hover:shadow-[0_0_20px_rgba(168,85,247,0.12)]
+    "
+  >
+    <div className="flex items-start justify-between">
+
+      <div>
+
+        <p className="text-xs uppercase tracking-wider text-zinc-400">
+          Applications Sent
+        </p>
+
+        <h2 className="mt-4 text-2xl
+sm:text-3xl font-bold">
+          {applicationsSent}
+        </h2>
+
+        <p className="mt-2 text-xs text-purple-400">
+          Emails Sent
+        </p>
+
+      </div>
+
+      <div className="flex h-12
+sm:h-14 w-12 items-center justify-center rounded-xl bg-purple-500/10">
+        <Send className="h-6 w-6 text-purple-400" />
+      </div>
+
+    </div>
+  </div>
+
+</div>
+        <div
+  className="
+    mt-6
+sm:mt-8
+    w-full
+    rounded-3xl
+    border
+    border-white/10
+    bg-white/[0.03]
+    backdrop-blur-2xl
+    overflow-hidden
+  "
+>
+  {/* Header */}
+
+  <div className="border-b border-white/10 px-5
+sm:px-6
+lg:px-8
+py-5
+sm:py-6">
+    <h2 className="text-2xl
+sm:text-3xl font-bold text-white">
+      Agent Configuration
+    </h2>
+
+    <p className="mt-2 text-xs
+sm:text-sm text-zinc-400">
+      Configure how your AI Agent searches and automatically applies for jobs.
+    </p>
+  </div>
+
+  {/* Body */}
+
+  <div className="p-5
+sm:p-6
+lg:p-8">
+
+    <div className="grid
+grid-cols-1
+lg:grid-cols-[1fr_1fr_auto] gap-6 items-end">
+
+      {/* Keywords */}
+
+      <div>
+
+        <label className="mb-2 flex items-center gap-2 text-xs
+sm:text-sm font-medium text-zinc-300">
+
+          <Search className="h-4 w-4 text-cyan-400" />
+
+          Job Keywords
+
+        </label>
+
+        <input
+          value={keywords}
+          onChange={(e) => setKeywords(e.target.value)}
+          placeholder="Backend Developer"
+          className="
+            h-12
+sm:h-14
+            w-full
+            rounded-xl
+            border
+            border-white/10
+            bg-black/30
+            px-5
+            text-xs
+sm:text-sm
+            text-white
+            placeholder:text-zinc-500
+            outline-none
+            transition-all
+            duration-300
+            focus:border-cyan-500
+            focus:ring-2
+            focus:ring-cyan-500/20
+          "
+        />
+
+      </div>
+
+      {/* Location */}
+
+      <div>
+
+        <label className="mb-2 flex items-center gap-2 text-xs
+sm:text-sm font-medium text-zinc-300">
+
+          <MapPin className="h-4 w-4 text-cyan-400" />
+
+          Preferred Location
+
+        </label>
+
+        <input
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
+          placeholder="Remote / Bangalore"
+          className="
+            h-12
+sm:h-14
+            w-full
+            rounded-xl
+            border
+            border-white/10
+            bg-black/30
+            px-5
+            text-xs
+sm:text-sm
+            text-white
+            placeholder:text-zinc-500
+            outline-none
+            transition-all
+            duration-300
+            focus:border-cyan-500
+            focus:ring-2
+            focus:ring-cyan-500/20
+          "
+        />
+
+      </div>
+
+      {/* Launch Button */}
+
+      <button
+        onClick={startAgent}
+        disabled={loading}
+        className="
+          h-12
+sm:h-14
+          w-full
+lg:w-auto
+px-8
+          rounded-xl
+          border
+          border-white/10
+          bg-slate-900/70
+          text-white
+          font-semibold
+          transition-all
+          duration-300
+          md:hover:-translate-y-1
+          hover:border-cyan-500/40
+          hover:bg-slate-800
+          hover:shadow-[0_0_18px_rgba(6,182,212,.15)]
+          active:scale-95
+          disabled:opacity-60
+        "
+      >
+
+        <span className="flex items-center justify-center gap-2">
+
+          <Rocket className="h-4 w-4" />
+
+          {loading ? "Searching..." : "Launch AI Agent"}
+
+        </span>
+
+      </button>
+
+    </div>
+
+    {/* Divider */}
+
+    <div className="my-8 border-t border-white/10" />
+
+   
+
+  </div>
+
+</div>
+      </main>
+  
   );
 }

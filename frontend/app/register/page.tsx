@@ -33,7 +33,15 @@ export default function RegisterPage() {
 
   return (
     <div
-      className="relative min-h-screen overflow-hidden bg-cover bg-center bg-no-repeat"
+      className="
+relative
+min-h-screen
+overflow-x-hidden
+overflow-y-auto
+bg-cover
+bg-center
+bg-no-repeat
+"
       style={{
         backgroundImage: "url('/Login_BG.png')",
       }}
@@ -42,12 +50,34 @@ export default function RegisterPage() {
 
       <div className="absolute inset-0 bg-gradient-to-r from-black/65 via-black/35 to-black/50" />
 
-      <div className="relative z-10 flex min-h-screen">
+      <div
+className="
+relative
+z-10
+flex
+min-h-screen
+flex-col
+lg:flex-row
+"
+>
         {/* ================= LEFT PANEL ================= */}
 
-        <div className="hidden lg:flex w-[58%] items-center justify-center px-6 xl:px-8">
+        <div
+className="
+hidden
+lg:flex
+lg:w-1/2
+xl:w-[58%]
+items-center
+justify-center
+px-6
+xl:px-10
+2xl:px-16
+"
+>
           <div className="max-w-md">
-            <div className="inline-flex rounded-full border border-violet-500/30 bg-violet-500/10 px-3 py-1 text-[11px] font-medium text-violet-300">
+            <div className="inline-flex rounded-full border border-violet-500/30 bg-violet-500/10 px-3 py-1 text-xs
+sm:text-sm font-medium text-violet-300">
               🚀 Join thousands of successful job seekers
             </div>
 
@@ -62,7 +92,7 @@ export default function RegisterPage() {
                 text-white
               "
             >
-              TalentifyX
+              oneXjob
             </h1>
 
             <h2
@@ -112,7 +142,7 @@ export default function RegisterPage() {
                     backdrop-blur-xl
                     transition-all
                     duration-300
-                    hover:translate-x-1
+                    md:hover:translate-x-1
                     hover:border-violet-500/40
                     hover:bg-white/10
                   "
@@ -139,7 +169,8 @@ export default function RegisterPage() {
                   <div>
                     <p className="text-sm font-semibold text-white">{item}</p>
 
-                    <p className="text-[11px] text-zinc-400">
+                    <p className="text-xs
+sm:text-sm text-zinc-400">
                       Powered by advanced AI
                     </p>
                   </div>
@@ -151,17 +182,36 @@ export default function RegisterPage() {
 
         {/* ================= RIGHT PANEL ================= */}
 
-        <div className="flex flex-1 items-center justify-center px-3 py-4">
-          <div className="w-full max-w-[330px]">
+        <div
+className="
+flex
+flex-1
+items-center
+justify-center
+px-4
+sm:px-6
+md:px-8
+py-8
+lg:py-12
+"
+>
+          <div
+className="
+w-full
+max-w-sm
+sm:max-w-md
+"
+>
             {/* MOBILE HEADER */}
 
             <div className="mb-6 text-center lg:hidden">
-              <div className="inline-flex rounded-full border border-violet-500/30 bg-violet-500/10 px-3 py-1 text-[11px] text-violet-300">
+              <div className="inline-flex rounded-full border border-violet-500/30 bg-violet-500/10 px-3 py-1 text-xs
+sm:text-sm text-violet-300">
                 AI Career Assistant
               </div>
 
               <h1 className="mt-3 text-3xl font-black text-white">
-                TalentifyX
+                oneXjob
               </h1>
 
               <p className="mt-2 text-sm text-zinc-300">
@@ -177,24 +227,34 @@ export default function RegisterPage() {
         border
         border-white/10
         bg-black/45
-        p-4
+        p-5
+sm:p-6
+md:p-7
         shadow-[0_12px_35px_rgba(0,0,0,.55)]
         backdrop-blur-2xl
       "
             >
-              <h2 className="text-lg font-bold text-white">
+              <h2
+className="
+text-xl
+md:text-2xl
+font-bold
+text-white
+"
+>
                 Create Your Account
               </h2>
 
-              <p className="mt-2 text-[12px] leading-5 text-zinc-400">
-                Join TalentifyX and accelerate your job search with AI.
+              <p className="mt-2 text-sm leading-5 text-zinc-400">
+                Join oneXjob and accelerate your job search with AI.
               </p>
 
               <div className="mt-4 space-y-3">
                 {/* Full Name */}
 
                 <div>
-                  <label className="mb-1 block text-[11px] text-zinc-300">
+                  <label className="mb-1 block text-xs
+sm:text-sm text-zinc-300">
                     Full Name
                   </label>
 
@@ -204,12 +264,12 @@ export default function RegisterPage() {
                     placeholder="Shivam Kumar"
                     className="
               w-full
-              rounded-lg
+              rounded-xl
               border
               border-white/10
               bg-white/5
               px-3
-              py-2
+              py-3
               text-sm
               text-white
               placeholder:text-zinc-500
@@ -225,7 +285,8 @@ export default function RegisterPage() {
                 {/* Email */}
 
                 <div>
-                  <label className="mb-1 block text-[11px] text-zinc-300">
+                  <label className="mb-1 block text-xs
+sm:text-sm text-zinc-300">
                     Email Address
                   </label>
 
@@ -236,12 +297,12 @@ export default function RegisterPage() {
                     placeholder="you@example.com"
                     className="
               w-full
-              rounded-lg
+              rounded-xl
               border
               border-white/10
               bg-white/5
               px-3
-              py-2
+              py-3
               text-sm
               text-white
               placeholder:text-zinc-500
@@ -257,7 +318,8 @@ export default function RegisterPage() {
                 {/* Password */}
 
                 <div>
-                  <label className="mb-1 block text-[11px] text-zinc-300">
+                  <label className="mb-1 block text-xs
+sm:text-sm text-zinc-300">
                     Password
                   </label>
 
@@ -268,12 +330,12 @@ export default function RegisterPage() {
                     placeholder="••••••••"
                     className="
               w-full
-              rounded-lg
+              rounded-xl
               border
               border-white/10
               bg-white/5
               px-3
-              py-2
+              py-3
               text-sm
               text-white
               placeholder:text-zinc-500
@@ -285,7 +347,7 @@ export default function RegisterPage() {
             "
                   />
 
-                  <p className="mt-1 text-[10px] leading-4 text-zinc-500">
+                  <p className="mt-1 text-xs leading-4 text-zinc-500">
                     Use at least 8 characters with letters and numbers.
                   </p>
                 </div>
@@ -297,18 +359,18 @@ export default function RegisterPage() {
                   disabled={loading}
                   className="
             w-full
-            rounded-lg
+            rounded-xl
             bg-gradient-to-r
             from-violet-600
             via-indigo-600
             to-cyan-500
-            py-2.5
+            py-3.5
             text-sm
             font-semibold
             text-white
             transition-all
             duration-300
-            hover:scale-[1.01]
+            md:hover:scale-[1.01]
             hover:shadow-[0_0_20px_rgba(99,102,241,.35)]
           "
                 >
@@ -321,7 +383,7 @@ export default function RegisterPage() {
               <div className="my-4 flex items-center">
                 <div className="h-px flex-1 bg-white/10" />
 
-                <span className="px-3 text-[10px] text-zinc-500">
+                <span className="px-3 text-xs text-zinc-500">
                   Start Your Career
                 </span>
 
@@ -356,17 +418,19 @@ export default function RegisterPage() {
               <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-3 py-1">
                 <div className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></div>
 
-                <span className="text-[11px] text-emerald-300">
+                <span className="text-xs
+sm:text-sm text-emerald-300">
                   Secure Registration
                 </span>
               </div>
 
-              <p className="mt-3 text-[11px] leading-5 text-zinc-400">
+              <p className="mt-3 text-xs
+sm:text-sm leading-5 text-zinc-400">
                 🔒 Your information is encrypted and protected.
               </p>
 
-              <p className="mt-2 text-[10px] text-zinc-500">
-                © {new Date().getFullYear()} TalentifyX. All rights reserved.
+              <p className="mt-2 text-xs text-zinc-500">
+                © {new Date().getFullYear()} oneXjob. All rights reserved.
               </p>
             </div>
           </div>

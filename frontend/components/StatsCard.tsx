@@ -10,17 +10,28 @@ export default function StatsCard({
   subtitle,
 }: StatsCardProps) {
   return (
-    <div className="bg-slate-800 border border-slate-700 rounded-xl p-5 shadow-md">
-      <p className="text-slate-400 text-sm">
+    <div
+      className="
+      rounded-xl
+      border
+      border-slate-700
+      bg-slate-800
+      p-4
+      md:p-5
+      shadow-md
+      w-full
+    "
+    >
+      <p className="text-xs md:text-sm text-slate-400">
         {title}
       </p>
 
-      <h2 className="text-3xl font-bold mt-2 text-white">
+      <h2 className="mt-2 text-2xl md:text-3xl font-bold text-white break-words">
         {value}
       </h2>
 
       {subtitle && (
-        <p className="text-slate-500 text-sm mt-2">
+        <p className="mt-2 text-xs md:text-sm text-slate-500">
           {subtitle}
         </p>
       )}

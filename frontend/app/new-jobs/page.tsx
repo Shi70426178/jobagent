@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { api } from "@/lib/axios";
-import Sidebar from "@/components/Sidebar";
+// import Sidebar from "@/components/Sidebar";
 import { useRouter } from "next/navigation";
 export default function LinkedinPage() {
   const router = useRouter();
@@ -86,14 +86,30 @@ const applyLead = async (
   };
 
   return (
-    <div className="flex">
-      <Sidebar />
+    
 
-      <main className="flex-1 bg-black/40 backdrop-blur-xl min-h-screen text-white p-10">
+      <main
+  className="
+    min-h-screen
+    bg-transparent
+    text-white
+    px-4
+    sm:px-6
+    lg:px-8
+    xl:px-10
+    py-6
+    sm:py-8
+    lg:py-10
+  "
+>
 
         <div className="mb-12">
 
-          <h1 className="text-5xl font-semibold tracking-tight">
+          <h1 className="text-xl
+sm:text-2xl
+sm:text-3xl
+sm:text-4xl
+xl:text-5xl font-semibold tracking-tight">
             New Leads
           </h1>
 
@@ -104,27 +120,38 @@ const applyLead = async (
 
         </div>
 
-        <div className="grid md:grid-cols-3 gap-6 mb-10">
+        <div className="grid
+grid-cols-1
+sm:grid-cols-2
+xl:grid-cols-3 gap-6 mb-10">
 
-          <div className="bg-zinc-900/60 backdrop-blur-xl border border-zinc-800 rounded-2xl p-6">
+          <div className="bg-zinc-900/60 backdrop-blur-xl border border-zinc-800 rounded-2xl p-5
+sm:p-6">
 
-            <p className="text-zinc-500 text-sm">
+            <p className="text-zinc-500 text-xs
+sm:text-sm">
               Total Leads
             </p>
 
-            <h2 className="text-3xl font-bold mt-3">
+            <h2 className="text-xl
+sm:text-2xl
+sm:text-3xl font-bold mt-3">
               {posts.length}
             </h2>
 
           </div>
 
-          <div className="bg-zinc-900/60 backdrop-blur-xl border border-zinc-800 rounded-2xl p-6">
+          <div className="bg-zinc-900/60 backdrop-blur-xl border border-zinc-800 rounded-2xl p-5
+sm:p-6">
 
-            <p className="text-zinc-500 text-sm">
+            <p className="text-zinc-500 text-xs
+sm:text-sm">
               Emails Found
             </p>
 
-            <h2 className="text-3xl font-bold mt-3">
+            <h2 className="text-xl
+sm:text-2xl
+sm:text-3xl font-bold mt-3">
               {
                 posts.filter(
                   (p) => p.email
@@ -134,13 +161,17 @@ const applyLead = async (
 
           </div>
 
-          <div className="bg-zinc-900/60 backdrop-blur-xl border border-zinc-800 rounded-2xl p-6">
+          <div className="bg-zinc-900/60 backdrop-blur-xl border border-zinc-800 rounded-2xl p-5
+sm:p-6">
 
-            <p className="text-zinc-500 text-sm">
+            <p className="text-zinc-500 text-xs
+sm:text-sm">
               Applied
             </p>
 
-            <h2 className="text-3xl font-bold mt-3 text-green-500">
+            <h2 className="text-xl
+sm:text-2xl
+sm:text-3xl font-bold mt-3 text-green-500">
               {
                 posts.filter(
                   (p) =>
@@ -165,15 +196,25 @@ const applyLead = async (
                 border
                 border-zinc-800
                 rounded-2xl
-                p-6
+                p-5
+sm:p-6
               "
             >
 
-              <div className="flex justify-between items-start">
+              <div
+className="
+flex
+flex-col
+sm:flex-row
+justify-between
+gap-6
+"
+>
 
                 <div>
 
-                  <h2 className="text-2xl font-semibold">
+                  <h2 className="text-xl
+sm:text-2xl font-semibold">
                     {post.job_title}
                   </h2>
 
@@ -199,8 +240,10 @@ const applyLead = async (
 
                 <div
                   className={`
-                    px-4
-                    py-2
+                   px-3
+sm:px-4
+py-2
+self-start
                     rounded-full
                     text-white
                     font-medium
@@ -239,7 +282,10 @@ const applyLead = async (
           View Generated Email
         </summary>
 
-        <div className="mt-3 bg-black/40 backdrop-blur-xl border border-zinc-800 rounded-xl p-4 whitespace-pre-wrap text-zinc-300">
+        <div className="mt-3 bg-black/40 backdrop-blur-xl border border-zinc-800 rounded-xl p-4
+overflow-x-auto whitespace-pre-wrap
+break-words
+overflow-x-auto text-zinc-300">
           {post.generated_email}
         </div>
 
@@ -254,12 +300,14 @@ const applyLead = async (
         }
         className="
           w-full
-          h-64
+          h-56
+sm:h-64
           bg-black/40 backdrop-blur-xl
           border
           border-zinc-800
           rounded-xl
           p-4
+overflow-x-auto
           text-zinc-300
           resize-none
         "
@@ -271,14 +319,25 @@ const applyLead = async (
 
 )}
 
-              <div className="flex items-center justify-between mt-6">
+              <div
+className="
+mt-6
+flex
+flex-col
+gap-4
+lg:flex-row
+lg:items-center
+lg:justify-between
+"
+>
 
                 <span
                   className={`
                     px-3
                     py-1
                     rounded-full
-                    text-sm
+                    text-xs
+sm:text-sm
                     ${
                       post.status ===
                       "applied"
@@ -290,7 +349,13 @@ const applyLead = async (
                   {post.status}
                 </span>
 
-               <div className="flex gap-3">
+               <div
+className="
+flex
+flex-wrap
+gap-3
+"
+>
 
   <button
     onClick={() =>
@@ -299,8 +364,10 @@ const applyLead = async (
     className="
       bg-zinc-900/60 backdrop-blur-xl
       hover:bg-zinc-700
-      px-4
-      py-2
+      px-3
+sm:px-4
+py-2
+self-start
       rounded-xl
     "
   >
@@ -316,8 +383,10 @@ const applyLead = async (
     className="
       bg-purple-600
       hover:bg-purple-700
-      px-4
-      py-2
+      px-3
+sm:px-4
+py-2
+self-start
       rounded-xl
       text-white
     "
@@ -348,8 +417,10 @@ await loadPosts();
         className="
           bg-blue-600
           hover:bg-blue-700
-          px-4
-          py-2
+          px-3
+sm:px-4
+py-2
+self-start
           rounded-xl
         "
       >
@@ -363,8 +434,10 @@ await loadPosts();
         className="
           bg-zinc-700
           hover:bg-zinc-600
-          px-4
-          py-2
+          px-3
+sm:px-4
+py-2
+self-start
           rounded-xl
         "
       >
@@ -389,8 +462,10 @@ await loadPosts();
       className="
         bg-blue-600
         hover:bg-blue-700
-        px-4
-        py-2
+        px-3
+sm:px-4
+py-2
+self-start
         rounded-xl
       "
     >
@@ -407,8 +482,10 @@ await loadPosts();
     applyLead(post.id)
   }
    className={`
-  px-4
-  py-2
+  px-3
+sm:px-4
+py-2
+self-start
   rounded-xl
   font-medium
   ${
@@ -431,6 +508,6 @@ await loadPosts();
         </div>
 
       </main>
-    </div>
+   
   );
 }
