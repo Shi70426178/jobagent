@@ -54,9 +54,18 @@ def collect_jobs(
 
         print(f"\nSearching: {keyword}")
 
-        page.goto(url)
+        page.goto(
+            url,
+            wait_until="domcontentloaded",
+            timeout=60000
+         )
 
-        page.wait_for_load_state("networkidle")
+        page.wait_for_timeout(5000)
+        print("\n========== LINKEDIN DEBUG ==========")
+        print("Title:", page.title())
+        print("URL:", page.url)
+        print("===================================\n")
+
         if "checkpoint" in page.url:
             print("LinkedIn security verification detected.")
             browser.close()
@@ -76,32 +85,15 @@ def collect_jobs(
         body = page.locator("body").inner_text()
         print(body[:5000])
 
-        return
+        posts = body.split("Feed post")
 
-        # body = page.locator("body").inner_text()
-        # print(body[:3000])
+        print(f"\nFound {len(posts)} posts")
 
-        # posts = split_posts(body)
+        for text in posts:
 
-        # print(f"Found {len(posts)} posts")
+            text = text.strip()
 
-        for i in range(count):
-
-            try:
-
-                post = posts.nth(i)
-
-                text = post.inner_text(timeout=5000)
-
-                print("\n==========================")
-                print(f"POST {i+1}")
-                print("==========================")
-                print(text[:1000])
-
-            except Exception as e:
-
-                print(e)
-
+            if not text:
                 continue
 
             if not is_hiring_post(text):
@@ -114,7 +106,21 @@ def collect_jobs(
                 if not job.get("is_job_post"):
                     continue
 
-                if not job.get("email"):
+                email = job.get("email", "").strip()
+
+                # Skip jobs without a valid email
+                if (
+                    email == ""
+                    or email.lower() in [
+                        "n/a",
+                        "na",
+                        "none",
+                        "null",
+                        "not mentioned",
+                        "not provided"
+                    ]
+                ):
+                    print("Skipping job - no email found")
                     continue
 
                 save_job(
@@ -125,7 +131,7 @@ def collect_jobs(
 
                     company=job.get("company", ""),
 
-                    email=job.get("email", ""),
+                    email=email,
 
                     job_title=job.get("job_title", ""),
 
@@ -150,11 +156,8 @@ def collect_jobs(
                     search_keyword=keyword
                 )
 
-                print(
-                    f"Saved: {job.get('company')} - {job.get('job_title')}"
-                )
+                print(f"Saved: {job.get('company')} - {job.get('job_title')}")
 
             except Exception as e:
                 print(e)
-
         browser.close()

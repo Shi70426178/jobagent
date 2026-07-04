@@ -11,8 +11,11 @@ def search_jobs(
     user_id,
     keywords
 ):
+    print("Agent keyword:", keywords)
 
     jobs = get_recent_jobs(db, keywords)
+
+    print("Jobs found:", len(jobs))
 
     resume = (
         db.query(Resume)
@@ -28,18 +31,15 @@ def search_jobs(
 
     for job in jobs:
 
+        print(f"Processing: {job.company} - {job.job_title}", flush=True)
+
         match = calculate_match(
             resume.skills,
             resume.experience,
             job.post_text
         )
 
-        # email_text = generate_email(
-        #     resume=resume,
-        #     job_title=job.job_title,
-        #     company=job.company,
-        #     post_text=job.post_text
-        # )
+        print(f"Match score: {match['score']}", flush=True)
 
         save_post(
             db=db,
@@ -53,5 +53,7 @@ def search_jobs(
             match_reason=match["reason"],
             generated_email=""
         )
+
+        print("Saved post successfully", flush=True)
 
     return True
