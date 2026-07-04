@@ -3,7 +3,9 @@ from sqlalchemy import text
 from app.api.jobs import router as jobs_router
 from app.api.linkedin import router as linkedin_router
 from app.models.linkedin_post import LinkedInPost
-from app.db.database import engine, Base
+# from app.db.database import engine, Base
+from app.db.database import engine
+from app.db.base import Base
 from app.api.agent import router as agent_router
 from app.api.gmail import router as gmail_router
 from app.api.auth import router as auth_router
@@ -18,10 +20,15 @@ from app.api.stats import router as stats_router
 from app.models.hackernews_post import HackerNewsPost
 from app.api.hackernews import router as hackernews_router
 from app.api import admin_hackernews
+from app.models.scheduler_keyword import SchedulerKeyword
 # from app.api import auth, gmail, resume, application, users
 # from app.api.users import router as users_router
+from app.models.linkedin_job import LinkedInJob
+from app.api.scheduler import router as scheduler_router
 app = FastAPI()
 
+# print("DATABASE BASE TABLES")
+# print(Base.metadata.tables.keys())
 Base.metadata.create_all(bind=engine)
 
 app.include_router(
@@ -82,6 +89,11 @@ app.include_router(
 #     prefix="/users",
 #     tags=["Users"],
 # )
+app.include_router(
+    scheduler_router,
+    prefix="/scheduler",
+    tags=["Scheduler"]
+)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[

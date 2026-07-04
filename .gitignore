@@ -6,6 +6,18 @@ __pycache__/
 # Environment variables
 .env
 
+# LinkedIn
+backend/linkedin.json
+backend/linkedin-profile/
+linkedin-profile/
+
+# Test files
+backend/test.py
+
+# Playwright debug
+linkedin_debug.png
+*.png
+
 # Node
 node_modules/
 .next/
@@ -15,3 +27,4 @@ node_modules/
 
 # Logs
 *.log
+scheduler.log
