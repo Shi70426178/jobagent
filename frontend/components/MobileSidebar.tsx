@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 import {
   Menu,
@@ -17,12 +17,25 @@ import {
   FileBadge,
   Sparkles,
   ChevronRight,
+  LogOut,
 } from "lucide-react";
+
+import { useAuthStore } from "@/store/authStore";
 
 export default function MobileSidebar() {
   const pathname = usePathname();
 
+  const router = useRouter();
+
   const [open, setOpen] = useState(false);
+
+  const { logout } = useAuthStore();
+
+  const handleLogout = () => {
+    logout();
+    setOpen(false);
+    router.push("/login");
+  };
 
   const menuItems = [
     {
@@ -70,6 +83,7 @@ export default function MobileSidebar() {
   return (
     <>
       {/* Top Navbar */}
+
       <div className="fixed top-0 left-0 right-0 z-[60] flex h-16 items-center justify-between border-b border-white/10 bg-[#050816]/90 px-4 backdrop-blur-xl lg:hidden">
 
         <button
@@ -80,20 +94,29 @@ export default function MobileSidebar() {
         </button>
 
         <div className="flex items-center gap-3">
+
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-500 via-blue-500 to-purple-600">
+
             <Sparkles size={20} />
+
           </div>
 
           <div>
-            <h1 className="font-bold text-lg">oneXjob</h1>
+
+            <h1 className="text-lg font-bold">
+              oneXjob
+            </h1>
 
             <p className="text-[10px] text-zinc-400">
               AI Career Assistant
             </p>
+
           </div>
+
         </div>
 
         <div className="w-8" />
+
       </div>
 
       {/* Overlay */}
@@ -109,23 +132,28 @@ export default function MobileSidebar() {
 
       <aside
         className={`
-        fixed
-        top-0
-        left-0
-        z-[70]
-        h-screen
-        w-72
-        border-r
-        border-white/10
-        bg-[#050816]
-        backdrop-blur-2xl
-        transition-transform
-        duration-300
-        lg:hidden
+          fixed
+          top-0
+          left-0
+          z-[70]
+          flex
+          h-screen
+          w-72
+          flex-col
+          border-r
+          border-white/10
+          bg-[#050816]
+          backdrop-blur-2xl
+          transition-transform
+          duration-300
+          lg:hidden
 
-        ${open ? "translate-x-0" : "-translate-x-full"}
-      `}
+          ${open ? "translate-x-0" : "-translate-x-full"}
+        `}
       >
+
+        {/* Header */}
+
         <div className="flex items-center justify-between border-b border-white/10 p-5">
 
           <div className="flex items-center gap-3">
@@ -138,7 +166,7 @@ export default function MobileSidebar() {
 
             <div>
 
-              <h1 className="font-bold text-xl">
+              <h1 className="text-xl font-bold">
                 oneXjob
               </h1>
 
@@ -159,62 +187,223 @@ export default function MobileSidebar() {
 
         </div>
 
-        <nav className="p-4 space-y-2">
+                {/* Navigation */}
 
-          {menuItems.map((item) => {
+        <div className="flex-1 overflow-y-auto p-4">
 
-            const Icon = item.icon;
+          <div className="space-y-2">
 
-            const active =
-              pathname === item.href;
+            {menuItems.map((item) => {
 
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={() => setOpen(false)}
-                className={`flex items-center justify-between rounded-2xl px-4 py-3 transition-all
+              const Icon = item.icon;
 
-                ${
-                  active
-                    ? "bg-cyan-500/20 border border-cyan-500/30"
-                    : "hover:bg-white/5"
-                }
-                `}
-              >
-                <div className="flex items-center gap-4">
+              const active = pathname === item.href;
 
-                  <div
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onClick={() => setOpen(false)}
+                  className={`
+                    group
+                    relative
+                    flex
+                    items-center
+                    justify-between
+                    rounded-2xl
+                    px-4
+                    py-3
+                    transition-all
+                    duration-300
+
+                    ${
+                      active
+                        ? "border border-cyan-500/30 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 text-white"
+                        : "text-zinc-400 hover:bg-white/5 hover:text-white"
+                    }
+                  `}
+                >
+
+                  <div className="flex items-center gap-4">
+
+                    <div
+                      className={`
+                        flex
+                        h-10
+                        w-10
+                        items-center
+                        justify-center
+                        rounded-xl
+                        transition-all
+                        duration-300
+
+                        ${
+                          active
+                            ? "bg-cyan-500/20 text-cyan-300"
+                            : "bg-zinc-800 text-zinc-400 group-hover:bg-cyan-500/10 group-hover:text-cyan-300"
+                        }
+                      `}
+                    >
+
+                      <Icon size={18} />
+
+                    </div>
+
+                    <span className="font-medium">
+                      {item.name}
+                    </span>
+
+                  </div>
+
+                  <ChevronRight
+                    size={18}
                     className={`
+                      transition-all
+                      duration-300
+
+                      ${
+                        active
+                          ? "opacity-100 translate-x-0 text-cyan-300"
+                          : "opacity-0 -translate-x-2 group-hover:translate-x-0 group-hover:opacity-100"
+                      }
+                    `}
+                  />
+
+                </Link>
+              );
+
+            })}
+
+            {/* Logout */}
+
+            <button
+              onClick={handleLogout}
+              className="
+                group
+                relative
+                flex
+                w-full
+                items-center
+                justify-between
+                rounded-2xl
+                px-4
+                py-3
+                text-zinc-400
+                transition-all
+                duration-300
+                hover:bg-white/5
+                hover:text-red-400
+              "
+            >
+
+              <div className="flex items-center gap-4">
+
+                <div
+                  className="
                     flex
                     h-10
                     w-10
                     items-center
                     justify-center
                     rounded-xl
+                    bg-zinc-800
+                    text-zinc-400
+                    transition-all
+                    duration-300
+                    group-hover:bg-red-500/10
+                    group-hover:text-red-400
+                  "
+                >
 
-                    ${
-                      active
-                        ? "bg-cyan-500/20"
-                        : "bg-zinc-800"
-                    }
-                  `}
-                  >
-                    <Icon size={18} />
-                  </div>
-
-                  <span>{item.name}</span>
+                  <LogOut size={18} />
 
                 </div>
 
-                <ChevronRight size={18} />
+                <span className="font-medium">
+                  Logout
+                </span>
 
-              </Link>
-            );
-          })}
+              </div>
 
-        </nav>
+              <ChevronRight
+                size={18}
+                className="
+                  opacity-0
+                  -translate-x-2
+                  transition-all
+                  duration-300
+                  group-hover:translate-x-0
+                  group-hover:opacity-100
+                  group-hover:text-red-400
+                "
+              />
+
+            </button>
+
+          </div>
+
+        </div>
+
+                {/* Bottom */}
+
+        <div className="border-t border-white/10 p-5">
+
+          <div className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl">
+
+            <div className="flex items-center gap-4">
+
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600">
+
+                <Bot className="h-6 w-6 text-white" />
+
+              </div>
+
+              <div>
+
+                <h3 className="font-semibold text-white">
+                  oneXjob AI
+                </h3>
+
+                <p className="text-xs text-zinc-400">
+                  Smart Career Assistant
+                </p>
+
+              </div>
+
+            </div>
+
+            <div className="mt-5 flex items-center justify-between">
+
+              <div>
+
+                <p className="text-xs text-zinc-500">
+                  Version
+                </p>
+
+                <p className="text-sm font-semibold text-cyan-400">
+                  v1.0.0
+                </p>
+
+              </div>
+
+              <div className="flex items-center gap-2 rounded-full bg-green-500/10 px-3 py-2">
+
+                <div className="h-2 w-2 animate-pulse rounded-full bg-green-400" />
+
+                <span className="text-xs text-green-300">
+                  Online
+                </span>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
       </aside>
+
     </>
   );
 }

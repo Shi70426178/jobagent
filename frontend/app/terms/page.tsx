@@ -80,7 +80,7 @@ export default function TermsPage() {
             </h2>
 
             <p className="mt-4 text-zinc-300">
-              support@onexjob.com
+              shivamsingh221537@gmail.com
             </p>
           </section>
 

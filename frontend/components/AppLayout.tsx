@@ -13,6 +13,9 @@ export default function AppLayout({
   const hideSidebar =
     pathname === "/" ||
     pathname === "/login" ||
+    pathname === "/privacy" ||
+    pathname === "/contact" ||
+    pathname === "/terms" ||
     pathname === "/register";
 
   return (

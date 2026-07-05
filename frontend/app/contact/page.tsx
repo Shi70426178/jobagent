@@ -27,7 +27,7 @@ export default function ContactPage() {
             </p>
 
             <p className="mt-6 font-semibold text-cyan-400">
-              support@onexjob.com
+              shivamsingh221537@gmail.com
             </p>
 
             <p className="mt-2 text-sm text-zinc-500">
@@ -47,7 +47,7 @@ export default function ContactPage() {
             </p>
 
             <p className="mt-6 font-semibold text-violet-400">
-              business@onexjob.com
+              shivamsingh221537@gmail.com
             </p>
 
           </div>
@@ -63,7 +63,7 @@ export default function ContactPage() {
             </p>
 
             <p className="mt-6 font-semibold text-cyan-400">
-              bugs@onexjob.com
+              shivamsingh221537@gmail.com
             </p>
 
           </div>

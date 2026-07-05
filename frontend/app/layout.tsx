@@ -24,10 +24,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${inter.variable} ${geistMono.variable} h-full scroll-smooth antialiased`}
-    >
+  <html
+  lang="en"
+  className={`dark ${inter.variable} ${geistMono.variable} h-full scroll-smooth antialiased`}
+>
       <body
         className="
           relative
