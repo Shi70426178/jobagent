@@ -6,7 +6,8 @@ from sqlalchemy.orm import Session
 from google_auth_oauthlib.flow import Flow
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
-
+from google.oauth2 import id_token
+from google.auth.transport.requests import Request as GoogleRequest
 import os
 
 from app.db.database import get_db
@@ -30,7 +31,8 @@ router = APIRouter()
 
 SCOPES = [
     "https://www.googleapis.com/auth/gmail.send",
-    "https://www.googleapis.com/auth/gmail.readonly",
+    "openid",
+    "https://www.googleapis.com/auth/userinfo.email",
 ]
 
 CODE_VERIFIER = None
@@ -124,23 +126,13 @@ def gmail_callback(
     credentials = flow.credentials
     print("TOKEN FETCHED")
 
-    creds = Credentials(
-        token=credentials.token
+    id_info = id_token.verify_oauth2_token(
+        credentials.id_token,
+        GoogleRequest(),
+        os.getenv("GOOGLE_CLIENT_ID")
     )
 
-    service = build(
-        "gmail",
-        "v1",
-        credentials=creds
-    )
-
-    profile = (
-        service.users()
-        .getProfile(userId="me")
-        .execute()
-    )
-
-    email = profile["emailAddress"]
+    email = id_info["email"]
 
     user_id = int(
         request.query_params.get("state")

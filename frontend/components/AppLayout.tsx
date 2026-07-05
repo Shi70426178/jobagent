@@ -11,6 +11,7 @@ export default function AppLayout({
   const pathname = usePathname();
 
   const hideSidebar =
+    pathname === "/" ||
     pathname === "/login" ||
     pathname === "/register";
 
@@ -24,15 +25,13 @@ export default function AppLayout({
 )}
 
       <main
-        className={`
-          min-h-screen
-pt-16
-lg:pt-0
-transition-all
-duration-300
-lg:ml-72
-        `}
-      >
+  className={`
+    min-h-screen
+    transition-all
+    duration-300
+    ${hideSidebar ? "" : "pt-16 lg:pt-0 lg:ml-72"}
+  `}
+>
         {children}
       </main>
     </div>
