@@ -14,6 +14,7 @@ interface Application {
   status: string;
   generated_email: string;
   match_score: number;
+  created_at?: string;
 }
 
 export default function ApplicationsPage() {
