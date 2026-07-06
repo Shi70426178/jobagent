@@ -73,54 +73,6 @@ def get_user_account(
     )
 
 
-def get_gmail_profile(
-    db: Session,
-    user_id: int
-):
-
-    account = get_user_account(
-        db,
-        user_id
-    )
-
-    if not account:
-        return None
-
-    creds = Credentials(
-        token=account.access_token,
-        refresh_token=account.refresh_token,
-        token_uri="https://oauth2.googleapis.com/token",
-        client_id=os.getenv("GOOGLE_CLIENT_ID"),
-        client_secret=os.getenv("GOOGLE_CLIENT_SECRET")
-    )
-
-    service = build(
-        "gmail",
-        "v1",
-        credentials=creds
-    )
-
-    try:
-
-        profile = (
-            service.users()
-            .getProfile(
-                userId="me"
-            )
-            .execute()
-        )
-
-        return profile
-
-    except Exception as e:
-
-        print(
-            "PROFILE ERROR:",
-            e
-        )
-
-        return None
-    
 def send_test_email(
     db: Session,
     user_id: int,

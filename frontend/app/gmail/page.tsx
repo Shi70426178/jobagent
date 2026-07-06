@@ -74,9 +74,8 @@ export default function GmailPage() {
 
           <p className="text-zinc-500 mt-3">
             Connect Gmail so your AI Agent can
-            send personalized job applications,
-            recruiter follow-ups and monitor
-            responses.
+send personalized job application
+emails from your mail account.
           </p>
 
         </div>
@@ -126,7 +125,7 @@ export default function GmailPage() {
           <div className="bg-zinc-900/60 backdrop-blur-xl border border-zinc-800 rounded-2xl p-6">
 
             <p className="text-zinc-500 text-sm">
-              Replies Received
+              Generated Mail
             </p>
 
             <h2 className="text-2xl font-semibold mt-3">
@@ -145,11 +144,11 @@ export default function GmailPage() {
 
           <p className="text-zinc-500 leading-relaxed mb-8">
             Securely connect your Gmail account
-            using Google OAuth. oneXjob only
-            uses your Gmail account to send
-            personalized job applications,
-            recruiter follow-ups and monitor
-            recruiter replies.
+using Google OAuth. oneXjob only
+uses your Gmail account to send
+personalized job application emails
+on your behalf. We do not read,
+modify, or delete your emails.
           </p>
 
           <div className="bg-black/40 border border-zinc-800 rounded-xl p-5 mb-8">
@@ -158,21 +157,11 @@ export default function GmailPage() {
               Permissions Required
             </h3>
 
-            <ul className="space-y-3 text-zinc-400 text-sm">
-
-              <li>
-                ✅ Send job application emails
-              </li>
-
-              <li>
-                ✅ Read recruiter replies
-              </li>
-
-              <li>
-                ✅ Track application status
-              </li>
-
-            </ul>
+          <ul className="space-y-3 text-zinc-400 text-sm">
+  <li>✅ Send job application emails</li>
+  <li>✅ Secure Google OAuth authentication</li>
+  {/* <li>✅ We do not read, modify, or delete your emails</li> */}
+</ul>
 
           </div>
 

@@ -20,7 +20,6 @@ from app.schemas.email import EmailRequest
 
 from app.services.gmail_service import (
     save_gmail_account,
-    get_gmail_profile,
     send_test_email,
     get_user_account,
 )
@@ -30,9 +29,10 @@ print("LOADING GMAIL FILE")
 router = APIRouter()
 
 SCOPES = [
-    "https://www.googleapis.com/auth/gmail.send",
     "openid",
     "https://www.googleapis.com/auth/userinfo.email",
+    "https://www.googleapis.com/auth/userinfo.profile",
+    "https://www.googleapis.com/auth/gmail.send",
 ]
 
 CODE_VERIFIER = None
@@ -165,8 +165,6 @@ def gmail_profile(
     current_user: User = Depends(get_current_user)
 ):
 
-    print("CURRENT USER ID:", current_user.id)
-
     account = get_user_account(
         db,
         current_user.id
@@ -177,35 +175,10 @@ def gmail_profile(
             "connected": False
         }
 
-    try:
-
-        profile = get_gmail_profile(
-            db,
-            current_user.id
-        )
-
-        if not profile:
-            return {
-                "connected": False
-            }
-
-        return {
-            "connected": True,
-            "emailAddress": profile[
-                "emailAddress"
-            ]
-        }
-
-    except Exception as e:
-
-        print(
-            "PROFILE ERROR:",
-            e
-        )
-
-        return {
-            "connected": False
-        }
+    return {
+        "connected": True,
+        "emailAddress": account.email
+    }
 @router.get("/hello")
 def hello():
 
