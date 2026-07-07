@@ -171,3 +171,29 @@ def send_test_email(
     )
 
     return result
+
+def disconnect_gmail_account(
+    db: Session,
+    user_id: int
+):
+
+    account = get_user_account(
+        db,
+        user_id
+    )
+
+    if not account:
+        return
+
+    try:
+        requests.post(
+            "https://oauth2.googleapis.com/revoke",
+            params={
+                "token": account.access_token
+            }
+        )
+    except:
+        pass
+
+    db.delete(account)
+    db.commit()

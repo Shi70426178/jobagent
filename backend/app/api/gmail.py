@@ -246,3 +246,19 @@ def get_accounts(
             }
         ]
     }
+
+@router.delete("/disconnect")
+def disconnect_gmail(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    from app.services.gmail_service import disconnect_gmail_account
+
+    disconnect_gmail_account(
+        db=db,
+        user_id=current_user.id
+    )
+
+    return {
+        "success": True
+    }

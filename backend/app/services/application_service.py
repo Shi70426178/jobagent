@@ -26,3 +26,6 @@ def get_applications(
     db: Session
 ):
     return db.query(Application).all()
+
+
+

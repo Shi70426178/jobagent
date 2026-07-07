@@ -59,6 +59,26 @@ export default function GmailPage() {
     }
   };
 
+  const disconnectGmail = async () => {
+  if (
+    !confirm(
+      "Are you sure you want to disconnect your Gmail account?"
+    )
+  ) {
+    return;
+  }
+
+  try {
+    await api.delete("/gmail/disconnect");
+
+    setConnected(false);
+    setEmail("");
+  } catch (error) {
+    console.error(error);
+    alert("Failed to disconnect Gmail");
+  }
+};
+
   return (
     <div className="flex">
 
@@ -185,19 +205,38 @@ modify, or delete your emails.
 
               </div>
 
-              <button
-                disabled
-                className="
-                  bg-green-600
-                  text-white
-                  px-6
-                  py-3
-                  rounded-xl
-                  cursor-not-allowed
-                "
-              >
-                Gmail Connected
-              </button>
+              <div className="flex gap-4">
+
+  <button
+    disabled
+    className="
+      bg-green-600
+      text-white
+      px-6
+      py-3
+      rounded-xl
+      cursor-not-allowed
+    "
+  >
+    Gmail Connected
+  </button>
+
+  <button
+    onClick={disconnectGmail}
+    className="
+      bg-red-600
+      hover:bg-red-700
+      text-white
+      px-6
+      py-3
+      rounded-xl
+      transition
+    "
+  >
+    Remove Gmail Account
+  </button>
+
+</div>
 
             </div>
 
