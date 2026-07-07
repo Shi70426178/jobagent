@@ -155,7 +155,7 @@ def gmail_callback(
     )
 
     return RedirectResponse(
-        url=f"{frontend_url}/dashboard/gmail"
+        url=f"{frontend_url}/gmail"
     )
 
 
