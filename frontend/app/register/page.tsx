@@ -412,6 +412,22 @@ sm:text-sm text-zinc-300">
               </div>
             </div>
 
+<p className="text-sm text-zinc-500 mt-6 text-center">
+  By creating an account, you agree to our{" "}
+  <a
+    href="/terms"
+    className="text-blue-500 hover:underline"
+  >
+    Terms of Service
+  </a>{" "}
+  and{" "}
+  <a
+    href="/privacy"
+    className="text-blue-500 hover:underline"
+  >
+    Privacy Policy
+  </a>.
+</p>
             {/* Footer */}
 
             <div className="mt-5 text-center">

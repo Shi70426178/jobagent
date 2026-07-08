@@ -782,6 +782,28 @@ sm:text-2xl font-bold">Live Activity</h2>
                 </div>
               </div>
 
+              <footer className="mt-16 border-t border-zinc-800 pt-6 text-center text-sm text-zinc-500">
+  <a
+    href="/privacy"
+    className="hover:text-white transition"
+  >
+    Privacy Policy
+  </a>
+
+  <span className="mx-3">•</span>
+
+  <a
+    href="/terms"
+    className="hover:text-white transition"
+  >
+    Terms of Service
+  </a>
+
+  <span className="mx-3">•</span>
+
+  <span>© 2026 oneXjob</span>
+</footer>
+
             
             </div>{" "}
             {/* AI Job Agent */}
