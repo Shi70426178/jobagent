@@ -101,7 +101,15 @@ def collect_jobs(
 
             try:
 
+                print("\n========== LINKEDIN POST ==========")
+                print(text[:1000])   # print first 1000 characters
+
                 job = extract_job_details(text)
+
+                print("\n========== OPENAI OUTPUT ==========")
+                print(job)
+
+                print("Posted Time:", job.get("posted_time"))
 
                 if not job.get("is_job_post"):
                     continue
