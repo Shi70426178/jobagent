@@ -35,6 +35,8 @@ class LinkedInJob(Base):
 
     location = Column(String)
 
+    posted_time = Column(String)
+
     experience = Column(String)
 
     employment_type = Column(String)
