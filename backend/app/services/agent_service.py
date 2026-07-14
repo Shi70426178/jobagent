@@ -2,7 +2,7 @@ from app.services.linkedin_job_service import get_recent_jobs
 from app.services.linkedin_db_service import save_post
 from app.services.job_match_service import calculate_match
 from app.services.email_generator_service import generate_email
-
+from datetime import datetime, timezone
 from app.models.resume import Resume
 
 
