@@ -12,6 +12,7 @@ from app.core.dependencies import get_current_user
 from app.models.resume import Resume
 from app.schemas.linkedin import UpdateEmailRequest
 from app.services.email_generator_service import generate_email
+from datetime import datetime, timezone
 router = APIRouter()
 
 
@@ -33,7 +34,8 @@ def get_posts(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    return (
+
+    posts = (
         db.query(LinkedInPost)
         .filter(
             LinkedInPost.user_id == current_user.id
@@ -41,6 +43,23 @@ def get_posts(
         .order_by(LinkedInPost.id.desc())
         .all()
     )
+
+    for post in posts:
+
+        diff = datetime.now(timezone.utc) - post.created_at
+
+        hours = int(diff.total_seconds() // 3600)
+
+        if hours < 1:
+            minutes = int(diff.total_seconds() // 60)
+            post.posted_time = f"{minutes} mins ago"
+        elif hours < 24:
+            post.posted_time = f"{hours} hrs ago"
+        else:
+            days = hours // 24
+            post.posted_time = f"{days} days ago"
+
+    return posts
 
 @router.get("/applications")
 def get_applications(

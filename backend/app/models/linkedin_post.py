@@ -1,7 +1,8 @@
 from sqlalchemy import Column, Integer, String, Text
 from app.db.base import Base
 from sqlalchemy import ForeignKey
-
+from sqlalchemy import DateTime
+from sqlalchemy.sql import func
 class LinkedInPost(Base):
 
     __tablename__ = "linkedin_posts"
@@ -21,6 +22,11 @@ class LinkedInPost(Base):
     job_title = Column(String)
     location = Column(String)
     posted_time = Column(String)
+
+    created_at = Column(
+        DateTime(timezone=True),
+        server_default=func.now()
+    )
 
     experience = Column(String)
 
