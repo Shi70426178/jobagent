@@ -19,6 +19,9 @@ class LinkedInPost(Base):
     email = Column(String)
 
     job_title = Column(String)
+    location = Column(String)
+    posted_time = Column(String)
+
 
     status = Column(String, default="new")
 

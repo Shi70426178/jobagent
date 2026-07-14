@@ -218,23 +218,19 @@ sm:text-2xl font-semibold">
                     {post.job_title}
                   </h2>
 
-                  <div className="mt-4 space-y-2 text-zinc-400">
+<div className="mt-4 space-y-2 text-zinc-400">
 
-                    <p>
-                      🏢 {post.company}
-                    </p>
+  <p>🏢 {post.company}</p>
 
-                    <p>
-                      👤 {post.recruiter_name}
-                    </p>
+  <p>👤 {post.recruiter_name}</p>
 
-                    <p>
-                      ✉{" "}
-                      {post.email ||
-                        "Email not found"}
-                    </p>
+  <p>📍 {post.location || "Location not available"}</p>
 
-                  </div>
+  <p>🕒 {post.posted_time || "Unknown"}</p>
+
+  <p>✉ {post.email || "Email not found"}</p>
+
+</div>
 
                 </div>
 

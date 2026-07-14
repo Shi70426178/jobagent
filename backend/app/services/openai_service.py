@@ -26,6 +26,7 @@ If it IS a hiring post return ONLY valid JSON in this format:
   "department": "",
   "industry": "",
   "location": "",
+  "posted_time": "",
   "experience": "",
   "employment_type": "",
   "salary": "",
@@ -41,6 +42,7 @@ Rules:
 - department = examples: IT, HR, Finance, Sales, Marketing, Healthcare, Education, Legal, Logistics.
 - industry = examples: Software, Banking, Healthcare, Construction, Retail, Education.
 - location = city, state, country or Remote.
+- posted_time = time since the post was published (examples: "2h", "5 hours ago", "1 day ago", "3 weeks ago"). Return "" if not available.
 - experience = experience required.
 - employment_type = Full Time, Part Time, Internship, Contract, Freelance, Remote.
 - salary = salary if mentioned, otherwise "".

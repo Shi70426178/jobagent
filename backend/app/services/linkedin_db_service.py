@@ -10,6 +10,8 @@ def save_post(
     email: str,
     job_title: str,
     post_text: str,
+    location: str = "",
+    posted_time: str = "",
     match_score: int = 0,
     match_reason: str = "",
     generated_email: str = ""
@@ -33,13 +35,15 @@ def save_post(
         company=company,
         email=email,
         job_title=job_title,
+        location=location,
+        posted_time=posted_time,
         status="new",
         post_text=post_text,
         linkedin_url="",
         match_score=match_score,
         match_reason=match_reason,
         generated_email=generated_email
-)
+    )
 
     db.add(post)
 
