@@ -141,6 +141,8 @@ def collect_jobs(
 
                     location=job.get("location", ""),
 
+                    posted_time=job.get("posted_time", ""),
+
                     experience=job.get("experience", ""),
 
                     employment_type=job.get("employment_type", ""),
