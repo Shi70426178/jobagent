@@ -48,6 +48,8 @@ def search_jobs(
             company=job.company,
             email=job.email,
             job_title=job.job_title,
+            location=job.location,
+            posted_time=job.posted_time,
             post_text=job.post_text,
             match_score=match["score"],
             match_reason=match["reason"],
