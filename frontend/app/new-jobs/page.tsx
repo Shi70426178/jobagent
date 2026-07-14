@@ -220,15 +220,17 @@ sm:text-2xl font-semibold">
 
 <div className="mt-4 space-y-2 text-zinc-400">
 
-  <p>🏢 {post.company}</p>
+<p>🏢 {post.company}</p>
 
-  <p>👤 {post.recruiter_name}</p>
+<p>👤 {post.recruiter_name}</p>
 
-  <p>📍 {post.location || "Location not available"}</p>
+<p>📍 {post.location || "Location not available"}</p>
 
-  <p>🕒 {post.posted_time || "Unknown"}</p>
+<p>🕒 {post.posted_time || "Unknown"}</p>
 
-  <p>✉ {post.email || "Email not found"}</p>
+<p>💼 {post.experience || "Experience not available"}</p>
+
+<p>✉ {post.email || "Email not found"}</p>
 
 </div>
 

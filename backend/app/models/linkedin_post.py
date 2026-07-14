@@ -22,6 +22,8 @@ class LinkedInPost(Base):
     location = Column(String)
     posted_time = Column(String)
 
+    experience = Column(String)
+
 
     status = Column(String, default="new")
 

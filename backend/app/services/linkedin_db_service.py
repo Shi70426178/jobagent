@@ -12,6 +12,7 @@ def save_post(
     post_text: str,
     location: str = "",
     posted_time: str = "",
+    experience: str = "",
     match_score: int = 0,
     match_reason: str = "",
     generated_email: str = ""
@@ -37,6 +38,7 @@ def save_post(
         job_title=job_title,
         location=location,
         posted_time=posted_time,
+        experience=experience,
         status="new",
         post_text=post_text,
         linkedin_url="",
