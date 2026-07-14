@@ -41,6 +41,19 @@ def search_jobs(
 
         print(f"Match score: {match['score']}", flush=True)
 
+        diff = datetime.now(timezone.utc) - job.scraped_at
+
+        hours = int(diff.total_seconds() // 3600)
+
+        if hours < 1:
+            minutes = int(diff.total_seconds() // 60)
+            current_posted_time = f"{minutes} mins ago"
+        elif hours < 24:
+            current_posted_time = f"{hours} hrs ago"
+        else:
+            days = hours // 24
+            current_posted_time = f"{days} days ago"
+
         save_post(
             db=db,
             user_id=user_id,
@@ -49,7 +62,7 @@ def search_jobs(
             email=job.email,
             job_title=job.job_title,
             location=job.location,
-            posted_time=job.posted_time,
+            posted_time=current_posted_time,
             post_text=job.post_text,
             match_score=match["score"],
             match_reason=match["reason"],
