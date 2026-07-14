@@ -11,6 +11,7 @@ def save_job(
     department,
     industry,
     location,
+    posted_time,
     experience,
     employment_type,
     salary,
