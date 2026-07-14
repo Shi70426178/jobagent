@@ -48,6 +48,8 @@ def save_job(
 
         location=location,
 
+        posted_time=posted_time,
+
         experience=experience,
 
         employment_type=employment_type,
@@ -61,7 +63,6 @@ def save_job(
         linkedin_url=linkedin_url,
 
         search_keyword=search_keyword
-        
     )
 
     db.add(job)
