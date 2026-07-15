@@ -9,11 +9,16 @@ from app.models.resume import Resume
 def search_jobs(
     db,
     user_id,
-    keywords
+    keywords,
+    location
 ):
     print("Agent keyword:", keywords)
 
-    jobs = get_recent_jobs(db, keywords)
+    jobs = get_recent_jobs(
+        db,
+        keywords,
+        location
+    )
 
     print("Jobs found:", len(jobs))
 

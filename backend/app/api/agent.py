@@ -27,7 +27,8 @@ def start_agent(
     search_jobs(
         db,
         current_user.id,
-        data.keywords
+        data.keywords,
+        data.location
     )
 
     return {

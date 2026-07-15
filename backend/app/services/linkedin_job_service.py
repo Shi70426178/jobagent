@@ -1,13 +1,14 @@
 from datetime import datetime, timedelta
 from sqlalchemy import or_
+
 from app.models.linkedin_job import LinkedInJob
 
 
-def get_recent_jobs(db, keyword):
+def get_recent_jobs(db, keyword, location=None):
 
     last_7_days = datetime.utcnow() - timedelta(days=7)
 
-    jobs = (
+    query = (
         db.query(LinkedInJob)
         .filter(
             LinkedInJob.scraped_at >= last_7_days,
@@ -16,7 +17,11 @@ def get_recent_jobs(db, keyword):
                 LinkedInJob.skills.ilike(f"%{keyword}%")
             )
         )
-        .all()
     )
 
-    return jobs
+    if location and location.strip():
+        query = query.filter(
+            LinkedInJob.location.ilike(f"%{location}%")
+        )
+
+    return query.all()
