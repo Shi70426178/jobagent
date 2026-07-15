@@ -2,7 +2,6 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-
 import { useAuth } from "@/hooks/useAuth";
 
 export default function ProtectedRoute({
@@ -12,14 +11,20 @@ export default function ProtectedRoute({
 }) {
   const router = useRouter();
 
-  const { isAuthenticated } =
-    useAuth();
+  const {
+    isAuthenticated,
+    initialized,
+  } = useAuth();
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      router.push("/login");
+    if (initialized && !isAuthenticated) {
+      router.replace("/login");
     }
-  }, [isAuthenticated, router]);
+  }, [initialized, isAuthenticated, router]);
+
+  if (!initialized) {
+    return null; // or a loading spinner
+  }
 
   if (!isAuthenticated) {
     return null;
