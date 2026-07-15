@@ -5,6 +5,9 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 // import Sidebar from "@/components/Sidebar";
 import { Search, MapPin, Rocket,Activity,BriefcaseBusiness,  Send, } from "lucide-react";
+import Swal from "sweetalert2";
+import { Loader2 } from "lucide-react";
+
 export default function AgentPage() {
   const router = useRouter();
 
@@ -36,26 +39,71 @@ export default function AgentPage() {
     }
   };
 
-  const startAgent = async () => {
-    setLoading(true);
+const startAgent = async () => {
+  if (!keywords.trim()) {
+   Swal.fire({
+  icon: "warning",
+  title: "Job Keyword Required",
+  text: "Please enter job keywords.",
+  background: "#0b1220",
+  color: "#fff",
+  confirmButtonColor: "#06b6d4",
+});
+    return;
+  }
 
-    try {
-      const response = await api.post("/agent/start", {
-        keywords,
-        location,
-      });
+  setLoading(true);
 
-      alert(response.data.message);
+  // Show Loading Popup
 
-      router.push("/new-jobs");
-    } catch (error) {
-      console.error(error);
+Swal.fire({
+  title: "Running...",
+  background: "#0b1220",
+  color: "#fff",
+  showConfirmButton: false,
+  allowOutsideClick: false,
+  allowEscapeKey: false,
+  customClass: {
+    popup: "rounded-2xl border border-cyan-500/20 shadow-2xl",
+    title: "text-white font-semibold",
+  },
+  didOpen: () => {
+    Swal.showLoading();
+  },
+});
+  try {
+    const response = await api.post("/agent/start", {
+      keywords,
+      location,
+    });
 
-      alert("Failed to start agent");
-    } finally {
-      setLoading(false);
-    }
-  };
+    Swal.close();
+
+    await Swal.fire({
+  icon: "success",
+  title: "Success",
+  text: response.data.message,
+  background: "#0b1220",
+  color: "#fff",
+  confirmButtonColor: "#06b6d4",
+});
+
+    router.push("/new-jobs");
+  } catch (error: any) {
+    Swal.close();
+
+    Swal.fire({
+  icon: "error",
+  title: "Oops!",
+  text: "Unable to start AI Agent.",
+  background: "#0b1220",
+  color: "#fff",
+  confirmButtonColor: "#ef4444",
+});
+  } finally {
+    setLoading(false);
+  }
+};
 
  return (
   <main
@@ -117,33 +165,51 @@ sm:p-6
       hover:shadow-[0_0_20px_rgba(34,197,94,0.12)]
     "
   >
-    <div className="flex items-start justify-between">
+   
 
-      <div>
-        <p className="text-xs uppercase tracking-wider text-zinc-400">
-          Agent Status
-        </p>
 
-        <h2
-          className={`mt-4 text-2xl
-sm:text-3xl font-bold ${
-            loading ? "text-yellow-400" : "text-green-400"
-          }`}
-        >
-          {loading ? "Running" : "Ready"}
-        </h2>
+<div className="flex items-center justify-between">
+  <div>
+    <p className="text-xs uppercase tracking-[0.18em] text-zinc-500">
+      Agent Status
+    </p>
 
-        <p className="mt-2 text-xs text-zinc-500">
-          AI Automation Engine
-        </p>
-      </div>
+    <div className="mt-3 flex items-center gap-2">
+      <span
+        className={`h-2.5 w-2.5 rounded-full ${
+          loading ? "bg-cyan-400" : "bg-emerald-400"
+        }`}
+      />
 
-      <div className="flex h-12
-sm:h-14 w-12 items-center justify-center rounded-xl bg-green-500/10">
-        <Activity className="h-6 w-6 text-green-400" />
-      </div>
-
+      <h2 className="text-3xl font-semibold text-white">
+        {loading ? "Running" : "Ready"}
+      </h2>
     </div>
+
+    <p className="mt-2 text-sm text-zinc-400">
+      {loading
+        ? "AI agent is processing jobs"
+        : "Ready to launch"}
+    </p>
+  </div>
+
+  <div
+    className={`flex h-14 w-14 items-center justify-center rounded-2xl border transition-all duration-300 ${
+      loading
+        ? "border-cyan-500/30 bg-cyan-500/10"
+        : "border-white/10 bg-white/[0.04]"
+    }`}
+  >
+    <Activity
+      className={`h-6 w-6 ${
+        loading ? "text-cyan-400" : "text-zinc-300"
+      }`}
+    />
+  </div>
+</div>
+
+
+
   </div>
 
   {/* Jobs Found */}
@@ -390,13 +456,13 @@ px-8
         "
       >
 
-        <span className="flex items-center justify-center gap-2">
+      <span className="flex items-center justify-center gap-2">
+  {loading && (
+    <Loader2 className="h-5 w-5 animate-spin" />
+  )}
 
-          <Rocket className="h-4 w-4" />
-
-          {loading ? "Searching..." : "Launch AI Agent"}
-
-        </span>
+  {loading ? "Searching Jobs..." : "Launch AI Agent"}
+</span>
 
       </button>
 

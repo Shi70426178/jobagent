@@ -40,7 +40,26 @@ body {
 * {
   -webkit-tap-highlight-color: transparent;
 }
+.swal2-popup.dark-popup {
+  background: #0b1220 !important;
+  border: 1px solid rgba(6, 182, 212, 0.25);
+  border-radius: 18px;
+  color: #fff !important;
+  box-shadow: 0 0 40px rgba(6, 182, 212, 0.15);
+}
 
+.swal2-title {
+  color: #fff !important;
+}
+
+.swal2-html-container {
+  color: #9ca3af !important;
+}
+
+.swal2-confirm {
+  background: #06b6d4 !important;
+  border-radius: 10px !important;
+}
 /* =========================
    Premium AI Scrollbar
    ========================= */

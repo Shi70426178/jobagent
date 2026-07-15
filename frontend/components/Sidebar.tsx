@@ -128,28 +128,6 @@ export default function Sidebar() {
 
           </div>
 
-          <div className="mt-6 rounded-2xl border border-green-500/20 bg-green-500/10 p-4">
-
-            <div className="flex items-center gap-3">
-
-              <div className="h-3 w-3 animate-pulse rounded-full bg-green-400" />
-
-              <span className="text-sm font-medium text-green-300">
-                AI Agent Online
-              </span>
-
-            </div>
-
-            <div className="mt-4 flex items-center gap-2 text-xs text-zinc-400">
-
-              <Cpu className="h-4 w-4 text-cyan-400" />
-
-              Monitoring Jobs 24×7
-
-            </div>
-
-          </div>
-
         </div>
 
               {/* Navigation */}
@@ -322,63 +300,7 @@ export default function Sidebar() {
 
       </div>
 
-            {/* Footer */}
-
-      <div className="border-t border-white/10 p-5">
-
-        <div className="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-xl">
-
-          <div className="flex items-center gap-4">
-
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-500 to-blue-600">
-
-              <Bot className="h-6 w-6 text-white" />
-
-            </div>
-
-            <div>
-
-              <h3 className="font-semibold text-white">
-                oneXjob AI
-              </h3>
-
-              <p className="text-xs text-zinc-400">
-                Smart Career Assistant
-              </p>
-
-            </div>
-
-          </div>
-
-          <div className="mt-5 flex items-center justify-between">
-
-            <div>
-
-              <p className="text-xs text-zinc-500">
-                Version
-              </p>
-
-              <p className="text-sm font-semibold text-cyan-400">
-                v1.0.0
-              </p>
-
-            </div>
-
-            <div className="flex items-center gap-2 rounded-full bg-green-500/10 px-3 py-2">
-
-              <div className="h-2 w-2 rounded-full bg-green-400 animate-pulse" />
-
-              <span className="text-xs text-green-300">
-                Online
-              </span>
-
-            </div>
-
-          </div>
-
-        </div>
-
-      </div>
+       
 
     </div>
 
