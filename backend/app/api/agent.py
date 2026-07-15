@@ -9,6 +9,7 @@ from app.models.user import User
 from app.core.dependencies import get_current_user
 from app.db.database import get_db
 from app.services.job_service import save_jobs
+from app.models.resume import Resume
 from app.services.gmail_service import get_user_account
 from pydantic import BaseModel
 class AgentRequest(BaseModel):
@@ -24,6 +25,20 @@ def start_agent(
 ):
     
     
+    resume = (
+        db.query(Resume)
+        .filter(Resume.user_id == current_user.id)
+        .order_by(Resume.id.desc())
+        .first()
+    )
+
+    if not resume:
+        return {
+            "success": False,
+            "resume_uploaded": False,
+            "message": "Please upload your resume first."
+        }
+
     search_jobs(
         db,
         current_user.id,
@@ -33,7 +48,7 @@ def start_agent(
 
     return {
         "success": True,
-        "message": "LinkedIn search completed"
+        "message": "Job search completed"
     }
 
 @router.get("/hn-test")

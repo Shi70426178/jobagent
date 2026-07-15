@@ -72,14 +72,28 @@ Swal.fire({
   },
 });
   try {
-    const response = await api.post("/agent/start", {
-      keywords,
-      location,
-    });
+const response = await api.post("/agent/start", {
+  keywords,
+  location,
+});
 
-    Swal.close();
+Swal.close();
 
-    await Swal.fire({
+if (response.data.resume_uploaded === false) {
+  await Swal.fire({
+    icon: "warning",
+    title: "Resume Required",
+    text: response.data.message,
+    background: "#0b1220",
+    color: "#fff",
+    confirmButtonColor: "#06b6d4",
+  });
+
+  router.push("/resume");
+  return;
+}
+
+await Swal.fire({
   icon: "success",
   title: "Success",
   text: response.data.message,
@@ -88,7 +102,7 @@ Swal.fire({
   confirmButtonColor: "#06b6d4",
 });
 
-    router.push("/new-jobs");
+router.push("/new-jobs");
   } catch (error: any) {
     Swal.close();
 
