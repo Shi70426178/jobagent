@@ -98,28 +98,36 @@ export default function PrivacyPage() {
             </ul>
           </section>
 
-          <section>
-            <h2 className="text-2xl font-bold text-white">
-              AI Services
-            </h2>
+         <section>
+  <h2 className="text-2xl font-bold text-white">
+    AI Services
+  </h2>
 
-            <p className="mt-4 leading-8 text-zinc-300">
-              oneXjob uses artificial intelligence to help users generate
-              personalized job application emails and improve resume matching.
-            </p>
+  <p className="mt-4 leading-8 text-zinc-300">
+    oneXjob uses artificial intelligence to generate personalized job
+    application emails and improve resume-to-job matching.
+  </p>
 
-            <p className="mt-4 leading-8 text-zinc-300">
-              Google user data obtained through Gmail APIs is not used to
-              develop, improve, or train generalized artificial intelligence or
-              machine learning models.
-            </p>
+  <p className="mt-4 leading-8 text-zinc-300">
+    AI-generated emails are created using only the user's resume,
+    job title, company name, and job description. Google Workspace
+    (Gmail) user data, including email messages, inbox contents,
+    attachments, contacts, and email history, is not transmitted to
+    AI providers for processing.
+  </p>
 
-            <p className="mt-4 leading-8 text-zinc-300">
-              We do not permit Google user data to be used by third-party AI
-              providers for training their artificial intelligence or machine
-              learning models.
-            </p>
-          </section>
+  <p className="mt-4 leading-8 text-zinc-300">
+    Google user data obtained through Gmail APIs is not used to
+    develop, improve, or train generalized artificial intelligence
+    or machine learning models.
+  </p>
+
+  <p className="mt-4 leading-8 text-zinc-300">
+    We do not permit Google user data to be used by third-party AI
+    providers for training their artificial intelligence or machine
+    learning models.
+  </p>
+</section>
 
           <section>
             <h2 className="text-2xl font-bold text-white">
@@ -132,9 +140,11 @@ export default function PrivacyPage() {
             </p>
 
             <p className="mt-4 leading-8 text-zinc-300">
-              Information is shared only when necessary to provide the services
-              you request or when required by applicable law.
-            </p>
+  Resume information and job-related information may be processed by
+  our AI provider solely to generate the user-requested job
+  application email. Google Workspace user data is not shared with AI
+  providers for processing or model training.
+</p>
           </section>
 
           <section>
