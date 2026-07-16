@@ -15,6 +15,11 @@ export default function LinkedinPage() {
 const [editedEmail, setEditedEmail] =
   useState("");
 
+  const [showSkills, setShowSkills] = useState(false);
+
+const [selectedSkills, setSelectedSkills] =
+  useState("");
+
   useEffect(() => {
     loadPosts();
   }, []);
@@ -355,22 +360,23 @@ gap-3
 "
 >
 
-  <button
-    onClick={() =>
-      alert(post.post_text)
-    }
-    className="
-      bg-zinc-900/60 backdrop-blur-xl
-      hover:bg-zinc-700
-      px-3
-sm:px-4
-py-2
-self-start
-      rounded-xl
-    "
-  >
-    View Post
-  </button>
+ <button
+  onClick={() => {
+    setSelectedSkills(post.skills || "");
+    setShowSkills(true);
+  }}
+  className="
+    bg-zinc-900/60
+    backdrop-blur-xl
+    hover:bg-zinc-700
+    px-3
+    sm:px-4
+    py-2
+    rounded-xl
+  "
+>
+  View Skills
+</button>
 
   {!post.generated_email && (
 
@@ -504,6 +510,63 @@ self-start
           ))}
 
         </div>
+
+        {showSkills && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
+    <div className="w-full max-w-2xl rounded-2xl border border-zinc-800 bg-zinc-900 p-6">
+
+      <div className="flex items-center justify-between mb-5">
+        <h2 className="text-2xl font-bold">
+          Required Skills
+        </h2>
+
+        <button
+          onClick={() => setShowSkills(false)}
+          className="text-zinc-400 hover:text-white text-xl"
+        >
+          ✕
+        </button>
+      </div>
+
+      {selectedSkills.trim() ? (
+
+        <div className="flex flex-wrap gap-3">
+
+          {selectedSkills
+            .split(",")
+            .map((skill: string, index: number) => (
+
+              <span
+                key={index}
+                className="
+                  rounded-full
+                  bg-purple-600/20
+                  border
+                  border-purple-600
+                  px-4
+                  py-2
+                  text-sm
+                  text-white
+                "
+              >
+                {skill.trim()}
+              </span>
+
+          ))}
+
+        </div>
+
+      ) : (
+
+        <div className="text-center py-10 text-zinc-500">
+          No skills found.
+        </div>
+
+      )}
+
+    </div>
+  </div>
+)}
 
       </main>
    

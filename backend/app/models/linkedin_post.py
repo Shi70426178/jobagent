@@ -41,4 +41,6 @@ class LinkedInPost(Base):
 
     match_reason = Column(Text)
     generated_email = Column(Text)
+
+    skills = Column(Text)
     

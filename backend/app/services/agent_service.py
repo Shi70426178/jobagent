@@ -69,6 +69,7 @@ def search_jobs(
             location=job.location,
             posted_time=current_posted_time,
             experience=job.experience,
+            skills=job.skills,
             post_text=job.post_text,
             match_score=match["score"],
             match_reason=match["reason"],
