@@ -63,7 +63,34 @@ body {
 /* =========================
    Premium AI Scrollbar
    ========================= */
+.swal-small-icon {
+  transform: scale(0.65);
+}
 
+.swal2-popup {
+  border-radius: 14px !important;
+}
+
+.swal2-title {
+  font-size: 18px !important;
+  margin-top: 6px !important;
+  margin-bottom: 6px !important;
+}
+
+.swal2-html-container {
+  font-size: 13px !important;
+  margin: 4px 0 !important;
+}
+
+.swal2-confirm {
+  font-size: 13px !important;
+  padding: 6px 18px !important;
+}
+
+.swal2-loader {
+  width: 1.8em !important;
+  height: 1.8em !important;
+}
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
