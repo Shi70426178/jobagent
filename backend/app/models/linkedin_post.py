@@ -43,4 +43,6 @@ class LinkedInPost(Base):
     generated_email = Column(Text)
 
     skills = Column(Text)
+
+    linkedin_job_id = Column(Integer)
     

@@ -14,6 +14,7 @@ def save_post(
     posted_time: str = "",
     experience: str = "",
     skills: str = "",
+    linkedin_job_id: int = None,
     match_score: int = 0,
     match_reason: str = "",
     generated_email: str = ""
@@ -41,6 +42,7 @@ def save_post(
         posted_time=posted_time,
         experience=experience,
         skills=skills,
+        linkedin_job_id=linkedin_job_id,
         status="new",
         post_text=post_text,
         linkedin_url="",

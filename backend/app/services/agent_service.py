@@ -16,6 +16,7 @@ def search_jobs(
 
     jobs = get_recent_jobs(
         db,
+        user_id,
         keywords,
         location
     )
@@ -62,6 +63,7 @@ def search_jobs(
         save_post(
             db=db,
             user_id=user_id,
+            linkedin_job_id=job.id,
             recruiter_name=job.recruiter_name,
             company=job.company,
             email=job.email,
