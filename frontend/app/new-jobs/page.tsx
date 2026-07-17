@@ -137,44 +137,49 @@ router.push("/gmail");
 };
 
   const getScoreColor = (score: number) => {
-    if (score >= 80) return "border-emerald-500";
-    if (score >= 60) return "border-yellow-500";
-    return "border-red-500";
-  };
+  if (score <= 20) return "border-red-500";
+  if (score <= 60) return "border-yellow-500";
+  return "border-emerald-500";
+};
+const highestMatch = useMemo(() => {
+  return posts.length
+    ? Math.max(...posts.map((p) => p.match_score || 0))
+    : 0;
+}, [posts]);
+const filteredPosts = useMemo(() => {
+  return posts.filter((post) => {
+    const matches =
+      post.company?.toLowerCase().includes(search.toLowerCase()) ||
+      post.job_title?.toLowerCase().includes(search.toLowerCase()) ||
+      post.recruiter_name?.toLowerCase().includes(search.toLowerCase());
 
-  const filteredPosts = useMemo(() => {
-    return posts.filter((post) => {
-      const matches =
-        post.company?.toLowerCase().includes(search.toLowerCase()) ||
-        post.job_title?.toLowerCase().includes(search.toLowerCase()) ||
-        post.recruiter_name?.toLowerCase().includes(search.toLowerCase());
+    if (filter === "applied")
+      return matches && post.status === "applied";
 
-      if (filter === "applied")
-        return matches && post.status === "applied";
+    if (filter === "high")
+      return matches && (post.match_score || 0) === highestMatch;
 
-      if (filter === "high")
-        return matches && (post.match_score || 0) >= 80;
+    return matches;
+  });
+}, [posts, search, filter, highestMatch]);
 
-      return matches;
-    });
-  }, [posts, search, filter]);
+
 
   return (
     <main className="min-h-screen bg-[#09090B] text-white">
 
-      <div className="mx-auto max-w-7xl px-6 py-5">
-
+<div className="mx-auto w-full max-w-7xl px-3 sm:px-5 lg:px-6 py-4 sm:py-5">
         {/* Header */}
 
         <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
 
           <div>
 
-            <h1 className="text-4xl font-bold tracking-tight">
-              Recruiter Leads
+<h1 className="text-lg sm:text-xl lg:text-2xl sm:text-3xl lg:text-4xl font-bold tracking-tight">           
+     Recruiter Leads
             </h1>
 
-            <p className="mt-1 text-sm text-zinc-500">
+            <p className="mt-1 text-xs sm:text-sm text-zinc-500">
               AI ranked recruiter opportunities.
             </p>
 
@@ -190,7 +195,7 @@ router.push("/gmail");
             bg-violet-600
             px-5
             py-2.5
-            text-sm
+           text-xs sm:text-sm
             font-medium
             transition
             hover:bg-violet-500
@@ -204,7 +209,7 @@ router.push("/gmail");
 
         {/* Search */}
 
-        <div className="mt-6 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+        <div className="mt-5 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
 
           <div className="relative w-full max-w-sm">
 
@@ -226,7 +231,7 @@ router.push("/gmail");
               py-2.5
               pl-10
               pr-3
-              text-sm
+             text-xs sm:text-sm
               outline-none
               transition
               focus:border-violet-500
@@ -235,11 +240,11 @@ router.push("/gmail");
 
           </div>
 
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
 
             <button
               onClick={() => setFilter("all")}
-              className={`rounded-lg px-4 py-2 text-sm transition ${
+              className={`rounded-lg px-4 py-2 text-xs sm:text-smtransition ${
                 filter === "all"
                   ? "bg-violet-600"
                   : "bg-zinc-900 hover:bg-zinc-800"
@@ -250,7 +255,7 @@ router.push("/gmail");
 
             <button
               onClick={() => setFilter("high")}
-              className={`rounded-lg px-4 py-2 text-sm transition ${
+              className={`rounded-lg px-4 py-2 text-xs sm:text-smtransition ${
                 filter === "high"
                   ? "bg-violet-600"
                   : "bg-zinc-900 hover:bg-zinc-800"
@@ -261,7 +266,7 @@ router.push("/gmail");
 
             <button
               onClick={() => setFilter("applied")}
-              className={`rounded-lg px-4 py-2 text-sm transition ${
+              className={`rounded-lg px-4 py-2 text-xs sm:text-smtransition ${
                 filter === "applied"
                   ? "bg-violet-600"
                   : "bg-zinc-900 hover:bg-zinc-800"
@@ -277,7 +282,7 @@ router.push("/gmail");
         {/* Statistics */}
         {/* ===================== */}
 
-        <div className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <div className="mt-5 grid grid grid-cols-2 md:grid-cols-4 gap-3">
 
           {/* Total */}
 
@@ -291,7 +296,7 @@ router.push("/gmail");
                   Total Leads
                 </p>
 
-                <h2 className="mt-1 text-2xl font-bold">
+                <h2 className="mt-1 text-xl sm:text-2xl font-bold">
                   {filteredPosts.length}
                 </h2>
 
@@ -322,7 +327,7 @@ router.push("/gmail");
                   Emails
                 </p>
 
-                <h2 className="mt-1 text-2xl font-bold">
+                <h2 className="mt-1 text-xl sm:text-2xl font-bold">
                   {
                     filteredPosts.filter(
                       (p) => p.email
@@ -357,7 +362,7 @@ router.push("/gmail");
                   Applied
                 </p>
 
-                <h2 className="mt-1 text-2xl font-bold text-emerald-400">
+                <h2 className="mt-1 text-xl sm:text-2xl font-bold text-emerald-400">
                   {
                     filteredPosts.filter(
                       (p) =>
@@ -393,14 +398,9 @@ router.push("/gmail");
                   High Match
                 </p>
 
-                <h2 className="mt-1 text-2xl font-bold text-violet-400">
-                  {
-                    filteredPosts.filter(
-                      (p) =>
-                        (p.match_score || 0) >= 80
-                    ).length
-                  }
-                </h2>
+              <h2 className="mt-1 text-xl sm:text-2xl font-bold text-violet-400">
+  {highestMatch}%
+</h2>
 
               </div>
 
@@ -445,18 +445,17 @@ router.push("/gmail");
 
                 {/* Header */}
 
-                <div className="flex items-start justify-between gap-5">
+                <div className="flex flex-col lg:flex-row gap-5">
 
                   {/* Left */}
 
-                  <div className="flex gap-4 flex-1">
+                  <div className="flex gap-3 flex-1">
 
                     {/* Company Icon */}
 
                     <div className="
                     flex
-                    h-14
-                    w-14
+                    h-12 w-12 sm:h-14 sm:w-14
                     shrink-0
                     items-center
                     justify-center
@@ -467,7 +466,7 @@ router.push("/gmail");
                     ">
 
                       <Building2
-                        size={26}
+                        size={22}
                         className="text-violet-400"
                       />
 
@@ -477,7 +476,7 @@ router.push("/gmail");
 
                     <div className="flex-1 min-w-0">
 
-                      <h2 className="text-2xl font-bold leading-tight">
+                      <h2 className="text-lg sm:text-xl lg:text-2xl font-bold leading-tight">
 
                         {post.job_title}
 
@@ -498,7 +497,7 @@ router.push("/gmail");
                       {/* Small Info */}
 
 
-<div className="mt-3 flex flex-wrap items-center gap-2 text-sm text-zinc-400">
+<div className="mt-3 flex flex-wrap items-center gap-2 text-xs sm:text-smtext-zinc-400">
 
     <span className="flex items-center gap-1">
         👤
@@ -530,14 +529,14 @@ router.push("/gmail");
 
                       {/* Email */}
 
-                      <div className="mt-3 flex items-center gap-2 rounded-lg border border-white/10 px-3 py-2">
+                      <div className="mt-3 flex items-center gap-2 rounded-lg border border-white/10 px-3 py-2 text-xs sm:text-sm">
 
                         <Mail
                           size={15}
                           className="text-cyan-400"
                         />
 
-                        <span className="truncate text-sm text-zinc-300">
+                        <span className="truncate text-xs sm:text-smtext-zinc-300">
 
                           {post.email || "Email not found"}
 
@@ -551,12 +550,11 @@ router.push("/gmail");
 
                   {/* Match Score */}
 
-                  <div className="flex flex-col items-center">
+                  <div className="flex flex-row lg:flex-col items-center gap-3 lg:gap-2 self-start lg:self-auto">
 
                     <div
                       className={`
-                      h-20
-                      w-20
+                      h-16 w-16 sm:h-20 sm:w-20
                       rounded-full
                       border-[6px]
                       flex
@@ -568,7 +566,7 @@ router.push("/gmail");
 
                       <div className="text-center">
 
-                        <div className="text-2xl font-bold">
+<div className="text-lg sm:text-xl lg:text-2xl font-bold">
 
                           {post.match_score || 0}
 
@@ -604,7 +602,7 @@ router.push("/gmail");
 
                 {/* Divider */}
 
-                <div className="my-5 border-t border-white/10"></div>
+                <div className="my-4 border-t border-white/10"></div>
                                 {/* ========================= */}
                 {/* AI Analysis */}
                 {/* ========================= */}
@@ -640,12 +638,12 @@ router.push("/gmail");
 
                   </div>
 
-                  <div className="p-4">
+                  <div className="p-3 sm:p-4">
 
                     <p
                       className="
-                      text-sm
-                      leading-7
+                     text-xs sm:text-sm
+                      leading-6
                       text-zinc-300
                       line-clamp-4
                       "
@@ -701,7 +699,7 @@ router.push("/gmail");
 
                           <div>
 
-                            <h3 className="text-sm font-semibold">
+                            <h3 className="text-xs sm:text-smfont-semibold">
 
                               Generated Email
 
@@ -727,13 +725,13 @@ router.push("/gmail");
 
                       {editingId !== post.id ? (
 
-                        <div className="border-t border-white/10 p-4">
+                        <div className="border-t border-white/10 p-3 sm:p-4">
 
                           <pre
                             className="
                             whitespace-pre-wrap
                             break-words
-                            text-sm
+                           text-xs sm:text-sm
                             leading-7
                             text-zinc-300
                             font-sans
@@ -754,14 +752,14 @@ router.push("/gmail");
                               setEditedEmail(e.target.value)
                             }
                             className="
-                            h-56
+                            h-44 sm:h-56
                             w-full
                             rounded-lg
                             border
                             border-white/10
                             bg-zinc-900
                             p-3
-                            text-sm
+                           text-xs sm:text-sm
                             outline-none
                             focus:border-violet-500
                             resize-none
@@ -781,8 +779,7 @@ router.push("/gmail");
                 {/* Footer */}
                 {/* ========================= */}
 
-                <div className="mt-5 flex flex-col gap-3 border-t border-white/10 pt-4 lg:flex-row lg:items-center lg:justify-between">
-
+<div className="mt-4 flex flex-col gap-3 border-t border-white/10 pt-4 lg:flex-row lg:items-center lg:justify-between">
                   {/* Status */}
 
                   <div className="flex items-center gap-3">
@@ -807,7 +804,7 @@ router.push("/gmail");
 
                   {/* Buttons */}
 
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap justify-start lg:justify-end gap-2">
 
                     {/* Skills */}
 
@@ -823,7 +820,7 @@ router.push("/gmail");
                       bg-zinc-800
                       px-3
                       py-2
-                      text-sm
+                     text-xs sm:text-sm
                       transition
                       hover:bg-zinc-700
                       "
@@ -843,7 +840,7 @@ router.push("/gmail");
         bg-violet-600
         px-3
         py-2
-        text-sm
+       text-xs sm:text-sm
         transition
         hover:bg-violet-500
         disabled:opacity-60
@@ -886,7 +883,7 @@ router.push("/gmail");
                         bg-emerald-600
                         px-3
                         py-2
-                        text-sm
+                       text-xs sm:text-sm
                         transition
                         hover:bg-emerald-500
                         "
@@ -909,7 +906,7 @@ router.push("/gmail");
                         bg-zinc-700
                         px-3
                         py-2
-                        text-sm
+                       text-xs sm:text-sm
                         transition
                         hover:bg-zinc-600
                         "
@@ -939,7 +936,7 @@ router.push("/gmail");
                           bg-blue-600
                           px-3
                           py-2
-                          text-sm
+                         text-xs sm:text-sm
                           transition
                           hover:bg-blue-500
                           "
@@ -954,7 +951,7 @@ router.push("/gmail");
                    <button
     disabled={!post.generated_email || applyingId === post.id}
     onClick={() => applyLead(post.id)}
-    className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
+    className={`rounded-lg px-4 py-2 text-xs sm:text-smfont-medium transition ${
         post.generated_email
             ? "bg-white text-black hover:bg-zinc-200"
             : "cursor-not-allowed bg-zinc-800 text-zinc-500"
@@ -994,13 +991,13 @@ router.push("/gmail");
               className="mx-auto text-zinc-600"
             />
 
-            <h2 className="mt-4 text-2xl font-semibold">
+            <h2 className="mt-4 text-xl sm:text-2xl font-semibold">
 
               No recruiter leads found
 
             </h2>
 
-            <p className="mt-2 text-sm text-zinc-500">
+            <p className="mt-2 text-xs sm:text-smtext-zinc-500">
 
               Try another search or refresh the recruiter list.
 
@@ -1014,7 +1011,7 @@ router.push("/gmail");
               bg-violet-600
               px-5
               py-2
-              text-sm
+             text-xs sm:text-sm
               font-medium
               transition
               hover:bg-violet-500
@@ -1035,7 +1032,7 @@ router.push("/gmail");
 
       {showSkills && (
 
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-3 sm:p-4">
 
           <div className="w-full max-w-xl rounded-2xl border border-white/10 bg-zinc-900 shadow-xl">
 
@@ -1066,7 +1063,7 @@ router.push("/gmail");
                 bg-zinc-800
                 px-3
                 py-2
-                text-sm
+               text-xs sm:text-sm
                 transition
                 hover:bg-red-600
                 "
@@ -1118,7 +1115,7 @@ router.push("/gmail");
                     className="mx-auto text-zinc-600"
                   />
 
-                  <p className="mt-3 text-sm text-zinc-500">
+                  <p className="mt-3 text-xs sm:text-smtext-zinc-500">
 
                     No skills available.
 
@@ -1141,7 +1138,7 @@ router.push("/gmail");
                 bg-violet-600
                 px-5
                 py-2
-                text-sm
+               text-xs sm:text-sm
                 font-medium
                 transition
                 hover:bg-violet-500
