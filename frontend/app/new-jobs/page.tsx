@@ -1,24 +1,32 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { api } from "@/lib/axios";
-// import Sidebar from "@/components/Sidebar";
 import { useRouter } from "next/navigation";
+import Swal from "sweetalert2";
+import {
+  Sparkles,
+  Search,
+  RefreshCw,
+  Building2,
+  Users,
+  Mail,
+  CheckCircle2,
+} from "lucide-react";
+
 export default function LinkedinPage() {
   const router = useRouter();
-  const [posts, setPosts] =
-    useState<any[]>([]);
-
-  const [editingId, setEditingId] =
-  useState<number | null>(null);
-
-const [editedEmail, setEditedEmail] =
-  useState("");
+const [generatingId, setGeneratingId] = useState<number | null>(null);
+const [applyingId, setApplyingId] = useState<number | null>(null);
+  const [posts, setPosts] = useState<any[]>([]);
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editedEmail, setEditedEmail] = useState("");
 
   const [showSkills, setShowSkills] = useState(false);
+  const [selectedSkills, setSelectedSkills] = useState("");
 
-const [selectedSkills, setSelectedSkills] =
-  useState("");
+  const [search, setSearch] = useState("");
+  const [filter, setFilter] = useState("all");
 
   useEffect(() => {
     loadPosts();
@@ -26,549 +34,1131 @@ const [selectedSkills, setSelectedSkills] =
 
   const loadPosts = async () => {
     try {
-      const response =
-        await api.get(
-          "/linkedin/posts"
-        );
-
+      const response = await api.get("/linkedin/posts");
       setPosts(response.data);
     } catch (error) {
       console.error(error);
     }
   };
 
-const generateMail = async (
-  id: number
-) => {
+const generateMail = async (id: number) => {
   try {
+    setGeneratingId(id);
 
-    await api.post(
-      `/linkedin/generate-email/${id}`
-    );
+    await api.post(`/linkedin/generate-email/${id}`);
 
     await loadPosts();
 
-  } catch (error) {
+   Swal.fire({
+  icon: "success",
+  title: "Email Generated",
+  text: "AI-generated email has been created successfully.",
+  background: "#111827",
+  color: "#F8FAFC",
+  confirmButtonColor: "#06B6D4",
+  timer: 1800,
+  showConfirmButton: false,
+});
+
+  } catch (error: any) {
     console.error(error);
+
+    Swal.fire({
+      icon: "error",
+      title: "Generation Failed",
+      text:
+        error?.response?.data?.message ||
+        "Unable to generate the email.",
+    });
+  } finally {
+    setGeneratingId(null);
   }
 };
 
-const applyLead = async (
-  id: number
-) => {
+const applyLead = async (id: number) => {
   try {
+    setApplyingId(id);
 
-    const response = await api.post(
-      `/linkedin/apply/${id}`
-    );
+    const response = await api.post(`/linkedin/apply/${id}`);
 
-    if (response.data.gmail_connected === false) {
+    if (!response.data.gmail_connected) {
+      await Swal.fire({
+  icon: "warning",
+  title: "Gmail Not Connected",
+  text: response.data.message,
+  background: "#111827",
+  color: "#F8FAFC",
+  confirmButtonText: "Connect Gmail",
+  confirmButtonColor: "#06B6D4",
+});
 
-      alert(response.data.message);
+router.push("/gmail");
 
       router.push("/gmail");
-
       return;
     }
 
     await loadPosts();
 
-  } catch (error) {
+    await Swal.fire({
+  icon: "success",
+  title: "Application Sent",
+  html: `
+    <div style="font-size:15px;line-height:1.7">
+      Mail has been sent successfully to the recruiter.
+      <br><br>
+      <span style="color:#22C55E;font-weight:600">
+        Please check your <b>Gmail Sent</b> folder.
+      </span>
+    </div>
+  `,
+  background: "#111827",
+  color: "#F8FAFC",
+  confirmButtonText: "OK",
+  confirmButtonColor: "#06B6D4",
+});
+
+  } catch (error: any) {
     console.error(error);
+
+    Swal.fire({
+  icon: "error",
+  title: "Application Failed",
+  text:
+    error?.response?.data?.message ||
+    "Something went wrong while sending the application.",
+  background: "#111827",
+  color: "#F8FAFC",
+  confirmButtonColor: "#EF4444",
+});
+  } finally {
+    setApplyingId(null);
   }
 };
 
-  const getScoreColor = (
-    score: number
-  ) => {
-    if (score >= 80)
-      return "bg-green-600";
-
-    if (score >= 60)
-      return "bg-yellow-600";
-
-    return "bg-red-600";
+  const getScoreColor = (score: number) => {
+    if (score >= 80) return "border-emerald-500";
+    if (score >= 60) return "border-yellow-500";
+    return "border-red-500";
   };
 
+  const filteredPosts = useMemo(() => {
+    return posts.filter((post) => {
+      const matches =
+        post.company?.toLowerCase().includes(search.toLowerCase()) ||
+        post.job_title?.toLowerCase().includes(search.toLowerCase()) ||
+        post.recruiter_name?.toLowerCase().includes(search.toLowerCase());
+
+      if (filter === "applied")
+        return matches && post.status === "applied";
+
+      if (filter === "high")
+        return matches && (post.match_score || 0) >= 80;
+
+      return matches;
+    });
+  }, [posts, search, filter]);
+
   return (
-    
+    <main className="min-h-screen bg-[#09090B] text-white">
 
-      <main
-  className="
-    min-h-screen
-    bg-transparent
-    text-white
-    px-4
-    sm:px-6
-    lg:px-8
-    xl:px-10
-    py-6
-    sm:py-8
-    lg:py-10
-  "
->
+      <div className="mx-auto max-w-7xl px-6 py-5">
 
-        <div className="mb-12">
+        {/* Header */}
 
-          <h1 className="text-xl
-sm:text-2xl
-sm:text-3xl
-sm:text-4xl
-xl:text-5xl font-semibold tracking-tight">
-            New Leads
-          </h1>
+        <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
 
-          <p className="text-zinc-500 mt-3">
-            AI analyzed hiring posts and
-            discovered recruiter leads.
-          </p>
+          <div>
+
+            <h1 className="text-4xl font-bold tracking-tight">
+              Recruiter Leads
+            </h1>
+
+            <p className="mt-1 text-sm text-zinc-500">
+              AI ranked recruiter opportunities.
+            </p>
+
+          </div>
+
+          <button
+            onClick={loadPosts}
+            className="
+            inline-flex
+            items-center
+            gap-2
+            rounded-xl
+            bg-violet-600
+            px-5
+            py-2.5
+            text-sm
+            font-medium
+            transition
+            hover:bg-violet-500
+            "
+          >
+            <RefreshCw size={16} />
+            Refresh
+          </button>
 
         </div>
 
-        <div className="grid
-grid-cols-1
-sm:grid-cols-2
-xl:grid-cols-3 gap-6 mb-10">
+        {/* Search */}
 
-          <div className="bg-zinc-900/60 backdrop-blur-xl border border-zinc-800 rounded-2xl p-5
-sm:p-6">
+        <div className="mt-6 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
 
-            <p className="text-zinc-500 text-xs
-sm:text-sm">
-              Total Leads
-            </p>
+          <div className="relative w-full max-w-sm">
 
-            <h2 className="text-xl
-sm:text-2xl
-sm:text-3xl font-bold mt-3">
-              {posts.length}
-            </h2>
+            <Search
+              size={16}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500"
+            />
 
-          </div>
-
-          <div className="bg-zinc-900/60 backdrop-blur-xl border border-zinc-800 rounded-2xl p-5
-sm:p-6">
-
-            <p className="text-zinc-500 text-xs
-sm:text-sm">
-              Emails Found
-            </p>
-
-            <h2 className="text-xl
-sm:text-2xl
-sm:text-3xl font-bold mt-3">
-              {
-                posts.filter(
-                  (p) => p.email
-                ).length
-              }
-            </h2>
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search jobs..."
+              className="
+              w-full
+              rounded-xl
+              border
+              border-white/10
+              bg-zinc-900
+              py-2.5
+              pl-10
+              pr-3
+              text-sm
+              outline-none
+              transition
+              focus:border-violet-500
+              "
+            />
 
           </div>
 
-          <div className="bg-zinc-900/60 backdrop-blur-xl border border-zinc-800 rounded-2xl p-5
-sm:p-6">
+          <div className="flex gap-2">
 
-            <p className="text-zinc-500 text-xs
-sm:text-sm">
+            <button
+              onClick={() => setFilter("all")}
+              className={`rounded-lg px-4 py-2 text-sm transition ${
+                filter === "all"
+                  ? "bg-violet-600"
+                  : "bg-zinc-900 hover:bg-zinc-800"
+              }`}
+            >
+              All
+            </button>
+
+            <button
+              onClick={() => setFilter("high")}
+              className={`rounded-lg px-4 py-2 text-sm transition ${
+                filter === "high"
+                  ? "bg-violet-600"
+                  : "bg-zinc-900 hover:bg-zinc-800"
+              }`}
+            >
+              High Match
+            </button>
+
+            <button
+              onClick={() => setFilter("applied")}
+              className={`rounded-lg px-4 py-2 text-sm transition ${
+                filter === "applied"
+                  ? "bg-violet-600"
+                  : "bg-zinc-900 hover:bg-zinc-800"
+              }`}
+            >
               Applied
-            </p>
+            </button>
 
-            <h2 className="text-xl
-sm:text-2xl
-sm:text-3xl font-bold mt-3 text-green-500">
-              {
-                posts.filter(
-                  (p) =>
-                    p.status ===
-                    "applied"
-                ).length
-              }
-            </h2>
+          </div>
+
+        </div>
+                {/* ===================== */}
+        {/* Statistics */}
+        {/* ===================== */}
+
+        <div className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
+
+          {/* Total */}
+
+          <div className="rounded-xl border border-white/10 bg-zinc-900/60 px-4 py-3">
+
+            <div className="flex items-center justify-between">
+
+              <div>
+
+                <p className="text-[11px] uppercase tracking-wider text-zinc-500">
+                  Total Leads
+                </p>
+
+                <h2 className="mt-1 text-2xl font-bold">
+                  {filteredPosts.length}
+                </h2>
+
+              </div>
+
+              <div className="rounded-lg bg-violet-500/10 p-2">
+
+                <Building2
+                  size={20}
+                  className="text-violet-400"
+                />
+
+              </div>
+
+            </div>
+
+          </div>
+
+          {/* Emails */}
+
+          <div className="rounded-xl border border-white/10 bg-zinc-900/60 px-4 py-3">
+
+            <div className="flex items-center justify-between">
+
+              <div>
+
+                <p className="text-[11px] uppercase tracking-wider text-zinc-500">
+                  Emails
+                </p>
+
+                <h2 className="mt-1 text-2xl font-bold">
+                  {
+                    filteredPosts.filter(
+                      (p) => p.email
+                    ).length
+                  }
+                </h2>
+
+              </div>
+
+              <div className="rounded-lg bg-cyan-500/10 p-2">
+
+                <Mail
+                  size={20}
+                  className="text-cyan-400"
+                />
+
+              </div>
+
+            </div>
+
+          </div>
+
+          {/* Applied */}
+
+          <div className="rounded-xl border border-white/10 bg-zinc-900/60 px-4 py-3">
+
+            <div className="flex items-center justify-between">
+
+              <div>
+
+                <p className="text-[11px] uppercase tracking-wider text-zinc-500">
+                  Applied
+                </p>
+
+                <h2 className="mt-1 text-2xl font-bold text-emerald-400">
+                  {
+                    filteredPosts.filter(
+                      (p) =>
+                        p.status === "applied"
+                    ).length
+                  }
+                </h2>
+
+              </div>
+
+              <div className="rounded-lg bg-emerald-500/10 p-2">
+
+                <CheckCircle2
+                  size={20}
+                  className="text-emerald-400"
+                />
+
+              </div>
+
+            </div>
+
+          </div>
+
+          {/* Match */}
+
+          <div className="rounded-xl border border-white/10 bg-zinc-900/60 px-4 py-3">
+
+            <div className="flex items-center justify-between">
+
+              <div>
+
+                <p className="text-[11px] uppercase tracking-wider text-zinc-500">
+                  High Match
+                </p>
+
+                <h2 className="mt-1 text-2xl font-bold text-violet-400">
+                  {
+                    filteredPosts.filter(
+                      (p) =>
+                        (p.match_score || 0) >= 80
+                    ).length
+                  }
+                </h2>
+
+              </div>
+
+              <div className="rounded-lg bg-violet-500/10 p-2">
+
+                <Users
+                  size={20}
+                  className="text-violet-400"
+                />
+
+              </div>
+
+            </div>
 
           </div>
 
         </div>
 
-        <div className="space-y-6">
+        {/* ===================== */}
+        {/* Leads */}
+        {/* ===================== */}
 
-          {posts.map((post) => (
+        <div className="mt-6 space-y-4">
+
+          {filteredPosts.map((post) => (
 
             <div
               key={post.id}
               className="
-                bg-zinc-900/60 backdrop-blur-xl
-                border
-                border-zinc-800
-                rounded-2xl
-                p-5
-sm:p-6
+              rounded-2xl
+              border
+              border-white/10
+              bg-zinc-900/40
+              backdrop-blur-xl
+              transition
+              hover:border-violet-500/40
+              hover:bg-zinc-900/60
               "
             >
 
-              <div
-className="
-flex
-flex-col
-sm:flex-row
-justify-between
-gap-6
-"
->
+              <div className="p-5">
 
-                <div>
+                {/* Header */}
 
-                  <h2 className="text-xl
-sm:text-2xl font-semibold">
-                    {post.job_title}
-                  </h2>
+                <div className="flex items-start justify-between gap-5">
 
-<div className="mt-4 space-y-2 text-zinc-400">
+                  {/* Left */}
 
-<p>🏢 {post.company}</p>
+                  <div className="flex gap-4 flex-1">
 
-<p>👤 {post.recruiter_name}</p>
+                    {/* Company Icon */}
 
-<p>📍 {post.location || "Location not available"}</p>
+                    <div className="
+                    flex
+                    h-14
+                    w-14
+                    shrink-0
+                    items-center
+                    justify-center
+                    rounded-xl
+                    bg-violet-500/10
+                    border
+                    border-violet-500/20
+                    ">
 
-<p>🕒 {post.posted_time || "Unknown"}</p>
+                      <Building2
+                        size={26}
+                        className="text-violet-400"
+                      />
 
-<p>💼 {post.experience || "Experience not available"}</p>
+                    </div>
 
-<p>✉ {post.email || "Email not found"}</p>
+                    {/* Job */}
+
+                    <div className="flex-1 min-w-0">
+
+                      <h2 className="text-2xl font-bold leading-tight">
+
+                        {post.job_title}
+
+                      </h2>
+
+                      <div className="mt-1 flex items-center gap-2 text-violet-300">
+
+                        <Building2 size={15} />
+
+                        <span className="truncate">
+
+                          {post.company}
+
+                        </span>
+
+                      </div>
+
+                      {/* Small Info */}
+
+
+<div className="mt-3 flex flex-wrap items-center gap-2 text-sm text-zinc-400">
+
+    <span className="flex items-center gap-1">
+        👤
+        <span>{post.recruiter_name || "Unknown"}</span>
+    </span>
+
+    <span className="text-zinc-600">•</span>
+
+    <span className="flex items-center gap-1">
+        📍
+        <span>{post.location || "N/A"}</span>
+    </span>
+
+    <span className="text-zinc-600">•</span>
+
+    <span className="flex items-center gap-1">
+        💼
+        <span>{post.experience || "N/A"}</span>
+    </span>
+
+    <span className="text-zinc-600">•</span>
+
+    <span className="flex items-center gap-1">
+        🕒
+        <span>{post.posted_time || "N/A"}</span>
+    </span>
 
 </div>
 
-                </div>
+                      {/* Email */}
 
-                <div
-                  className={`
-                   px-3
-sm:px-4
-py-2
-self-start
+                      <div className="mt-3 flex items-center gap-2 rounded-lg border border-white/10 px-3 py-2">
+
+                        <Mail
+                          size={15}
+                          className="text-cyan-400"
+                        />
+
+                        <span className="truncate text-sm text-zinc-300">
+
+                          {post.email || "Email not found"}
+
+                        </span>
+
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                  {/* Match Score */}
+
+                  <div className="flex flex-col items-center">
+
+                    <div
+                      className={`
+                      h-20
+                      w-20
+                      rounded-full
+                      border-[6px]
+                      flex
+                      items-center
+                      justify-center
+                      ${getScoreColor(post.match_score || 0)}
+                      `}
+                    >
+
+                      <div className="text-center">
+
+                        <div className="text-2xl font-bold">
+
+                          {post.match_score || 0}
+
+                        </div>
+
+                        <div className="text-[10px] text-zinc-400">
+
+                          Match
+
+                        </div>
+
+                      </div>
+
+                    </div>
+
+                    <span className="
+                    mt-2
                     rounded-full
-                    text-white
-                    font-medium
-                    ${getScoreColor(
-                      post.match_score || 0
-                    )}
-                  `}
-                >
-                  {post.match_score || 0}%
-                </div>
-
-              </div>
-
-              <div className="mt-6">
-
-                <h3 className="font-semibold mb-2">
-                  AI Analysis
-                </h3>
-
-                <p className="text-zinc-400">
-                  {post.match_reason ||
-                    "No analysis available"}
-                </p>
-
-              </div>
-
-{post.generated_email && (
-
-  <div className="mt-6">
-
-    {editingId !== post.id ? (
-
-      <details>
-
-        <summary className="cursor-pointer text-white font-medium">
-          View Generated Email
-        </summary>
-
-        <div className="mt-3 bg-black/40 backdrop-blur-xl border border-zinc-800 rounded-xl p-4
-overflow-x-auto whitespace-pre-wrap
-break-words
-overflow-x-auto text-zinc-300">
-          {post.generated_email}
-        </div>
-
-      </details>
-
-    ) : (
-
-      <textarea
-        value={editedEmail}
-        onChange={(e) =>
-          setEditedEmail(e.target.value)
-        }
-        className="
-          w-full
-          h-56
-sm:h-64
-          bg-black/40 backdrop-blur-xl
-          border
-          border-zinc-800
-          rounded-xl
-          p-4
-overflow-x-auto
-          text-zinc-300
-          resize-none
-        "
-      />
-
-    )}
-
-  </div>
-
-)}
-
-              <div
-className="
-mt-6
-flex
-flex-col
-gap-4
-lg:flex-row
-lg:items-center
-lg:justify-between
-"
->
-
-                <span
-                  className={`
+                    bg-violet-500/10
                     px-3
                     py-1
-                    rounded-full
-                    text-xs
-sm:text-sm
-                    ${
-                      post.status ===
-                      "applied"
-                        ? "bg-green-600"
-                        : "bg-zinc-700"
-                    }
-                  `}
-                >
-                  {post.status}
-                </span>
+                    text-[11px]
+                    text-violet-300
+                    ">
 
-               <div
-className="
-flex
-flex-wrap
-gap-3
-"
->
+                      AI Match
 
- <button
-  onClick={() => {
-    setSelectedSkills(post.skills || "");
-    setShowSkills(true);
-  }}
-  className="
-    bg-zinc-900/60
-    backdrop-blur-xl
-    hover:bg-zinc-700
-    px-3
-    sm:px-4
-    py-2
-    rounded-xl
-  "
+                    </span>
+
+                  </div>
+
+                </div>
+
+                {/* Divider */}
+
+                <div className="my-5 border-t border-white/10"></div>
+                                {/* ========================= */}
+                {/* AI Analysis */}
+                {/* ========================= */}
+
+                <div className="rounded-xl border border-violet-500/20 bg-violet-500/5">
+
+                  <div className="flex items-center gap-3 border-b border-white/10 px-4 py-3">
+
+                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-violet-500/10">
+
+                      <Sparkles
+                        size={18}
+                        className="text-violet-300"
+                      />
+
+                    </div>
+
+                    <div>
+
+                      <h3 className="text-base font-semibold">
+
+                        AI Insights
+
+                      </h3>
+
+                      <p className="text-xs text-zinc-500">
+
+                        Match analysis
+
+                      </p>
+
+                    </div>
+
+                  </div>
+
+                  <div className="p-4">
+
+                    <p
+                      className="
+                      text-sm
+                      leading-7
+                      text-zinc-300
+                      line-clamp-4
+                      "
+                    >
+                      {post.match_reason ||
+                        "No AI analysis available."}
+                    </p>
+
+                  </div>
+
+                </div>
+
+                {/* ========================= */}
+                {/* Generated Email */}
+                {/* ========================= */}
+
+                {post.generated_email && (
+
+                  <div className="mt-4 rounded-xl border border-white/10">
+
+                    <details>
+
+                      <summary
+                        className="
+                        flex
+                        cursor-pointer
+                        items-center
+                        justify-between
+                        px-4
+                        py-3
+                        hover:bg-white/[0.03]
+                        "
+                      >
+
+                        <div className="flex items-center gap-3">
+
+                          <div className="
+                          flex
+                          h-9
+                          w-9
+                          items-center
+                          justify-center
+                          rounded-lg
+                          bg-cyan-500/10
+                          ">
+
+                            <Mail
+                              size={18}
+                              className="text-cyan-400"
+                            />
+
+                          </div>
+
+                          <div>
+
+                            <h3 className="text-sm font-semibold">
+
+                              Generated Email
+
+                            </h3>
+
+                            <p className="text-xs text-zinc-500">
+
+                              Click to preview
+
+                            </p>
+
+                          </div>
+
+                        </div>
+
+                        <span className="text-xs text-zinc-500">
+
+                          Expand
+
+                        </span>
+
+                      </summary>
+
+                      {editingId !== post.id ? (
+
+                        <div className="border-t border-white/10 p-4">
+
+                          <pre
+                            className="
+                            whitespace-pre-wrap
+                            break-words
+                            text-sm
+                            leading-7
+                            text-zinc-300
+                            font-sans
+                            "
+                          >
+                            {post.generated_email}
+                          </pre>
+
+                        </div>
+
+                      ) : (
+
+                        <div className="border-t border-white/10 p-4">
+
+                          <textarea
+                            value={editedEmail}
+                            onChange={(e) =>
+                              setEditedEmail(e.target.value)
+                            }
+                            className="
+                            h-56
+                            w-full
+                            rounded-lg
+                            border
+                            border-white/10
+                            bg-zinc-900
+                            p-3
+                            text-sm
+                            outline-none
+                            focus:border-violet-500
+                            resize-none
+                            "
+                          />
+
+                        </div>
+
+                      )}
+
+                    </details>
+
+                  </div>
+
+                )}
+                                {/* ========================= */}
+                {/* Footer */}
+                {/* ========================= */}
+
+                <div className="mt-5 flex flex-col gap-3 border-t border-white/10 pt-4 lg:flex-row lg:items-center lg:justify-between">
+
+                  {/* Status */}
+
+                  <div className="flex items-center gap-3">
+
+                    <span
+                      className={`rounded-full px-3 py-1 text-xs font-medium ${
+                        post.status === "applied"
+                          ? "bg-emerald-500/15 text-emerald-400"
+                          : "bg-yellow-500/15 text-yellow-400"
+                      }`}
+                    >
+                      {post.status === "applied"
+                        ? "Applied"
+                        : "Pending"}
+                    </span>
+
+                    <span className="text-xs text-zinc-500">
+                      Recruiter Status
+                    </span>
+
+                  </div>
+
+                  {/* Buttons */}
+
+                  <div className="flex flex-wrap gap-2">
+
+                    {/* Skills */}
+
+                    <button
+                      onClick={() => {
+                        setSelectedSkills(post.skills || "");
+                        setShowSkills(true);
+                      }}
+                      className="
+                      rounded-lg
+                      border
+                      border-white/10
+                      bg-zinc-800
+                      px-3
+                      py-2
+                      text-sm
+                      transition
+                      hover:bg-zinc-700
+                      "
+                    >
+                      Skills
+                    </button>
+
+                    {/* Generate */}
+
+                    {!post.generated_email && (
+
+                      <button
+    onClick={() => generateMail(post.id)}
+    disabled={generatingId === post.id}
+    className="
+        rounded-lg
+        bg-violet-600
+        px-3
+        py-2
+        text-sm
+        transition
+        hover:bg-violet-500
+        disabled:opacity-60
+        disabled:cursor-not-allowed
+    "
 >
-  View Skills
+    {generatingId === post.id ? (
+        <div className="flex items-center gap-2">
+            <RefreshCw className="h-4 w-4 animate-spin" />
+            Generating...
+        </div>
+    ) : (
+        "Generate"
+    )}
 </button>
 
-  {!post.generated_email && (
+                    )}
 
-  <button
-    onClick={() =>
-      generateMail(post.id)
-    }
-    className="
-      bg-purple-600
-      hover:bg-purple-700
-      px-3
-sm:px-4
-py-2
-self-start
-      rounded-xl
-      text-white
-    "
-  >
-    Generate Mail
-  </button>
+                    {/* Save */}
 
-)}
+                    {editingId === post.id && (
 
-  {editingId === post.id ? (
+                      <button
+                        onClick={async () => {
 
-    <>
-      <button
-        onClick={async () => {
+                          await api.put(
+                            `/linkedin/email/${post.id}`,
+                            {
+                              generated_email: editedEmail,
+                            }
+                          );
 
-        await api.put(
-  `/linkedin/email/${post.id}`,
-  {
-    generated_email: editedEmail
-  }
-);
+                          setEditingId(null);
 
-setEditingId(null);
+                          await loadPosts();
 
-await loadPosts();
+                        }}
+                        className="
+                        rounded-lg
+                        bg-emerald-600
+                        px-3
+                        py-2
+                        text-sm
+                        transition
+                        hover:bg-emerald-500
+                        "
+                      >
+                        Save
+                      </button>
 
-        }}
-        className="
-          bg-blue-600
-          hover:bg-blue-700
-          px-3
-sm:px-4
-py-2
-self-start
-          rounded-xl
-        "
-      >
-        Save
-      </button>
+                    )}
 
-      <button
-        onClick={() =>
-          setEditingId(null)
-        }
-        className="
-          bg-zinc-700
-          hover:bg-zinc-600
-          px-3
-sm:px-4
-py-2
-self-start
-          rounded-xl
-        "
-      >
-        Cancel
-      </button>
-    </>
+                    {/* Cancel */}
 
-  ) : (
+                    {editingId === post.id && (
 
-  post.generated_email && (
+                      <button
+                        onClick={() =>
+                          setEditingId(null)
+                        }
+                        className="
+                        rounded-lg
+                        bg-zinc-700
+                        px-3
+                        py-2
+                        text-sm
+                        transition
+                        hover:bg-zinc-600
+                        "
+                      >
+                        Cancel
+                      </button>
 
-    <button
-      onClick={() => {
+                    )}
 
-        setEditingId(post.id);
+                    {/* Edit */}
 
-        setEditedEmail(
-          post.generated_email
-        );
+                    {editingId !== post.id &&
+                      post.generated_email && (
 
-      }}
-      className="
-        bg-blue-600
-        hover:bg-blue-700
-        px-3
-sm:px-4
-py-2
-self-start
-        rounded-xl
-      "
-    >
-      Edit
-    </button>
+                        <button
+                          onClick={() => {
 
-  )
+                            setEditingId(post.id);
 
-)}
+                            setEditedEmail(
+                              post.generated_email
+                            );
 
-<button
-  disabled={!post.generated_email}
-  onClick={() =>
-    applyLead(post.id)
-  }
-   className={`
-  px-3
-sm:px-4
-py-2
-self-start
-  rounded-xl
-  font-medium
-  ${
-    post.generated_email
-      ? "bg-white text-black hover:bg-zinc-200"
-      : "bg-zinc-700 text-zinc-400 cursor-not-allowed"
-  }
-`}
-  >
-    Apply
-  </button>
+                          }}
+                          className="
+                          rounded-lg
+                          bg-blue-600
+                          px-3
+                          py-2
+                          text-sm
+                          transition
+                          hover:bg-blue-500
+                          "
+                        >
+                          Edit
+                        </button>
 
-</div>
+                      )}
+
+                    {/* Apply */}
+
+                   <button
+    disabled={!post.generated_email || applyingId === post.id}
+    onClick={() => applyLead(post.id)}
+    className={`rounded-lg px-4 py-2 text-sm font-medium transition ${
+        post.generated_email
+            ? "bg-white text-black hover:bg-zinc-200"
+            : "cursor-not-allowed bg-zinc-800 text-zinc-500"
+    } disabled:opacity-60`}
+>
+    {applyingId === post.id ? (
+        <div className="flex items-center gap-2">
+            <RefreshCw className="h-4 w-4 animate-spin" />
+            Applying...
+        </div>
+    ) : post.status === "applied" ? (
+        "Applied"
+    ) : (
+        "Apply"
+    )}
+</button>
+
+                  </div>
+
+                </div>
+
               </div>
 
             </div>
 
           ))}
+                  {/* ========================= */}
+        {/* Empty State */}
+        {/* ========================= */}
 
-        </div>
+        {filteredPosts.length === 0 && (
 
-        {showSkills && (
-  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
-    <div className="w-full max-w-2xl rounded-2xl border border-zinc-800 bg-zinc-900 p-6">
+          <div className="mt-8 rounded-2xl border border-dashed border-white/10 bg-zinc-900/40 py-14 text-center">
 
-      <div className="flex items-center justify-between mb-5">
-        <h2 className="text-2xl font-bold">
-          Required Skills
-        </h2>
+            <Search
+              size={40}
+              className="mx-auto text-zinc-600"
+            />
 
-        <button
-          onClick={() => setShowSkills(false)}
-          className="text-zinc-400 hover:text-white text-xl"
-        >
-          ✕
-        </button>
+            <h2 className="mt-4 text-2xl font-semibold">
+
+              No recruiter leads found
+
+            </h2>
+
+            <p className="mt-2 text-sm text-zinc-500">
+
+              Try another search or refresh the recruiter list.
+
+            </p>
+
+            <button
+              onClick={loadPosts}
+              className="
+              mt-6
+              rounded-lg
+              bg-violet-600
+              px-5
+              py-2
+              text-sm
+              font-medium
+              transition
+              hover:bg-violet-500
+              "
+            >
+              Refresh
+            </button>
+
+          </div>
+
+        )}
+
       </div>
+ </div>
+      {/* ========================= */}
+      {/* Skills Modal */}
+      {/* ========================= */}
 
-      {selectedSkills.trim() ? (
+      {showSkills && (
 
-        <div className="flex flex-wrap gap-3">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
 
-          {selectedSkills
-            .split(",")
-            .map((skill: string, index: number) => (
+          <div className="w-full max-w-xl rounded-2xl border border-white/10 bg-zinc-900 shadow-xl">
 
-              <span
-                key={index}
+            {/* Header */}
+
+            <div className="flex items-center justify-between border-b border-white/10 px-5 py-4">
+
+              <div>
+
+                <h2 className="text-lg font-semibold">
+
+                  Required Skills
+
+                </h2>
+
+                <p className="text-xs text-zinc-500">
+
+                  Skills extracted from this job.
+
+                </p>
+
+              </div>
+
+              <button
+                onClick={() => setShowSkills(false)}
                 className="
-                  rounded-full
-                  bg-purple-600/20
-                  border
-                  border-purple-600
-                  px-4
-                  py-2
-                  text-sm
-                  text-white
+                rounded-lg
+                bg-zinc-800
+                px-3
+                py-2
+                text-sm
+                transition
+                hover:bg-red-600
                 "
               >
-                {skill.trim()}
-              </span>
+                ✕
 
-          ))}
+              </button>
 
-        </div>
+            </div>
 
-      ) : (
+            {/* Body */}
 
-        <div className="text-center py-10 text-zinc-500">
-          No skills found.
+            <div className="max-h-[320px] overflow-y-auto p-5">
+
+              {selectedSkills.trim() ? (
+
+                <div className="flex flex-wrap gap-2">
+
+                  {selectedSkills
+                    .split(",")
+                    .map((skill: string, index: number) => (
+
+                      <span
+                        key={index}
+                        className="
+                        rounded-full
+                        border
+                        border-violet-500/20
+                        bg-violet-500/10
+                        px-3
+                        py-1.5
+                        text-xs
+                        text-violet-200
+                        "
+                      >
+                        {skill.trim()}
+                      </span>
+
+                    ))}
+
+                </div>
+
+              ) : (
+
+                <div className="py-10 text-center">
+
+                  <Users
+                    size={36}
+                    className="mx-auto text-zinc-600"
+                  />
+
+                  <p className="mt-3 text-sm text-zinc-500">
+
+                    No skills available.
+
+                  </p>
+
+                </div>
+
+              )}
+
+            </div>
+
+            {/* Footer */}
+
+            <div className="flex justify-end border-t border-white/10 px-5 py-4">
+
+              <button
+                onClick={() => setShowSkills(false)}
+                className="
+                rounded-lg
+                bg-violet-600
+                px-5
+                py-2
+                text-sm
+                font-medium
+                transition
+                hover:bg-violet-500
+                "
+              >
+                Close
+              </button>
+
+            </div>
+
+          </div>
+
         </div>
 
       )}
 
-    </div>
-  </div>
-)}
+    </main>
 
-      </main>
-   
   );
 }

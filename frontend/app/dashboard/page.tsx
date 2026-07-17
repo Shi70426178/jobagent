@@ -356,9 +356,33 @@ const colorClasses = {
           </section>
 
           {/* ================= AGENT CONFIGURATION ================= */}
-          <section className="mt-8 rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-2xl overflow-hidden">
-            {/* Header */}
-            <div className="border-b border-white/10 px-4 sm:px-6 py-4 sm:py-5 flex flex-col xl:flex-row justify-between xl:items-center gap-4">
+<section
+  className="
+    mt-8
+    rounded-2xl
+    border
+    border-white/10
+    bg-white/[0.04]
+    backdrop-blur-2xl
+    overflow-hidden
+    shadow-[0_0_35px_rgba(255,255,255,0.12)]
+  "
+>            {/* Header */}
+            <div className="
+  border-b
+  border-white/20
+  bg-white/[0.02]
+  px-4
+  sm:px-6
+  py-4
+  sm:py-5
+  flex
+  flex-col
+  xl:flex-row
+  justify-between
+  xl:items-center
+  gap-4
+">
               <div>
                 <h2 className="text-xl sm:text-2xl font-black text-white">
                   Agent Configuration
