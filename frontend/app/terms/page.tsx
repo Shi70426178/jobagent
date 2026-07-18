@@ -103,7 +103,7 @@ export default function TermsPage() {
                 </h2>
 
                 <p className="mt-3 text-sm text-violet-400">
-                  shivamsingh221537@gmail.com
+                  support@onexjob.com
                 </p>
               </section>
             </div>

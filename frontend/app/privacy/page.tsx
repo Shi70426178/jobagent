@@ -224,7 +224,7 @@ export default function PrivacyPage() {
                 </h2>
 
                 <p className="mt-3 text-sm text-violet-400">
-                  Email: shivamsingh221537@gmail.com
+                  Email: support@onexjob.com
                 </p>
               </section>
             </div>
