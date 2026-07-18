@@ -156,28 +156,32 @@ const startAgent = async () => {
 
   showLoading();
 
-  try {
-    const response = await api.post("/agent/start", {
-      keywords,
-      location,
-    });
+try {
+  const response = await api.post("/agent/start", {
+    keywords,
+    location,
+  });
 
-    Swal.close();
+  Swal.close();
 
-    showSuccess(
-      response.data.message || "AI Agent started successfully."
-    );
+  showSuccess(
+    response.data.message || "AI Agent started successfully."
+  );
 
-    loadStats();
-  } catch (err) {
-    Swal.close();
+  loadStats();
 
-    console.error(err);
+  // Redirect to New Jobs page
+  router.push("/new-jobs");
 
-    showError("Failed to start AI Agent.");
-  } finally {
-    setLoading(false);
-  }
+} catch (err) {
+  Swal.close();
+
+  console.error(err);
+
+  showError("Failed to start AI Agent.");
+} finally {
+  setLoading(false);
+}
 };
   // ---------- Stat cards config ----------
   const stats = [

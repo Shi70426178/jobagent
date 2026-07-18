@@ -44,20 +44,20 @@ export default function MobileSidebar() {
       icon: LayoutDashboard,
     },
     {
-      name: "Agent",
+      name: "Job Agent",
       href: "/agent",
       icon: Bot,
     },
     {
-      name: "New Jobs",
+      name: "View Jobs",
       href: "/new-jobs",
       icon: Globe,
     },
-    {
-      name: "YC Jobs",
-      href: "/hackernews",
-      icon: Newspaper,
-    },
+    // {
+    //   name: "YC Jobs",
+    //   href: "/hackernews",
+    //   icon: Newspaper,
+    // },
     {
       name: "Applications",
       href: "/applications",
