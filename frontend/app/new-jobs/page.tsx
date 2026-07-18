@@ -79,24 +79,22 @@ const applyLead = async (id: number) => {
   try {
     setApplyingId(id);
 
-    const response = await api.post(`/linkedin/apply/${id}`);
+   const response = await api.post(`/linkedin/apply/${id}`);
 
-    if (!response.data.gmail_connected) {
-      await Swal.fire({
-  icon: "warning",
-  title: "Gmail Not Connected",
-  text: response.data.message,
-  background: "#111827",
-  color: "#F8FAFC",
-  confirmButtonText: "Connect Gmail",
-  confirmButtonColor: "#06B6D4",
-});
+if (response.data.gmail_connected === false) {
+  await Swal.fire({
+    icon: "warning",
+    title: "Gmail Not Connected",
+    text: response.data.message,
+    background: "#111827",
+    color: "#F8FAFC",
+    confirmButtonText: "Connect Gmail",
+    confirmButtonColor: "#06B6D4",
+  });
 
-router.push("/gmail");
-
-      router.push("/gmail");
-      return;
-    }
+  router.push("/gmail");
+  return;
+}
 
     await loadPosts();
 

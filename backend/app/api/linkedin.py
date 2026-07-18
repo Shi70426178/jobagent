@@ -189,7 +189,8 @@ def apply_post(
     db.commit()
 
     return {
-        "success": True
+        "success": True,
+        "gmail_connected": True
     }
 
 @router.put("/email/{post_id}")
