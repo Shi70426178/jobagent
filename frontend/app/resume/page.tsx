@@ -99,44 +99,95 @@ export default function ResumePage() {
             Upload Resume
           </h2>
 
-          <input
-            type="file"
-            accept=".pdf"
-            onChange={(e) =>
-              setFile(
-                e.target.files?.[0] ||
-                  null
-              )
-            }
-            className="
-              block
-              w-full
-              text-zinc-400
-              mb-6
-            "
-          />
+         <div className="bg-zinc-900/60 backdrop-blur-xl border border-zinc-800 rounded-2xl p-8 mb-10">
 
-          <button
-            onClick={uploadResume}
-            disabled={
-              uploading || !file
-            }
-            className="
-              bg-white
-              text-black
-              px-6
-              py-3
-              rounded-xl
-              font-medium
-              hover:bg-zinc-200
-              transition
-              disabled:opacity-50
-            "
-          >
-            {uploading
-              ? "Uploading..."
-              : "Upload Resume"}
-          </button>
+  {/* <h2 className="text-xl sm:text-2xl font-semibold mb-2">
+    Upload Resume
+  </h2> */}
+
+  <p className="text-zinc-400 text-sm mb-6">
+    Upload your latest resume in PDF format. AI will automatically extract your
+    skills, experience and education.
+  </p>
+
+  <label
+    htmlFor="resume-upload"
+    className="
+  flex flex-col items-center justify-center
+  h-40 sm:h-56
+  w-full
+  rounded-2xl
+  border-2 border-dashed border-zinc-700
+  bg-zinc-950/40
+  cursor-pointer
+  transition-all
+  hover:border-cyan-500
+  hover:bg-zinc-900
+  px-4
+  text-center
+"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="w-9 h-9 sm:w-12 sm:h-12 text-cyan-400 mb-3"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={1.8}
+        d="M7 16a4 4 0 01-.88-7.903A5 5 0 0116.9 6.1A4.5 4.5 0 0117.5 15H15m-3-3v9m0-9l-3 3m3-3l3 3"
+      />
+    </svg>
+
+    <p className="text-sm sm:text-lg font-medium text-white">
+      Click to upload your resume
+    </p>
+
+    <p className="text-sm text-zinc-500 mt-2">
+      PDF only • Max 5 MB
+    </p>
+
+    {file && (
+      <div className="mt-5 rounded-xl bg-cyan-500/10 border border-cyan-500/30 px-4 py-2 text-cyan-300 text-sm">
+        📄 {file.name}
+      </div>
+    )}
+  </label>
+
+  <input
+    id="resume-upload"
+    type="file"
+    accept=".pdf"
+    className="hidden"
+    onChange={(e) =>
+      setFile(e.target.files?.[0] || null)
+    }
+  />
+
+  <button
+    onClick={uploadResume}
+    disabled={!file || uploading}
+    className="
+      mt-6
+      w-full
+      h-12
+      rounded-xl
+      bg-cyan-500
+      text-black
+      font-semibold
+      transition
+      hover:bg-cyan-400
+      disabled:opacity-50
+      disabled:cursor-not-allowed
+    "
+  >
+    {uploading ? "Uploading Resume..." : "Upload Resume"}
+  </button>
+
+</div>
 
         </div>
 
