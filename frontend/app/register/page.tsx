@@ -302,7 +302,7 @@ export default function RegisterPage() {
 
                   <input
                     type="text"
-                    placeholder="Shivam Singh"
+                    placeholder="Your Name"
                     autoComplete="name"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
