@@ -10,14 +10,16 @@ export default function AppLayout({
 }) {
   const pathname = usePathname();
 
-  const hideSidebar =
-    pathname === "/" ||
-    pathname === "/login" ||
-    pathname === "/privacy" ||
-    pathname === "/contact" ||
-    pathname === "/terms" ||
-    pathname === "/register";
-
+  const hideSidebar = [
+    "/",
+    "/login",
+    "/register",
+    "/forgot-password",
+    "/reset-password",
+    "/privacy",
+    "/contact",
+    "/terms",
+  ].includes(pathname);
   return (
     <div className="relative z-10 min-h-screen">
       {!hideSidebar && (

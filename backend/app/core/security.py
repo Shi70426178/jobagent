@@ -1,5 +1,6 @@
 from passlib.context import CryptContext
 from jose import jwt, JWTError
+import secrets
 from datetime import datetime, timedelta
 SECRET_KEY = "TalentifyX-secret-key"
 ALGORITHM = "HS256"
@@ -42,3 +43,6 @@ def decode_token(token: str):
         return payload
     except JWTError:
         return None
+
+def generate_reset_token():
+    return secrets.token_urlsafe(32)

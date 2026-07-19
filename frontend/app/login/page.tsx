@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 import { api } from "@/lib/axios";
 import { useAuthStore } from "@/store/authStore";
-
+import Link from "next/link";
 export default function LoginPage() {
   const router = useRouter();
   const { setToken } = useAuthStore();
@@ -216,6 +216,12 @@ export default function LoginPage() {
                 </button>
               </div>
 
+<Link
+  href="/forgot-password"
+  className="text-sm text-violet-500 hover:underline"
+>
+  Forgot Password?
+</Link>
               {/* Divider */}
               <div className="my-5 flex items-center">
                 <div className="h-px flex-1 bg-white/10" />
