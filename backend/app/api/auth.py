@@ -24,6 +24,7 @@ from app.core.security import (
 
 from app.services.email_service import (
     send_reset_password_email,
+    send_welcome_email,
 )
 router = APIRouter()
 
@@ -41,11 +42,16 @@ def register(
             detail="Email already exists"
         )
 
+    # Send welcome email
+    send_welcome_email(
+        created.email,
+        created.full_name or "there"
+    )
+
     return {
         "message": "User created",
         "email": created.email
     }
-
 @router.post("/login")
 def login(
     user: UserLogin,
