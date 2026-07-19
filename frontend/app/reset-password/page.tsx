@@ -1,25 +1,26 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { api } from "@/lib/axios";
 
-export default function ResetPasswordPage() {
-  const searchParams = useSearchParams();
-
-  const token = searchParams.get("token");
+export default function ResetPasswordPage({
+  searchParams,
+}: {
+  searchParams: { token?: string };
+}) {
+  const token = searchParams.token;
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const handleReset = async () => {
     if (!token) {
-      alert("Invalid reset link.");
+      alert("Invalid reset link");
       return;
     }
 
     if (password !== confirmPassword) {
-      alert("Passwords do not match.");
+      alert("Passwords do not match");
       return;
     }
 
@@ -29,13 +30,13 @@ export default function ResetPasswordPage() {
         password,
       });
 
-      alert("Password reset successfully.");
+      alert("Password reset successfully");
 
       window.location.href = "/login";
     } catch (err: any) {
       alert(
-        err.response?.data?.detail ||
-          "Failed to reset password."
+        err.response?.data?.detail ??
+          "Failed to reset password"
       );
     }
   };
@@ -43,11 +44,11 @@ export default function ResetPasswordPage() {
   return (
     <div
       style={{
-        maxWidth: "400px",
+        maxWidth: 400,
         margin: "100px auto",
         display: "flex",
         flexDirection: "column",
-        gap: "15px",
+        gap: 15,
       }}
     >
       <h2>Reset Password</h2>
