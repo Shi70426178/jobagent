@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { Search, MapPin, Rocket,Activity,BriefcaseBusiness,  Send, } from "lucide-react";
 import Swal from "sweetalert2";
 import { Loader2 } from "lucide-react";
-
+import Select from "react-select";
 export default function AgentPage() {
   const router = useRouter();
 
@@ -22,7 +22,58 @@ export default function AgentPage() {
   const [jobsFound, setJobsFound] = useState(0);
 
   const [applicationsSent, setApplicationsSent] = useState(0);
+const locationOptions = [
+  { value: "", label: "All Locations" },
 
+  // Remote
+  { value: "Remote", label: "🌍 Remote" },
+  { value: "Anywhere", label: "🌎 Anywhere" },
+
+  // Metro Cities
+  { value: "Bangalore", label: "Bangalore" },
+  { value: "Hyderabad", label: "Hyderabad" },
+  { value: "Pune", label: "Pune" },
+  { value: "Mumbai", label: "Mumbai" },
+  { value: "Delhi NCR", label: "Delhi NCR" },
+  { value: "Gurugram", label: "Gurugram" },
+  { value: "Noida", label: "Noida" },
+  { value: "New Delhi", label: "New Delhi" },
+  { value: "Chennai", label: "Chennai" },
+  { value: "Kolkata", label: "Kolkata" },
+  { value: "Ahmedabad", label: "Ahmedabad" },
+
+  // Growing IT Cities
+  { value: "Kochi", label: "Kochi" },
+  { value: "Thiruvananthapuram", label: "Thiruvananthapuram" },
+  { value: "Coimbatore", label: "Coimbatore" },
+  { value: "Mysore", label: "Mysore" },
+  { value: "Visakhapatnam", label: "Visakhapatnam" },
+  { value: "Bhubaneswar", label: "Bhubaneswar" },
+  { value: "Indore", label: "Indore" },
+  { value: "Nagpur", label: "Nagpur" },
+  { value: "Jaipur", label: "Jaipur" },
+  { value: "Lucknow", label: "Lucknow" },
+  { value: "Chandigarh", label: "Chandigarh" },
+  { value: "Mohali", label: "Mohali" },
+  { value: "Surat", label: "Surat" },
+  { value: "Vadodara", label: "Vadodara" },
+  { value: "Nashik", label: "Nashik" },
+  { value: "Patna", label: "Patna" },
+  { value: "Raipur", label: "Raipur" },
+  { value: "Bhopal", label: "Bhopal" },
+  { value: "Kanpur", label: "Kanpur" },
+  { value: "Jodhpur", label: "Jodhpur" },
+  { value: "Guwahati", label: "Guwahati" },
+  { value: "Vijayawada", label: "Vijayawada" },
+  { value: "Madurai", label: "Madurai" },
+  { value: "Mangalore", label: "Mangalore" },
+
+  // International
+  { value: "Dubai", label: "Dubai" },
+  { value: "Singapore", label: "Singapore" },
+  { value: "London", label: "London" },
+  { value: "United States", label: "United States" },
+];
   useEffect(() => {
     loadStats();
   }, []);
@@ -414,31 +465,112 @@ sm:text-sm font-medium text-zinc-300">
 
         </label>
 
-        <input
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
-          placeholder="Remote / Bangalore"
-          className="
-            h-12
-sm:h-14
-            w-full
-            rounded-xl
-            border
-            border-white/10
-            bg-black/30
-            px-5
-            text-xs
-sm:text-sm
-            text-white
-            placeholder:text-zinc-500
-            outline-none
-            transition-all
-            duration-300
-            focus:border-cyan-500
-            focus:ring-2
-            focus:ring-cyan-500/20
-          "
-        />
+   <Select
+  options={locationOptions}
+  placeholder="Search location..."
+  isSearchable
+  isClearable
+  menuPortalTarget={typeof window !== "undefined" ? document.body : undefined}
+  menuPosition="fixed"
+  value={
+    locationOptions.find((option) => option.value === location) || null
+  }
+  onChange={(selected) => setLocation(selected?.value || "")}
+styles={{
+  control: (base, state) => ({
+    ...base,
+    minHeight: "56px",
+    backgroundColor: "rgba(255,255,255,0.03)",
+    border: state.isFocused
+      ? "1px solid rgba(6,182,212,.45)"
+      : "1px solid rgba(255,255,255,.10)",
+    borderRadius: "12px",
+    boxShadow: state.isFocused
+      ? "0 0 0 3px rgba(6,182,212,.15)"
+      : "none",
+    transition: "all .2s ease",
+    "&:hover": {
+      border: "1px solid rgba(6,182,212,.35)",
+    },
+  }),
+
+  valueContainer: (base) => ({
+    ...base,
+    padding: "0 16px",
+  }),
+
+  input: (base) => ({
+    ...base,
+    color: "#fff",
+  }),
+
+  singleValue: (base) => ({
+    ...base,
+    color: "#fff",
+    fontSize: "14px",
+  }),
+
+  placeholder: (base) => ({
+    ...base,
+    color: "#71717a",
+    fontSize: "14px",
+  }),
+
+menu: (base) => ({
+  ...base,
+  backgroundColor: "#09090b",
+  border: "1px solid rgba(255,255,255,0.08)",
+  borderRadius: "12px",
+  overflow: "hidden",
+  boxShadow: "0 10px 30px rgba(0,0,0,.45)",
+  zIndex: 9999,
+}),
+
+menuList: (base) => ({
+  ...base,
+  backgroundColor: "#09090b",
+  padding: "6px",
+}),
+
+option: (base, state) => ({
+  ...base,
+  backgroundColor: state.isSelected
+    ? "rgba(6,182,212,.18)"
+    : state.isFocused
+    ? "rgba(255,255,255,.06)"
+    : "#09090b",
+  color: "#ffffff",
+  borderRadius: "8px",
+  padding: "10px 14px",
+  cursor: "pointer",
+}),
+
+  dropdownIndicator: (base) => ({
+    ...base,
+    color: "#9ca3af",
+    "&:hover": {
+      color: "#06b6d4",
+    },
+  }),
+
+  clearIndicator: (base) => ({
+    ...base,
+    color: "#9ca3af",
+    "&:hover": {
+      color: "#ef4444",
+    },
+  }),
+
+  indicatorSeparator: () => ({
+    display: "none",
+  }),
+
+  menuPortal: (base) => ({
+    ...base,
+    zIndex: 9999,
+  }),
+}}
+/>
 
       </div>
 

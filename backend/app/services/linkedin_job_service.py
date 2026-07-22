@@ -4,6 +4,60 @@ from app.models.linkedin_post import LinkedInPost
 from app.models.linkedin_job import LinkedInJob
 
 
+# Location aliases (normalized to lowercase keys)
+LOCATION_MAP = {
+    "bangalore": [
+        "Bangalore",
+        "Bengaluru",
+        "Greater Bengaluru",
+        "Bellandur",
+        "Koramangala",
+        "Manyata Tech Park",
+        "North Bangalore",
+    ],
+    "hyderabad": [
+        "Hyderabad",
+        "Kondapur",
+        "Malakpet",
+    ],
+    "mumbai": [
+        "Mumbai",
+        "Navi Mumbai",
+        "Andheri",
+        "Powai",
+        "Thane",
+        "Goregaon",
+        "Lower Parel",
+    ],
+    "delhi ncr": [
+        "Delhi",
+        "Delhi NCR",
+        "New Delhi",
+        "Noida",
+        "Greater Noida",
+        "Gurgaon",
+        "Gurugram",
+        "Faridabad",
+        "Ghaziabad",
+    ],
+    "pune": [
+        "Pune",
+        "Baner",
+        "Kalyani Nagar",
+        "Magarpatta",
+        "Wakad",
+        "Shivajinagar",
+    ],
+    "remote": [
+        "Remote",
+        "Work From Home",
+        "WFH",
+        "Permanent Remote",
+        "Anywhere",
+    ],
+}
+
+
 def get_recent_jobs(
     db,
     user_id,
@@ -24,9 +78,23 @@ def get_recent_jobs(
         )
     )
 
+    # Location filter
     if location and location.strip():
+
+        normalized_location = location.strip().lower()
+
+        aliases = LOCATION_MAP.get(
+            normalized_location,
+            [location]
+        )
+
         query = query.filter(
-            LinkedInJob.location.ilike(f"%{location}%")
+            or_(
+                *[
+                    LinkedInJob.location.ilike(f"%{alias}%")
+                    for alias in aliases
+                ]
+            )
         )
 
     shown_jobs = (
