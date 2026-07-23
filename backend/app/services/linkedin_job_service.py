@@ -221,6 +221,10 @@ def get_recent_jobs(
         )
     )
 
+    print("Keyword:", repr(keyword))
+    print("Location:", repr(location))
+    print("After keyword filter:", query.count())
+
     # Location filter
     if location and location.strip():
 
@@ -239,6 +243,7 @@ def get_recent_jobs(
                 ]
             )
         )
+        print("After location filter:", query.count())
 
     shown_jobs = (
         db.query(LinkedInPost.linkedin_job_id)
@@ -250,11 +255,16 @@ def get_recent_jobs(
     query = query.filter(
         ~LinkedInJob.id.in_(shown_jobs)
     )
+    print("After excluding shown jobs:", query.count())
 
-    return (
+    jobs = (
         query.order_by(
             LinkedInJob.scraped_at.desc()
         )
         .limit(10)
         .all()
     )
+
+    print("Jobs returned:", len(jobs))
+
+    return jobs

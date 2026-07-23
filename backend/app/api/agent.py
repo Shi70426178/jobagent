@@ -40,6 +40,11 @@ def start_agent(
             "resume_uploaded": False,
             "message": "Please upload your resume first."
         }
+    
+    print("================================")
+    print("Keyword received:", repr(data.keywords))
+    print("Location received:", repr(data.location))
+    print("================================")
 
     search_jobs(
         db,
@@ -47,6 +52,15 @@ def start_agent(
         data.keywords,
         data.location
     )
+
+    search_jobs(
+        db,
+        current_user.id,
+        data.keywords,
+        data.location
+    )
+
+
 
     return {
         "success": True,
