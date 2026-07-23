@@ -23,56 +23,72 @@ LOCATION_MAP = {
         "Kajurmarg", "Mira Road", "Chandivali"
     ],
 
-    "delhi": [
-        "Delhi", "New Delhi", "Delhi NCR",
-        "NCR", "South Delhi", "Model Town",
-        "Dwarka", "Nehru Place", "Rajendra Place"
-    ],
-
-    "gurgaon": [
-        "Gurgaon", "Gurugram",
-        "Sector 49", "Sector 74A"
-    ],
-
-    "noida": [
-        "Noida", "Greater Noida",
-        "Greater Noida West",
-        "Sector 2", "Sector 6",
-        "Sector 62", "Sector 63",
-        "Sector 126"
-    ],
-
-    "faridabad": [
-        "Faridabad"
-    ],
-
-    "ghaziabad": [
+    "delhi ncr": [
+        "Delhi",
+        "New Delhi",
+        "Delhi NCR",
+        "NCR",
+        "South Delhi",
+        "Dwarka",
+        "Nehru Place",
+        "Rajendra Place",
+        "Noida",
+        "Greater Noida",
+        "Gurgaon",
+        "Gurugram",
+        "Faridabad",
         "Ghaziabad"
     ],
 
+    "new delhi": [
+        "New Delhi",
+        "Delhi"
+    ],
+
+    "gurugram": [
+        "Gurgaon",
+        "Gurugram",
+        "Sector 49",
+        "Sector 74A"
+    ],
+
+    "noida": [
+        "Noida",
+        "Greater Noida",
+        "Greater Noida West",
+        "Sector 2",
+        "Sector 6",
+        "Sector 62",
+        "Sector 63",
+        "Sector 126"
+    ],
+
     "pune": [
-        "Pune", "Baner", "Pashan",
-        "Bibwewadi", "Kalyani Nagar",
-        "Magarpatta", "Shivajinagar",
-        "Pune District", "Pune Division"
+        "Pune",
+        "Baner",
+        "Pashan",
+        "Bibwewadi",
+        "Kalyani Nagar",
+        "Magarpatta",
+        "Shivajinagar",
+        "Pune District",
+        "Pune Division"
     ],
 
     "chennai": [
-        "Chennai", "OMR",
-        "Perambur", "Thiruporur"
+        "Chennai",
+        "OMR",
+        "Perambur",
+        "Thiruporur"
     ],
 
     "ahmedabad": [
-        "Ahmedabad", "Bopal",
-        "Makarba", "Nikol",
-        "Katraj", "SG Highway",
+        "Ahmedabad",
+        "Bopal",
+        "Makarba",
+        "Nikol",
+        "SG Highway",
         "Sindhu Bhavan"
-    ],
-
-    "gandhinagar": [
-        "Gandhinagar",
-        "Kudasan",
-        "Khatraj"
     ],
 
     "surat": [
@@ -85,11 +101,6 @@ LOCATION_MAP = {
         "Vadodara",
         "Savli",
         "Manjusar"
-    ],
-
-    "rajkot": [
-        "Rajkot",
-        "Morbi Road"
     ],
 
     "indore": [
@@ -133,32 +144,41 @@ LOCATION_MAP = {
         "Nashik"
     ],
 
-    "coimbatore": [
-        "Coimbatore"
-    ],
-
     "kochi": [
         "Kochi",
         "Cochin"
     ],
 
-    "kozhikode": [
-        "Kozhikode",
-        "Calicut"
-    ],
-
-    "trivandrum": [
+    "thiruvananthapuram": [
+        "Thiruvananthapuram",
         "Trivandrum",
-        "Technopark",
-        "Thiruvananthapuram"
+        "Technopark"
     ],
 
-    "mohali": [
-        "Mohali"
+    "coimbatore": [
+        "Coimbatore"
+    ],
+
+    "mysore": [
+        "Mysore",
+        "Mysuru"
+    ],
+
+    "visakhapatnam": [
+        "Visakhapatnam",
+        "Vizag"
+    ],
+
+    "bhubaneswar": [
+        "Bhubaneswar"
     ],
 
     "chandigarh": [
         "Chandigarh"
+    ],
+
+    "mohali": [
+        "Mohali"
     ],
 
     "kolkata": [
@@ -169,13 +189,49 @@ LOCATION_MAP = {
         "Madhyamgram"
     ],
 
-    "goa": [
-        "Goa",
-        "Margao"
+    "jodhpur": [
+        "Jodhpur"
     ],
 
-    "kerala": [
-        "Kerala"
+    "guwahati": [
+        "Guwahati"
+    ],
+
+    "vijayawada": [
+        "Vijayawada"
+    ],
+
+    "madurai": [
+        "Madurai"
+    ],
+
+    "mangalore": [
+        "Mangalore",
+        "Mangaluru"
+    ],
+
+    "dubai": [
+        "Dubai",
+        "Dubai, UAE",
+        "United Arab Emirates"
+    ],
+
+    "singapore": [
+        "Singapore"
+    ],
+
+    "london": [
+        "London",
+        "Greater London",
+        "United Kingdom",
+        "UK"
+    ],
+
+    "united states": [
+        "United States",
+        "USA",
+        "US",
+        "United States of America"
     ],
 
     "remote": [
@@ -196,6 +252,15 @@ LOCATION_MAP = {
         "Remote (USA)",
         "USA (Remote)",
         "United States (Remote)"
+    ],
+
+    "anywhere": [
+        "Anywhere",
+        "Remote",
+        "Worldwide",
+        "Global",
+        "Work From Home",
+        "WFH"
     ]
 }
 
@@ -209,15 +274,23 @@ def get_recent_jobs(
 
     last_7_days = datetime.utcnow() - timedelta(days=7)
 
+    words = keyword.split()
+
+    keyword_filters = []
+
+    for word in words:
+        keyword_filters.extend([
+            LinkedInJob.job_title.ilike(f"%{word}%"),
+            LinkedInJob.search_keyword.ilike(f"%{word}%"),
+            LinkedInJob.skills.ilike(f"%{word}%"),
+            LinkedInJob.post_text.ilike(f"%{word}%")
+        ])
+
     query = (
         db.query(LinkedInJob)
         .filter(
             LinkedInJob.scraped_at >= last_7_days,
-            or_(
-                LinkedInJob.job_title.ilike(f"%{keyword}%"),
-                LinkedInJob.search_keyword.ilike(f"%{keyword}%"),
-                LinkedInJob.skills.ilike(f"%{keyword}%")
-            )
+            or_(*keyword_filters)
         )
     )
 

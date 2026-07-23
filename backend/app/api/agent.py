@@ -53,12 +53,12 @@ def start_agent(
         data.location
     )
 
-    search_jobs(
-        db,
-        current_user.id,
-        data.keywords,
-        data.location
-    )
+    # search_jobs(
+    #     db,
+    #     current_user.id,
+    #     data.keywords,
+    #     data.location
+    # )
 
 
 
