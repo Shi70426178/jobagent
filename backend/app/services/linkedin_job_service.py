@@ -247,13 +247,22 @@ def get_recent_jobs(
 
     shown_jobs = (
         db.query(LinkedInPost.linkedin_job_id)
-        .filter(
-            LinkedInPost.user_id == user_id
-        )
+        .filter(LinkedInPost.user_id == user_id)
+        .all()
     )
 
+    print("Shown jobs:", shown_jobs)
+
+    shown_job_ids = [
+        row[0]
+        for row in shown_jobs
+        if row[0] is not None
+    ]
+
+    print("Shown job ids:", shown_job_ids)
+
     query = query.filter(
-        ~LinkedInJob.id.in_(shown_jobs)
+        ~LinkedInJob.id.in_(shown_job_ids)
     )
     print("After excluding shown jobs:", query.count())
 
@@ -266,5 +275,7 @@ def get_recent_jobs(
     )
 
     print("Jobs returned:", len(jobs))
+    for job in jobs:
+        print(f"JOB ID={job.id}, TITLE={job.job_title}, COMPANY={job.company}")
 
     return jobs
