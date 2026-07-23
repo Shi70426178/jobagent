@@ -46,7 +46,7 @@ def start_agent(
     print("Location received:", repr(data.location))
     print("================================")
 
-    search_jobs(
+    jobs = search_jobs(
         db,
         current_user.id,
         data.keywords,
@@ -64,7 +64,8 @@ def start_agent(
 
     return {
         "success": True,
-        "message": "Job search completed"
+        "message": f"{len(jobs)} jobs found.",
+        "jobs_found": len(jobs)
     }
 
 @router.get("/hn-test")

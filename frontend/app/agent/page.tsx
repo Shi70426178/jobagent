@@ -157,6 +157,19 @@ if (response.data.resume_uploaded === false) {
   return;
 }
 
+if (response.data.jobs_found === 0) {
+  await Swal.fire({
+    icon: "info",
+    title: "No Jobs Found",
+    text: "No new jobs found for this role in the selected location.",
+    background: "#0b1220",
+    color: "#fff",
+    confirmButtonColor: "#06b6d4",
+  });
+
+  return;
+}
+
 await Swal.fire({
   icon: "success",
   title: "Success",

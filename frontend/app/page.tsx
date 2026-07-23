@@ -4,12 +4,13 @@ import Link from "next/link";
 
 export default function Home() {
   return (
-    <div
-      className="relative min-h-screen overflow-x-hidden bg-cover bg-center bg-no-repeat"
-      style={{
-        backgroundImage: "url('/Login_BG.png')",
-      }}
-    >
+    // <div
+    //   className="relative min-h-screen overflow-x-hidden bg-cover bg-center bg-no-repeat"
+    //   // style={{
+    //   //   backgroundImage: "url('/Login_BG.png')",
+    //   // }}
+    // >
+    <div className="relative min-h-screen overflow-x-hidden bg-black-100">
       {/* Background Overlay */}
       <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/60 to-black/70" />
 

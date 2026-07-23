@@ -80,4 +80,4 @@ def search_jobs(
 
         print("Saved post successfully", flush=True)
 
-    return True
+    return jobs

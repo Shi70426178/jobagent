@@ -297,7 +297,7 @@ const colorClasses = {
     <ProtectedRoute>
       <div className="relative overflow-hidden min-h-screen">
         {/* Background blur image */}
-        <div
+        {/* <div
           className="fixed top-0 right-0 bottom-0 hidden lg:block left-72 z-0 bg-no-repeat"
           style={{
             backgroundImage: "url('/Login_BG.png')",
@@ -306,7 +306,7 @@ const colorClasses = {
             filter: "blur(12px)",
             opacity: 0.3,
           }}
-        />
+        /> */}
         <div className="fixed inset-0 -z-10 bg-gradient-to-r from-[#030712] via-[#030712]/80 to-transparent" />
         <div className="absolute inset-0 opacity-[0.05] bg-[linear-gradient(rgba(255,255,255,.15)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.15)_1px,transparent_1px)] bg-[size:50px_50px]" />
 
