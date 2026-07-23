@@ -13,6 +13,18 @@ export default function AgentPage() {
 
   const [keywords, setKeywords] = useState("");
 
+  const [keywordOptions, setKeywordOptions] = useState<
+  { value: string; label: string }[]
+>([]);
+  const loadKeywords = async () => {
+  try {
+    const response = await api.get("/agent/keywords");
+    setKeywordOptions(response.data);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
   const [location, setLocation] = useState("");
 
   // const [dailyLimit, setDailyLimit] =
@@ -74,9 +86,10 @@ const locationOptions = [
   { value: "London", label: "London" },
   { value: "United States", label: "United States" },
 ];
-  useEffect(() => {
-    loadStats();
-  }, []);
+useEffect(() => {
+  loadStats();
+  loadKeywords();
+}, []);
 
   const loadStats = async () => {
     try {
@@ -424,32 +437,112 @@ sm:text-sm font-medium text-zinc-300">
 
         </label>
 
-        <input
-          value={keywords}
-          onChange={(e) => setKeywords(e.target.value)}
-          placeholder="Backend Developer"
-          className="
-            h-12
-sm:h-14
-            w-full
-            rounded-xl
-            border
-            border-white/10
-            bg-black/30
-            px-5
-            text-xs
-sm:text-sm
-            text-white
-            placeholder:text-zinc-500
-            outline-none
-            transition-all
-            duration-300
-            focus:border-cyan-500
-            focus:ring-2
-            focus:ring-cyan-500/20
-          "
-        />
+        <Select
+    options={keywordOptions}
+  isSearchable
+  isClearable
+  placeholder="Search job role..."
+  value={
+    keywordOptions.find(option => option.value === keywords) || null
+  }
+  onChange={(selected) => {
+    setKeywords(selected?.value || "");
+  }}
+    styles={{
+  control: (base, state) => ({
+    ...base,
+    minHeight: "56px",
+    backgroundColor: "rgba(255,255,255,0.03)",
+    border: state.isFocused
+      ? "1px solid rgba(6,182,212,.45)"
+      : "1px solid rgba(255,255,255,.10)",
+    borderRadius: "12px",
+    boxShadow: state.isFocused
+      ? "0 0 0 3px rgba(6,182,212,.15)"
+      : "none",
+    transition: "all .2s ease",
+    "&:hover": {
+      border: "1px solid rgba(6,182,212,.35)",
+    },
+  }),
 
+  valueContainer: (base) => ({
+    ...base,
+    padding: "0 16px",
+  }),
+
+  input: (base) => ({
+    ...base,
+    color: "#fff",
+  }),
+
+  singleValue: (base) => ({
+    ...base,
+    color: "#fff",
+    fontSize: "14px",
+  }),
+
+  placeholder: (base) => ({
+    ...base,
+    color: "#71717a",
+    fontSize: "14px",
+  }),
+
+menu: (base) => ({
+  ...base,
+  backgroundColor: "#09090b",
+  border: "1px solid rgba(255,255,255,0.08)",
+  borderRadius: "12px",
+  overflow: "hidden",
+  boxShadow: "0 10px 30px rgba(0,0,0,.45)",
+  zIndex: 9999,
+}),
+
+menuList: (base) => ({
+  ...base,
+  backgroundColor: "#09090b",
+  padding: "6px",
+}),
+
+option: (base, state) => ({
+  ...base,
+  backgroundColor: state.isSelected
+    ? "rgba(6,182,212,.18)"
+    : state.isFocused
+    ? "rgba(255,255,255,.06)"
+    : "#09090b",
+  color: "#ffffff",
+  borderRadius: "8px",
+  padding: "10px 14px",
+  cursor: "pointer",
+}),
+
+  dropdownIndicator: (base) => ({
+    ...base,
+    color: "#9ca3af",
+    "&:hover": {
+      color: "#06b6d4",
+    },
+  }),
+
+  clearIndicator: (base) => ({
+    ...base,
+    color: "#9ca3af",
+    "&:hover": {
+      color: "#ef4444",
+    },
+  }),
+
+  indicatorSeparator: () => ({
+    display: "none",
+  }),
+
+  menuPortal: (base) => ({
+    ...base,
+    zIndex: 9999,
+  }),
+}}
+/>
       </div>
 
       {/* Location */}
@@ -475,7 +568,10 @@ sm:text-sm font-medium text-zinc-300">
   value={
     locationOptions.find((option) => option.value === location) || null
   }
-  onChange={(selected) => setLocation(selected?.value || "")}
+  onChange={(selected) => {
+  console.log(selected);
+  setLocation(selected ? selected.value : "");
+}}
 styles={{
   control: (base, state) => ({
     ...base,

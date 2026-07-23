@@ -2,6 +2,8 @@ from fastapi import APIRouter
 # from app.services.agent_service import search_jobs
 # from app.services.agent_service import scrape_wellfound
 from app.services.agent_service import search_jobs
+from sqlalchemy import func
+from app.models.job_keyword import JobKeyword
 from app.services.hackernews_service import get_hackernews_leads
 from sqlalchemy.orm import Session
 from fastapi import Depends
@@ -79,3 +81,19 @@ def hn_emails(
         "count": len(leads),
         "leads": leads
     }
+
+@router.get("/keywords")
+def get_keywords(db: Session = Depends(get_db)):
+    keywords = (
+        db.query(JobKeyword)
+        .order_by(JobKeyword.keyword)
+        .all()
+    )
+
+    return [
+        {
+            "value": row.search_value,   # <-- send search value
+            "label": row.keyword,        # <-- show label
+        }
+        for row in keywords
+    ]
