@@ -4,6 +4,7 @@ from app.services.gmail_service import (
     send_test_email,
     get_user_account
 )
+from app.models.linkedin_job import LinkedInJob
 from app.db.database import get_db
 from app.models.linkedin_post import LinkedInPost
 from app.services.linkedin_service import open_linkedin
@@ -36,7 +37,11 @@ def get_posts(
 ):
 
     posts = (
-        db.query(LinkedInPost)
+        db.query(LinkedInPost, LinkedInJob)
+        .join(
+            LinkedInJob,
+            LinkedInPost.linkedin_job_id == LinkedInJob.id
+        )
         .filter(
             LinkedInPost.user_id == current_user.id
         )
@@ -44,9 +49,11 @@ def get_posts(
         .all()
     )
 
-    for post in posts:
+    result = []
 
-        diff = datetime.now(timezone.utc) - post.created_at
+    for post, job in posts:
+
+        diff = datetime.now(timezone.utc) - job.scraped_at
 
         hours = int(diff.total_seconds() // 3600)
 
@@ -59,7 +66,9 @@ def get_posts(
             days = hours // 24
             post.posted_time = f"{days} days ago"
 
-    return posts
+        result.append(post)
+
+    return result
 
 @router.get("/applications")
 def get_applications(
