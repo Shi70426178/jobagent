@@ -7,54 +7,196 @@ from app.models.linkedin_job import LinkedInJob
 # Location aliases (normalized to lowercase keys)
 LOCATION_MAP = {
     "bangalore": [
-        "Bangalore",
-        "Bengaluru",
-        "Greater Bengaluru",
-        "Bellandur",
-        "Koramangala",
-        "Manyata Tech Park",
-        "North Bangalore",
+        "Bangalore", "Bengaluru", "Greater Bengaluru", "Bellandur",
+        "Koramangala", "Manyata Tech Park", "North Bangalore",
+        "JP Nagar", "Domlur", "Sarjapura", "BLR"
     ],
+
     "hyderabad": [
-        "Hyderabad",
-        "Kondapur",
-        "Malakpet",
+        "Hyderabad", "Kondapur", "Malakpet",
+        "Hyderabad, India", "Hyderabad, Andhra Pradesh"
     ],
+
     "mumbai": [
-        "Mumbai",
-        "Navi Mumbai",
-        "Andheri",
-        "Powai",
-        "Thane",
-        "Goregaon",
-        "Lower Parel",
+        "Mumbai", "Navi Mumbai", "Andheri", "Powai",
+        "Thane", "Goregaon", "Lower Parel",
+        "Kajurmarg", "Mira Road", "Chandivali"
     ],
-    "delhi ncr": [
-        "Delhi",
-        "Delhi NCR",
-        "New Delhi",
-        "Noida",
-        "Greater Noida",
-        "Gurgaon",
-        "Gurugram",
-        "Faridabad",
-        "Ghaziabad",
+
+    "delhi": [
+        "Delhi", "New Delhi", "Delhi NCR",
+        "NCR", "South Delhi", "Model Town",
+        "Dwarka", "Nehru Place", "Rajendra Place"
     ],
+
+    "gurgaon": [
+        "Gurgaon", "Gurugram",
+        "Sector 49", "Sector 74A"
+    ],
+
+    "noida": [
+        "Noida", "Greater Noida",
+        "Greater Noida West",
+        "Sector 2", "Sector 6",
+        "Sector 62", "Sector 63",
+        "Sector 126"
+    ],
+
+    "faridabad": [
+        "Faridabad"
+    ],
+
+    "ghaziabad": [
+        "Ghaziabad"
+    ],
+
     "pune": [
-        "Pune",
-        "Baner",
-        "Kalyani Nagar",
-        "Magarpatta",
-        "Wakad",
-        "Shivajinagar",
+        "Pune", "Baner", "Pashan",
+        "Bibwewadi", "Kalyani Nagar",
+        "Magarpatta", "Shivajinagar",
+        "Pune District", "Pune Division"
     ],
+
+    "chennai": [
+        "Chennai", "OMR",
+        "Perambur", "Thiruporur"
+    ],
+
+    "ahmedabad": [
+        "Ahmedabad", "Bopal",
+        "Makarba", "Nikol",
+        "Katraj", "SG Highway",
+        "Sindhu Bhavan"
+    ],
+
+    "gandhinagar": [
+        "Gandhinagar",
+        "Kudasan",
+        "Khatraj"
+    ],
+
+    "surat": [
+        "Surat",
+        "Vesu",
+        "Katargam"
+    ],
+
+    "vadodara": [
+        "Vadodara",
+        "Savli",
+        "Manjusar"
+    ],
+
+    "rajkot": [
+        "Rajkot",
+        "Morbi Road"
+    ],
+
+    "indore": [
+        "Indore",
+        "Nipania",
+        "Jaora Compound"
+    ],
+
+    "bhopal": [
+        "Bhopal"
+    ],
+
+    "raipur": [
+        "Raipur"
+    ],
+
+    "jaipur": [
+        "Jaipur",
+        "Kukas"
+    ],
+
+    "lucknow": [
+        "Lucknow",
+        "Raebareli"
+    ],
+
+    "kanpur": [
+        "Kanpur"
+    ],
+
+    "patna": [
+        "Patna"
+    ],
+
+    "nagpur": [
+        "Nagpur",
+        "MIHAN"
+    ],
+
+    "nashik": [
+        "Nashik"
+    ],
+
+    "coimbatore": [
+        "Coimbatore"
+    ],
+
+    "kochi": [
+        "Kochi",
+        "Cochin"
+    ],
+
+    "kozhikode": [
+        "Kozhikode",
+        "Calicut"
+    ],
+
+    "trivandrum": [
+        "Trivandrum",
+        "Technopark",
+        "Thiruvananthapuram"
+    ],
+
+    "mohali": [
+        "Mohali"
+    ],
+
+    "chandigarh": [
+        "Chandigarh"
+    ],
+
+    "kolkata": [
+        "Kolkata",
+        "Salt Lake",
+        "Sector V",
+        "Camac Street",
+        "Madhyamgram"
+    ],
+
+    "goa": [
+        "Goa",
+        "Margao"
+    ],
+
+    "kerala": [
+        "Kerala"
+    ],
+
     "remote": [
         "Remote",
+        "100% Remote",
         "Work From Home",
         "WFH",
         "Permanent Remote",
         "Anywhere",
-    ],
+        "Anywhere in India",
+        "India (Remote)",
+        "Remote (India)",
+        "Remote, India",
+        "Remote / Work From Home",
+        "Remote/Hybrid",
+        "Hybrid/Remote",
+        "India (WFH)",
+        "Remote (USA)",
+        "USA (Remote)",
+        "United States (Remote)"
+    ]
 }
 
 
@@ -72,6 +214,7 @@ def get_recent_jobs(
         .filter(
             LinkedInJob.scraped_at >= last_7_days,
             or_(
+                LinkedInJob.job_title.ilike(f"%{keyword}%"),
                 LinkedInJob.search_keyword.ilike(f"%{keyword}%"),
                 LinkedInJob.skills.ilike(f"%{keyword}%")
             )
@@ -85,7 +228,7 @@ def get_recent_jobs(
 
         aliases = LOCATION_MAP.get(
             normalized_location,
-            [location]
+            [normalized_location]
         )
 
         query = query.filter(
