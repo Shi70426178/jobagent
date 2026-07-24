@@ -22,7 +22,12 @@ export default function LinkedinPage() {
   const [searchId, setSearchId] = useState<string | null>(null);
 
 useEffect(() => {
-  setSearchId(new URLSearchParams(window.location.search).get("search_id"));
+  const id = new URLSearchParams(window.location.search).get("search_id");
+
+  console.log("Current URL:", window.location.href);
+  console.log("search_id:", id);
+
+  setSearchId(id);
 }, []);
 // const searchId = searchParams.get("search_id");
 const [generatingId, setGeneratingId] = useState<number | null>(null);
@@ -39,15 +44,19 @@ const [totalPages, setTotalPages] = useState(1);
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
 
-  useEffect(() => {
+useEffect(() => {
+  if (searchId) {
     loadPosts();
-}, [page]);
+  }
+}, [searchId, page]);
 
 const loadPosts = async () => {
+  if (!searchId) return;
+
   try {
     const response = await api.get(
-`/linkedin/posts?search_id=${searchId}&page=${page}&page_size=20`
-);
+      `/linkedin/posts?search_id=${searchId}&page=${page}&page_size=20`
+    );
 
     setPosts(response.data.posts);
     setTotalPages(response.data.total_pages);

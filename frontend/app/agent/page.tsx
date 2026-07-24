@@ -182,6 +182,8 @@ await Swal.fire({
   confirmButtonColor: "#06b6d4",
 });
 
+console.log("Agent Response:", response.data);
+console.log("Search ID:", response.data.search_id);
 router.push(
     `/new-jobs?search_id=${response.data.search_id}`
 );
