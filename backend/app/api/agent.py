@@ -79,17 +79,28 @@ def start_agent(
         db.commit()
         db.refresh(search)
 
-    result = search_jobs(
-        db=db,
-        user_id=current_user.id,
-        search_id=search.id,
-        keywords=search.keywords,
-        location=search.location,
-        page=data.page,
-        page_size=data.page_size
-    )
-    search.total_jobs = result["total"]
-    db.commit()
+    if data.page > search.last_scraped_page:
+
+        result = search_jobs(
+            db=db,
+            user_id=current_user.id,
+            search_id=search.id,
+            keywords=search.keywords,
+            location=search.location,
+            page=data.page,
+            page_size=data.page_size
+        )
+
+        search.total_jobs = result["total"]
+        search.last_scraped_page = data.page
+        db.commit()
+
+    else:
+
+        result = {
+            "jobs": [],
+            "total": search.total_jobs
+        }
 
     jobs = result["jobs"]
 

@@ -19,3 +19,5 @@ class AgentSearch(Base):
 
     created_at = Column(DateTime, server_default=func.now())
 
+    last_scraped_page = Column(Integer, default=0)
+
