@@ -53,8 +53,8 @@ def start_agent(
         current_user.id,
         data.keywords,
         data.location,
-        page=request.page,
-        page_size=request.page_size
+        page=data.page,
+        page_size=data.page_size
     )
 
     # search_jobs(

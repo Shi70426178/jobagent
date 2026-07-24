@@ -276,7 +276,7 @@ def get_recent_jobs(
 
     last_7_days = datetime.utcnow() - timedelta(days=7)
 
-    words = keyword.split()
+    words = keywords.split()
 
     keyword_filters = []
 
@@ -296,7 +296,7 @@ def get_recent_jobs(
         )
     )
 
-    print("Keyword:", repr(keyword))
+    print("Keyword:", repr(keywords))
     print("Location:", repr(location))
     print("After keyword filter:", query.count())
 
