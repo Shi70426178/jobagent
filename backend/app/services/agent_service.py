@@ -3,6 +3,7 @@ from app.services.linkedin_db_service import save_post
 from app.services.job_match_service import calculate_match
 from app.services.email_generator_service import generate_email
 from datetime import datetime, timezone
+from app.models.agent_search import AgentSearch
 from app.models.resume import Resume
 
 
