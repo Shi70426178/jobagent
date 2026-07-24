@@ -51,12 +51,14 @@ useEffect(() => {
 }, [searchId, page]);
 
 const loadPosts = async () => {
-  if (!searchId) return;
+  // if (!searchId) return;
 
   try {
-    const response = await api.get(
-      `/linkedin/posts?search_id=${searchId}&page=${page}&page_size=20`
-    );
+    const url = searchId
+  ? `/linkedin/posts?search_id=${searchId}&page=${page}&page_size=20`
+  : `/linkedin/posts?page=${page}&page_size=20`;
+
+const response = await api.get(url);
 
     setPosts(response.data.posts);
     setTotalPages(response.data.total_pages);

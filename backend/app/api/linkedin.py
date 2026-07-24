@@ -4,6 +4,8 @@ from app.services.gmail_service import (
     send_test_email,
     get_user_account
 )
+from typing import Optional
+from app.models.agent_search import AgentSearch
 from app.models.linkedin_job import LinkedInJob
 from app.db.database import get_db
 from app.models.linkedin_post import LinkedInPost
@@ -32,13 +34,33 @@ def linkedin_login(
 
 @router.get("/posts")
 def get_posts(
-    search_id: int,
+    search_id: Optional[int] = None,
     page: int = 1,
     page_size: int = 20,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
 
+     if search_id is None:
+        latest_search = (
+            db.query(AgentSearch)
+            .filter(
+                AgentSearch.user_id == current_user.id
+            )
+            .order_by(AgentSearch.id.desc())
+            .first()
+        )
+
+        if not latest_search:
+            return {
+                "posts": [],
+                "page": 1,
+                "page_size": page_size,
+                "total": 0,
+                "total_pages": 0
+            }
+
+        search_id = latest_search.id
     offset = (page - 1) * page_size
 
     query = (
