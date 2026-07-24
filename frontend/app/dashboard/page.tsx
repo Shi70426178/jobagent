@@ -5,7 +5,8 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import { api } from "@/lib/axios";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
-
+import Select from "react-select";
+import { MapPin, Loader2 } from "lucide-react";
 import {
   Bot,
   Mail,
@@ -38,19 +39,6 @@ const swalTheme = {
   },
 };
 
-const showLoading = (title = "Running...") => {
-  Swal.fire({
-    title,
-    html: "Please wait...",
-    ...swalTheme,
-    allowOutsideClick: false,
-    allowEscapeKey: false,
-    showConfirmButton: false,
-    didOpen: () => {
-      Swal.showLoading();
-    },
-  });
-};
 
 const showSuccess = (message: string) => {
   Swal.fire({
@@ -105,11 +93,116 @@ export default function Dashboard() {
   const [jobsFound, setJobsFound] = useState(0);
   const [applicationsSent, setApplicationsSent] = useState(0);
 
-  useEffect(() => {
-    loadData();
-    loadStats();
-  }, []);
+ useEffect(() => {
+  loadData();
+  loadStats();
+  loadKeywords();
+}, []);
+const [keywordOptions, setKeywordOptions] = useState<
+  { value: string; label: string }[]
+>([]);
 
+const locationOptions = [
+  { value: "", label: "All Locations" },
+  { value: "Remote", label: "🌍 Remote" },
+  { value: "Anywhere", label: "🌎 Anywhere" },
+  { value: "Bangalore", label: "Bangalore" },
+  { value: "Hyderabad", label: "Hyderabad" },
+  { value: "Pune", label: "Pune" },
+  { value: "Mumbai", label: "Mumbai" },
+  { value: "Delhi NCR", label: "Delhi NCR" },
+  { value: "Gurugram", label: "Gurugram" },
+  { value: "Noida", label: "Noida" },
+  { value: "New Delhi", label: "New Delhi" },
+  { value: "Chennai", label: "Chennai" },
+  { value: "Kolkata", label: "Kolkata" },
+  { value: "Ahmedabad", label: "Ahmedabad" },
+  { value: "Dubai", label: "Dubai" },
+  { value: "Singapore", label: "Singapore" },
+  { value: "London", label: "London" },
+  { value: "United States", label: "United States" },
+];
+
+const loadKeywords = async () => {
+  try {
+    const response = await api.get("/agent/keywords");
+    setKeywordOptions(response.data);
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+const selectStyles = {
+  control: (base: any, state: any) => ({
+    ...base,
+    minHeight: "48px",
+    backgroundColor: "rgba(255,255,255,.03)",
+    border: state.isFocused
+      ? "1px solid rgba(6,182,212,.45)"
+      : "1px solid rgba(255,255,255,.10)",
+    borderRadius: "12px",
+    boxShadow: state.isFocused
+      ? "0 0 0 3px rgba(6,182,212,.15)"
+      : "none",
+    "&:hover": {
+      border: "1px solid rgba(6,182,212,.35)",
+    },
+  }),
+
+  valueContainer: (base: any) => ({
+    ...base,
+    padding: "0 14px",
+  }),
+
+  input: (base: any) => ({
+    ...base,
+    color: "#fff",
+  }),
+
+  singleValue: (base: any) => ({
+    ...base,
+    color: "#fff",
+  }),
+
+  placeholder: (base: any) => ({
+    ...base,
+    color: "#71717a",
+  }),
+
+  menu: (base: any) => ({
+    ...base,
+    backgroundColor: "#09090b",
+    border: "1px solid rgba(255,255,255,.08)",
+    borderRadius: "12px",
+    overflow: "hidden",
+    zIndex: 9999,
+  }),
+
+  menuList: (base: any) => ({
+    ...base,
+    backgroundColor: "#09090b",
+  }),
+
+  option: (base: any, state: any) => ({
+    ...base,
+    backgroundColor: state.isSelected
+      ? "rgba(6,182,212,.18)"
+      : state.isFocused
+      ? "rgba(255,255,255,.06)"
+      : "#09090b",
+    color: "#fff",
+    cursor: "pointer",
+  }),
+
+  indicatorSeparator: () => ({
+    display: "none",
+  }),
+
+  menuPortal: (base: any) => ({
+    ...base,
+    zIndex: 9999,
+  }),
+};
   const loadData = async () => {
     try {
       const appRes = await api.get("/applications");
@@ -131,16 +224,25 @@ export default function Dashboard() {
       console.error(err);
     }
   };
-const showLoading = () => {
+const showLoading = (
+  title: string = "Running...",
+  message: string = "Please wait..."
+) => {
   Swal.fire({
-    title: "Running...",
-    html: "Searching Jobs...",
-    allowOutsideClick: false,
-    allowEscapeKey: false,
+    title,
+    html: message,
     width: "280px",
     padding: "1rem",
     background: "#0f172a",
     color: "#fff",
+    allowOutsideClick: false,
+    allowEscapeKey: false,
+    showConfirmButton: false,
+    customClass: {
+      popup: "rounded-xl",
+      title: "text-base font-semibold",
+      htmlContainer: "text-xs",
+    },
     didOpen: () => {
       Swal.showLoading();
     },
@@ -436,27 +538,55 @@ const colorClasses = {
             <div className="p-4 sm:p-6">
               <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr_auto] gap-4 items-end">
                 <div>
-                  <label className="mb-1.5 block text-xs font-medium text-zinc-300">
-                    Job Keywords
-                  </label>
-                  <input
-                    value={keywords}
-                    onChange={(e) => setKeywords(e.target.value)}
-                    placeholder="Backend Developer"
-                    className="h-11 w-full rounded-xl border border-white/10 bg-black/30 px-4 text-sm text-white outline-none transition focus:border-cyan-500"
-                  />
-                </div>
+  <label className="mb-2 flex items-center gap-2 text-xs font-medium text-zinc-300">
+    <Search className="h-4 w-4 text-cyan-400" />
+    Job Keywords
+  </label>
+
+  <Select
+    options={keywordOptions}
+    isSearchable
+    isClearable
+    placeholder="Search job role..."
+    value={
+      keywordOptions.find((o) => o.value === keywords) || null
+    }
+    onChange={(selected) =>
+      setKeywords(selected?.value || "")
+    }
+    styles={selectStyles}
+    menuPortalTarget={
+      typeof window !== "undefined"
+        ? document.body
+        : undefined
+    }
+    menuPosition="fixed"
+  />
+</div>
                 <div>
-                  <label className="mb-1.5 block text-xs font-medium text-zinc-300">
-                    Preferred Location
-                  </label>
-                  <input
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                    placeholder="Remote / Bangalore"
-                    className="h-11 w-full rounded-xl border border-white/10 bg-black/30 px-4 text-sm text-white outline-none transition focus:border-cyan-500"
-                  />
-                </div>
+  <label className="mb-2 flex items-center gap-2 text-xs font-medium text-zinc-300">
+    <MapPin className="h-4 w-4 text-cyan-400" />
+    Preferred Location
+  </label>
+
+  <Select
+    options={locationOptions}
+    isSearchable
+    isClearable
+    placeholder="Search location..."
+    value={
+      locationOptions.find((option) => option.value === location) || null
+    }
+    onChange={(selected) => {
+      setLocation(selected?.value || "");
+    }}
+    styles={selectStyles}
+    menuPortalTarget={
+      typeof window !== "undefined" ? document.body : undefined
+    }
+    menuPosition="fixed"
+  />
+</div>
                 <button
                   onClick={startAgent}
                   disabled={loading}
