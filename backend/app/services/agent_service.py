@@ -9,6 +9,7 @@ from app.models.resume import Resume
 def search_jobs(
     db,
     user_id,
+    search_id,
     keywords,
     location,
     page=1,
@@ -16,7 +17,7 @@ def search_jobs(
 ):
     print("Agent keyword:", keywords)
 
-    jobs = get_recent_jobs(
+    result = get_recent_jobs(
         db=db,
         user_id=user_id,
         keywords=keywords,
@@ -24,6 +25,9 @@ def search_jobs(
         page=page,
         page_size=page_size
     )
+
+    jobs = result["jobs"]
+    total_jobs = result["total"]
 
     print("Jobs found:", len(jobs))
 
@@ -67,6 +71,7 @@ def search_jobs(
         save_post(
             db=db,
             user_id=user_id,
+            search_id=search_id,
             linkedin_job_id=job.id,
             recruiter_name=job.recruiter_name,
             company=job.company,
@@ -84,4 +89,7 @@ def search_jobs(
 
         print("Saved post successfully", flush=True)
 
-    return jobs
+    return {
+        "jobs": jobs,
+        "total": total_jobs
+}

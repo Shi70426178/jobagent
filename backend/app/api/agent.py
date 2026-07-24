@@ -6,6 +6,7 @@ from sqlalchemy import func
 from app.models.job_keyword import JobKeyword
 from app.services.hackernews_service import get_hackernews_leads
 from sqlalchemy.orm import Session
+from app.models.agent_search import AgentSearch
 from fastapi import Depends
 from app.models.user import User
 from app.core.dependencies import get_current_user
@@ -15,10 +16,11 @@ from app.models.resume import Resume
 from app.services.gmail_service import get_user_account
 from pydantic import BaseModel
 class AgentRequest(BaseModel):
-    keywords: str
-    location: str
+    keywords: str | None = None
+    location: str | None = None
     page: int = 1
     page_size: int = 20
+    search_id: int | None = None
     
 router = APIRouter()
 @router.post("/start")
@@ -48,14 +50,46 @@ def start_agent(
     print("Location received:", repr(data.location))
     print("================================")
 
-    jobs = search_jobs(
-        db,
-        current_user.id,
-        data.keywords,
-        data.location,
+    if data.search_id is not None:
+
+        search = (
+            db.query(AgentSearch)
+            .filter(
+                AgentSearch.id == data.search_id,
+                AgentSearch.user_id == current_user.id
+            )
+            .first()
+        )
+
+        if not search:
+            return {
+                "success": False,
+                "message": "Search session not found."
+            }
+
+    else:
+
+        search = AgentSearch(
+            user_id=current_user.id,
+            keywords=data.keywords,
+            location=data.location
+        )
+
+        db.add(search)
+        db.commit()
+        db.refresh(search)
+
+    result = search_jobs(
+        db=db,
+        user_id=current_user.id,
+        search_id=search.id,
+        keywords=search.keywords,
+        location=search.location,
         page=data.page,
         page_size=data.page_size
     )
+
+    jobs = result["jobs"]
 
     # search_jobs(
     #     db,
@@ -68,8 +102,9 @@ def start_agent(
 
     return {
         "success": True,
-        "message": f"{len(jobs)} jobs found.",
-        "jobs_found": len(jobs)
+        "message": f"{result['total']} jobs found.",
+        "jobs_found": result["total"],
+        "search_id": search.id
     }
 
 @router.get("/hn-test")

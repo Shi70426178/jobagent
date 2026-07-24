@@ -45,4 +45,10 @@ class LinkedInPost(Base):
     skills = Column(Text)
 
     linkedin_job_id = Column(Integer)
+
+    search_id = Column(
+    Integer,
+    ForeignKey("agent_searches.id"),
+    nullable=False
+)
     

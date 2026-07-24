@@ -5,6 +5,7 @@ from app.models.linkedin_post import LinkedInPost
 def save_post(
     db: Session,
     user_id: int,
+    search_id: int,
     recruiter_name: str,
     company: str,
     email: str,
@@ -35,6 +36,7 @@ def save_post(
 
     post = LinkedInPost(
         user_id=user_id,
+        search_id=search_id,
         recruiter_name=recruiter_name,
         company=company,
         email=email,

@@ -182,7 +182,9 @@ await Swal.fire({
   confirmButtonColor: "#06b6d4",
 });
 
-router.push("/new-jobs");
+router.push(
+    `/new-jobs?search_id=${response.data.search_id}`
+);
   } catch (error: any) {
     Swal.close();
 

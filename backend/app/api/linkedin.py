@@ -32,6 +32,7 @@ def linkedin_login(
 
 @router.get("/posts")
 def get_posts(
+    search_id: int,
     page: int = 1,
     page_size: int = 20,
     db: Session = Depends(get_db),
@@ -47,7 +48,8 @@ def get_posts(
             LinkedInPost.linkedin_job_id == LinkedInJob.id
         )
         .filter(
-            LinkedInPost.user_id == current_user.id
+            LinkedInPost.user_id == current_user.id,
+            LinkedInPost.search_id == search_id
         )
     )
 

@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { api } from "@/lib/axios";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
+import { useSearchParams } from "next/navigation";
 import {
   Sparkles,
   Search,
@@ -16,6 +17,9 @@ import {
 
 export default function LinkedinPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+const searchId = searchParams.get("search_id");
 const [generatingId, setGeneratingId] = useState<number | null>(null);
 const [applyingId, setApplyingId] = useState<number | null>(null);
   const [posts, setPosts] = useState<any[]>([]);
@@ -37,8 +41,8 @@ const [totalPages, setTotalPages] = useState(1);
 const loadPosts = async () => {
   try {
     const response = await api.get(
-      `/linkedin/posts?page=${page}&page_size=20`
-    );
+`/linkedin/posts?search_id=${searchId}&page=${page}&page_size=20`
+);
 
     setPosts(response.data.posts);
     setTotalPages(response.data.total_pages);
@@ -167,7 +171,17 @@ const filteredPosts = useMemo(() => {
   });
 }, [posts, search, filter, highestMatch]);
 
+const nextPage = async () => {
+  const next = page + 1;
 
+  await api.post("/agent/start", {
+    page: next,
+    page_size: 20,
+    search_id: Number(searchId),
+  });
+
+  setPage(next);
+};
 
   return (
     <main className="min-h-screen bg-[#09090B] text-white">
@@ -1043,7 +1057,7 @@ const filteredPosts = useMemo(() => {
 
   <button
     disabled={page === totalPages}
-    onClick={() => setPage(page + 1)}
+    onClick={nextPage}
     className="px-4 py-2 rounded-lg bg-violet-600 disabled:opacity-40"
   >
     Next
