@@ -45,9 +45,7 @@ const [totalPages, setTotalPages] = useState(1);
   const [filter, setFilter] = useState("all");
 
 useEffect(() => {
-  if (searchId) {
-    loadPosts();
-  }
+  loadPosts();
 }, [searchId, page]);
 
 const loadPosts = async () => {
