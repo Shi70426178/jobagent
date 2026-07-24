@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { api } from "@/lib/axios";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
-import { useSearchParams } from "next/navigation";
+// import { useSearchParams } from "next/navigation";
 import {
   Sparkles,
   Search,
@@ -17,9 +17,14 @@ import {
 
 export default function LinkedinPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
+  // const searchParams = useSearchParams();
 
-const searchId = searchParams.get("search_id");
+  const [searchId, setSearchId] = useState<string | null>(null);
+
+useEffect(() => {
+  setSearchId(new URLSearchParams(window.location.search).get("search_id"));
+}, []);
+// const searchId = searchParams.get("search_id");
 const [generatingId, setGeneratingId] = useState<number | null>(null);
 const [applyingId, setApplyingId] = useState<number | null>(null);
   const [posts, setPosts] = useState<any[]>([]);
