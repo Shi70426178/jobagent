@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { api } from "@/lib/axios";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
-import { useSearchParams } from "next/navigation";
+// import { useSearchParams } from "next/navigation";
 import {
   Sparkles,
   Search,
@@ -22,11 +22,10 @@ export default function LinkedinPage() {
   const [searches, setSearches] = useState([]);
   const [searchId, setSearchId] = useState<string | null>(null);
 
-const searchParams = useSearchParams();
-
 useEffect(() => {
-  setSearchId(searchParams.get("search_id"));
-}, [searchParams]);
+  const id = new URLSearchParams(window.location.search).get("search_id");
+  setSearchId(id);
+}, []);
 // const searchId = searchParams.get("search_id");
 const [generatingId, setGeneratingId] = useState<number | null>(null);
 const [applyingId, setApplyingId] = useState<number | null>(null);
@@ -263,7 +262,7 @@ const nextPage = async () => {
       <button
         key={item.id}
         onClick={() => {
-          router.push(`/new-jobs?search_id=${item.id}`);
+          window.location.href = `/new-jobs?search_id=${item.id}`;
         }}
         className={`px-4 py-2 rounded-lg ${
           Number(searchId) === item.id
