@@ -36,6 +36,7 @@ const [applyingId, setApplyingId] = useState<number | null>(null);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editedEmail, setEditedEmail] = useState("");
 
+  const [loadingNext, setLoadingNext] = useState(false);
   const [page, setPage] = useState(1);
 const [totalPages, setTotalPages] = useState(1);
   const [showSkills, setShowSkills] = useState(false);
@@ -186,15 +187,24 @@ const filteredPosts = useMemo(() => {
 }, [posts, search, filter, highestMatch]);
 
 const nextPage = async () => {
-  const next = page + 1;
+  try {
+    setLoadingNext(true);
 
-  await api.post("/agent/start", {
-    page: next,
-    page_size: 20,
-    search_id: Number(searchId),
-  });
+    const next = page + 1;
 
-  setPage(next);
+    await api.post("/agent/start", {
+      search_id: Number(searchId),
+      page: next,
+      page_size: 20,
+    });
+
+    setPage(next);
+
+    // optional but recommended
+    await loadPosts();
+  } finally {
+    setLoadingNext(false);
+  }
 };
 
   return (
@@ -1070,12 +1080,13 @@ const nextPage = async () => {
   </span>
 
   <button
-    disabled={page === totalPages}
-    onClick={nextPage}
-    className="px-4 py-2 rounded-lg bg-violet-600 disabled:opacity-40"
-  >
-    Next
-  </button>
+  disabled={page === totalPages || loadingNext}
+  onClick={nextPage}
+>
+  {loadingNext ? "Loading..." : "Next"}
+</button>
+
+
 
 </div>
       </div>
