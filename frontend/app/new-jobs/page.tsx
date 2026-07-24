@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { api } from "@/lib/axios";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
-// import { useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import {
   Sparkles,
   Search,
@@ -19,16 +19,14 @@ export default function LinkedinPage() {
   const router = useRouter();
   // const searchParams = useSearchParams();
 
+  const [searches, setSearches] = useState([]);
   const [searchId, setSearchId] = useState<string | null>(null);
 
+const searchParams = useSearchParams();
+
 useEffect(() => {
-  const id = new URLSearchParams(window.location.search).get("search_id");
-
-  console.log("Current URL:", window.location.href);
-  console.log("search_id:", id);
-
-  setSearchId(id);
-}, []);
+  setSearchId(searchParams.get("search_id"));
+}, [searchParams]);
 // const searchId = searchParams.get("search_id");
 const [generatingId, setGeneratingId] = useState<number | null>(null);
 const [applyingId, setApplyingId] = useState<number | null>(null);
@@ -48,7 +46,13 @@ const [totalPages, setTotalPages] = useState(1);
 useEffect(() => {
   loadPosts();
 }, [searchId, page]);
-
+useEffect(() => {
+  loadSearches();
+}, []);
+const loadSearches = async () => {
+    const res = await api.get("/agent/searches");
+    setSearches(res.data);
+};
 const loadPosts = async () => {
   // if (!searchId) return;
 
@@ -248,6 +252,30 @@ const nextPage = async () => {
           </button>
 
         </div>
+
+        <div className="mt-6 mb-5">
+  <h2 className="text-lg font-semibold mb-3">
+    My Searches
+  </h2>
+
+  <div className="flex flex-wrap gap-2">
+    {searches.map((item: any) => (
+      <button
+        key={item.id}
+        onClick={() => {
+          router.push(`/new-jobs?search_id=${item.id}`);
+        }}
+        className={`px-4 py-2 rounded-lg ${
+          Number(searchId) === item.id
+            ? "bg-violet-600 text-white"
+            : "bg-zinc-800 hover:bg-zinc-700"
+        }`}
+      >
+        {item.keywords} ({item.total_jobs})
+      </button>
+    ))}
+  </div>
+</div>
 
         {/* Search */}
 

@@ -109,6 +109,19 @@ def start_agent(
         "search_id": search.id
     }
 
+@router.get("/searches")
+def get_searches(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    searches = (
+        db.query(AgentSearch)
+        .filter(AgentSearch.user_id == current_user.id)
+        .order_by(AgentSearch.created_at.desc())
+        .all()
+    )
+
+    return searches
 @router.get("/hn-test")
 def hn_test(
     db: Session = Depends(get_db),
@@ -153,3 +166,4 @@ def get_keywords(db: Session = Depends(get_db)):
         }
         for row in keywords
     ]
+
