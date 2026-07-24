@@ -16,6 +16,7 @@ from app.models.resume import Resume
 from app.schemas.linkedin import UpdateEmailRequest
 from app.services.email_generator_service import generate_email
 from datetime import datetime, timezone
+
 router = APIRouter()
 
 
@@ -41,7 +42,7 @@ def get_posts(
     current_user: User = Depends(get_current_user)
 ):
 
-     if search_id is None:
+    if search_id is None:
         latest_search = (
             db.query(AgentSearch)
             .filter(
@@ -61,6 +62,7 @@ def get_posts(
             }
 
         search_id = latest_search.id
+
     offset = (page - 1) * page_size
 
     query = (
@@ -112,6 +114,7 @@ def get_posts(
         "total_pages": (total + page_size - 1) // page_size
     }
 
+
 @router.get("/applications")
 def get_applications(
     db: Session = Depends(get_db),
@@ -127,6 +130,8 @@ def get_applications(
         .order_by(LinkedInPost.id.desc())
         .all()
     )
+
+
 @router.post("/generate-email/{post_id}")
 def generate_mail(
     post_id: int,
@@ -180,6 +185,7 @@ def generate_mail(
         "generated_email": email
     }
 
+
 @router.post("/apply/{post_id}")
 def apply_post(
     post_id: int,
@@ -214,10 +220,11 @@ def apply_post(
         .order_by(Resume.id.desc())
         .first()
     )
+
     account = get_user_account(
-    db,
-    current_user.id
-)
+        db,
+        current_user.id
+    )
 
     if not account:
         return {
@@ -243,6 +250,7 @@ def apply_post(
         "success": True,
         "gmail_connected": True
     }
+
 
 @router.put("/email/{post_id}")
 def update_email(
