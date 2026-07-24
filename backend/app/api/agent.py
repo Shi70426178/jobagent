@@ -88,6 +88,8 @@ def start_agent(
         page=data.page,
         page_size=data.page_size
     )
+    search.total_jobs = result["total"]
+    db.commit()
 
     jobs = result["jobs"]
 

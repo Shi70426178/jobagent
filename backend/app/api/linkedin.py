@@ -77,7 +77,16 @@ def get_posts(
         )
     )
 
-    total = query.count()
+    search = (
+        db.query(AgentSearch)
+        .filter(
+            AgentSearch.id == search_id,
+            AgentSearch.user_id == current_user.id
+        )
+        .first()
+    )
+
+    total = search.total_jobs if search else 0
 
     posts = (
         query
