@@ -60,8 +60,8 @@ const loadPosts = async () => {
 
   try {
     const url = searchId
-  ? `/linkedin/posts?search_id=${searchId}&page=${page}&page_size=20`
-  : `/linkedin/posts?page=${page}&page_size=20`;
+  ? `/linkedin/posts?search_id=${searchId}&page=${page}&page_size=5`
+  : `/linkedin/posts?page=${page}&page_size=5`;
 
 const response = await api.get(url);
 
@@ -201,7 +201,7 @@ const nextPage = async () => {
     await api.post("/agent/start", {
       search_id: Number(searchId),
       page: next,
-      page_size: 20,
+      page_size: 5,
     });
 
     setPage(next);

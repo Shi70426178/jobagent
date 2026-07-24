@@ -37,7 +37,7 @@ def linkedin_login(
 def get_posts(
     search_id: Optional[int] = None,
     page: int = 1,
-    page_size: int = 20,
+    page_size: int = 5,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):

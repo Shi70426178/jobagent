@@ -271,7 +271,7 @@ def get_recent_jobs(
     keywords,
     location,
     page=1,
-    page_size=20
+    page_size=5
 ):
 
     last_7_days = datetime.utcnow() - timedelta(days=7)

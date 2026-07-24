@@ -141,7 +141,7 @@ const response = await api.post("/agent/start", {
     keywords,
     location,
     page,
-    page_size: 20
+    page_size: 5
 });
 
 Swal.close();

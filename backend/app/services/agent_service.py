@@ -14,7 +14,7 @@ def search_jobs(
     keywords,
     location,
     page=1,
-    page_size=20
+    page_size=5
 ):
     print("Agent keyword:", keywords)
 

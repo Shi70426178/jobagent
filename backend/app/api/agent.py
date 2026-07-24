@@ -19,7 +19,7 @@ class AgentRequest(BaseModel):
     keywords: str | None = None
     location: str | None = None
     page: int = 1
-    page_size: int = 20
+    page_size: int = 5
     search_id: int | None = None
     
 router = APIRouter()
