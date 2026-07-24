@@ -50,6 +50,9 @@ useEffect(() => {
 }, []);
 const loadSearches = async () => {
     const res = await api.get("/agent/searches");
+
+    console.log("Searches API:", res.data);
+
     setSearches(res.data);
 };
 const loadPosts = async () => {
