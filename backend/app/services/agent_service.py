@@ -10,15 +10,19 @@ def search_jobs(
     db,
     user_id,
     keywords,
-    location
+    location,
+    page=1,
+    page_size=20
 ):
     print("Agent keyword:", keywords)
 
     jobs = get_recent_jobs(
-        db,
-        user_id,
-        keywords,
-        location
+        db=db,
+        user_id=user_id,
+        keywords=keywords,
+        location=location,
+        page=page,
+        page_size=page_size
     )
 
     print("Jobs found:", len(jobs))

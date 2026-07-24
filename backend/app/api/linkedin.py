@@ -32,11 +32,15 @@ def linkedin_login(
 
 @router.get("/posts")
 def get_posts(
+    page: int = 1,
+    page_size: int = 20,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
 
-    posts = (
+    offset = (page - 1) * page_size
+
+    query = (
         db.query(LinkedInPost, LinkedInJob)
         .join(
             LinkedInJob,
@@ -45,7 +49,15 @@ def get_posts(
         .filter(
             LinkedInPost.user_id == current_user.id
         )
+    )
+
+    total = query.count()
+
+    posts = (
+        query
         .order_by(LinkedInPost.id.desc())
+        .offset(offset)
+        .limit(page_size)
         .all()
     )
 
@@ -68,7 +80,13 @@ def get_posts(
 
         result.append(post)
 
-    return result
+    return {
+        "posts": result,
+        "page": page,
+        "page_size": page_size,
+        "total": total,
+        "total_pages": (total + page_size - 1) // page_size
+    }
 
 @router.get("/applications")
 def get_applications(

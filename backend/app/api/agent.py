@@ -17,6 +17,8 @@ from pydantic import BaseModel
 class AgentRequest(BaseModel):
     keywords: str
     location: str
+    page: int = 1
+    page_size: int = 20
     
 router = APIRouter()
 @router.post("/start")
@@ -50,7 +52,9 @@ def start_agent(
         db,
         current_user.id,
         data.keywords,
-        data.location
+        data.location,
+        page=request.page,
+        page_size=request.page_size
     )
 
     # search_jobs(

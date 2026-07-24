@@ -268,8 +268,10 @@ LOCATION_MAP = {
 def get_recent_jobs(
     db,
     user_id,
-    keyword,
-    location=None
+    keywords,
+    location,
+    page=1,
+    page_size=20
 ):
 
     last_7_days = datetime.utcnow() - timedelta(days=7)
@@ -340,10 +342,10 @@ def get_recent_jobs(
     print("After excluding shown jobs:", query.count())
 
     jobs = (
-        query.order_by(
-            LinkedInJob.scraped_at.desc()
-        )
-        .limit(10)
+        query
+        .order_by(LinkedInJob.scraped_at.desc())
+        .offset((page - 1) * page_size)
+        .limit(page_size)
         .all()
     )
 

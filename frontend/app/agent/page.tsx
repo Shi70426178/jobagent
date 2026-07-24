@@ -11,6 +11,7 @@ import Select from "react-select";
 export default function AgentPage() {
   const router = useRouter();
 
+  const [page, setPage] = useState(1);
   const [keywords, setKeywords] = useState("");
 
   const [keywordOptions, setKeywordOptions] = useState<
@@ -137,8 +138,10 @@ Swal.fire({
 });
   try {
 const response = await api.post("/agent/start", {
-  keywords,
-  location,
+    keywords,
+    location,
+    page,
+    page_size: 20
 });
 
 Swal.close();

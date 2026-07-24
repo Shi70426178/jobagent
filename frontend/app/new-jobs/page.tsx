@@ -22,6 +22,8 @@ const [applyingId, setApplyingId] = useState<number | null>(null);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editedEmail, setEditedEmail] = useState("");
 
+  const [page, setPage] = useState(1);
+const [totalPages, setTotalPages] = useState(1);
   const [showSkills, setShowSkills] = useState(false);
   const [selectedSkills, setSelectedSkills] = useState("");
 
@@ -30,16 +32,20 @@ const [applyingId, setApplyingId] = useState<number | null>(null);
 
   useEffect(() => {
     loadPosts();
-  }, []);
+}, [page]);
 
-  const loadPosts = async () => {
-    try {
-      const response = await api.get("/linkedin/posts");
-      setPosts(response.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+const loadPosts = async () => {
+  try {
+    const response = await api.get(
+      `/linkedin/posts?page=${page}&page_size=20`
+    );
+
+    setPosts(response.data.posts);
+    setTotalPages(response.data.total_pages);
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 const generateMail = async (id: number) => {
   try {
@@ -1021,7 +1027,29 @@ const filteredPosts = useMemo(() => {
           </div>
 
         )}
+<div className="flex justify-center items-center gap-4 mt-8">
 
+  <button
+    disabled={page === 1}
+    onClick={() => setPage(page - 1)}
+    className="px-4 py-2 rounded-lg bg-zinc-800 disabled:opacity-40"
+  >
+    Previous
+  </button>
+
+  <span>
+    Page {page} of {totalPages}
+  </span>
+
+  <button
+    disabled={page === totalPages}
+    onClick={() => setPage(page + 1)}
+    className="px-4 py-2 rounded-lg bg-violet-600 disabled:opacity-40"
+  >
+    Next
+  </button>
+
+</div>
       </div>
  </div>
       {/* ========================= */}
