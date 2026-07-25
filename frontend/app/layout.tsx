@@ -14,8 +14,47 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "oneXjob",
-  description: "AI Career Assistant",
+  metadataBase: new URL("https://onexjob.com"),
+
+  title: {
+    default: "oneXjob - AI Job Search & One-Click Job Applications",
+    template: "%s | oneXjob",
+  },
+
+  description:
+    "Find software jobs faster with AI. Upload your resume, discover matching jobs, generate personalized emails, and apply in one click.",
+
+  keywords: [
+    "AI Job Search",
+    "AI Job Agent",
+    "Software Developer Jobs",
+    "Remote Jobs",
+    "Resume Matcher",
+    "AI Cover Letter",
+    "Job Search India",
+    "oneXjob",
+  ],
+
+  robots: {
+    index: true,
+    follow: true,
+  },
+
+  openGraph: {
+    title: "oneXjob - AI Job Search & One-Click Job Applications",
+    description:
+      "Find software jobs faster with AI. Upload your resume, discover matching jobs, generate personalized emails, and apply in one click.",
+    url: "https://onexjob.com",
+    siteName: "oneXjob",
+    type: "website",
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "oneXjob - AI Job Search",
+    description:
+      "Find software jobs faster with AI and apply in one click.",
+  },
 };
 
 export default function RootLayout({
