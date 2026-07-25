@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Text, DateTime
+from sqlalchemy import Column, Integer, String, Text, DateTime, JSON
 from sqlalchemy.sql import func
 
 from app.db.base import Base
@@ -43,3 +43,14 @@ class LinkedInWalkInJob(Base):
     salary = Column(String)
 
     skills = Column(Text)
+
+    # New walk-in specific fields
+    walkin_date = Column(String)
+
+    walkin_time = Column(String)
+
+    venue = Column(Text)
+
+    positions = Column(JSON)
+
+    contact_email = Column(String)

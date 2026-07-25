@@ -4,6 +4,7 @@ from app.services.linkedin_walkin_db_service import (
     is_walkin_post,
     save_walkin_job
 )
+from app.services.walkin_ai_service import extract_walkin_details
 from app.services.openai_service import extract_job_details
 from app.services.linkedin_job_db_service import save_job
 
@@ -111,13 +112,15 @@ def collect_jobs(
 
                 if is_walkin_post(text):
 
+                    walkin = extract_walkin_details(text)
+
                     save_walkin_job(
 
                         db=db,
 
                         recruiter_name=job.get("recruiter", ""),
 
-                        company=job.get("company", ""),
+                        company=walkin.get("company", "") or job.get("company", ""),
 
                         job_title=job.get("job_title", ""),
 
@@ -125,17 +128,27 @@ def collect_jobs(
 
                         industry=job.get("industry", ""),
 
-                        location=job.get("location", ""),
+                        location=walkin.get("location", "") or job.get("location", ""),
 
                         posted_time=job.get("posted_time", ""),
 
-                        experience=job.get("experience", ""),
+                        experience=walkin.get("experience", "") or job.get("experience", ""),
 
                         employment_type=job.get("employment_type", ""),
 
                         salary=job.get("salary", ""),
 
-                        skills=job.get("skills", []),
+                        skills=walkin.get("skills", []) or job.get("skills", []),
+
+                        walkin_date=walkin.get("walkin_date", ""),
+
+                        walkin_time=walkin.get("walkin_time", ""),
+
+                        venue=walkin.get("venue", ""),
+
+                        positions=walkin.get("positions", []),
+
+                        contact_email=walkin.get("contact_email", ""),
 
                         post_text=text,
 

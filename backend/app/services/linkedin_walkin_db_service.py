@@ -25,6 +25,11 @@ def save_walkin_job(
     employment_type: str,
     salary: str,
     skills,
+    walkin_date: str,
+    walkin_time: str,
+    venue: str,
+    positions,
+    contact_email: str,
     post_text: str,
     linkedin_url: str,
     search_keyword: str
@@ -53,6 +58,17 @@ def save_walkin_job(
         employment_type=employment_type,
         salary=salary,
         skills=",".join(skills) if isinstance(skills, list) else skills,
+
+        walkin_date=walkin_date,
+
+        walkin_time=walkin_time,
+
+        venue=venue,
+
+        positions=positions,
+
+        contact_email=contact_email,
+
         post_text=post_text,
         linkedin_url=linkedin_url,
         search_keyword=search_keyword
