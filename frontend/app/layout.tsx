@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import AppLayout from "@/components/AppLayout";
+import { GoogleAnalytics } from "@next/third-parties/google";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -98,8 +99,10 @@ export default function RootLayout({
         <div className="fixed inset-0 -z-10 bg-black/40" />
 
         {/* Application */}
-        <AppLayout>{children}</AppLayout>
-      </body>
+<AppLayout>{children}</AppLayout>
+
+<GoogleAnalytics gaId="G-XG3ZY58ZFH" />
+</body>
     </html>
   );
 }
