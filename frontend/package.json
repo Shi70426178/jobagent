@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "postbuild": "next-sitemap",
     "lint": "eslint"
   },
   "dependencies": {
@@ -13,10 +14,14 @@
     "framer-motion": "^12.40.0",
     "lucide-react": "^1.22.0",
     "next": "16.2.9",
+    "next-sitemap": "^4.2.3",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "react-hot-toast": "^2.6.0",
+    "react-select": "^5.10.2",
     "recharts": "^3.8.1",
+    "sweetalert": "^2.1.2",
+    "sweetalert2": "^11.26.25",
     "zustand": "^5.0.14"
   },
   "devDependencies": {
