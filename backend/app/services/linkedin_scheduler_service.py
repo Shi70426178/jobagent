@@ -1,6 +1,9 @@
 from playwright.sync_api import sync_playwright
 from urllib.parse import quote
-
+from app.services.linkedin_walkin_db_service import (
+    is_walkin_post,
+    save_walkin_job
+)
 from app.services.openai_service import extract_job_details
 from app.services.linkedin_job_db_service import save_job
 
@@ -105,6 +108,41 @@ def collect_jobs(
                 print(text[:1000])   # print first 1000 characters
 
                 job = extract_job_details(text)
+
+                if is_walkin_post(text):
+
+                    save_walkin_job(
+
+                        db=db,
+
+                        recruiter_name=job.get("recruiter", ""),
+
+                        company=job.get("company", ""),
+
+                        job_title=job.get("job_title", ""),
+
+                        department=job.get("department", ""),
+
+                        industry=job.get("industry", ""),
+
+                        location=job.get("location", ""),
+
+                        posted_time=job.get("posted_time", ""),
+
+                        experience=job.get("experience", ""),
+
+                        employment_type=job.get("employment_type", ""),
+
+                        salary=job.get("salary", ""),
+
+                        skills=job.get("skills", []),
+
+                        post_text=text,
+
+                        linkedin_url="",
+
+                        search_keyword=keyword
+                    )
 
                 print("\n========== OPENAI OUTPUT ==========")
                 print(job)

@@ -25,6 +25,7 @@ from app.models.scheduler_keyword import SchedulerKeyword
 # from app.api.users import router as users_router
 from app.models.linkedin_job import LinkedInJob
 from app.api.scheduler import router as scheduler_router
+from app.api import walkin
 app = FastAPI()
 
 # print("DATABASE BASE TABLES")
@@ -84,6 +85,7 @@ app.include_router(
     prefix="/admin/hackernews",
     tags=["Admin HackerNews"],
 )
+app.include_router(walkin.router)
 # app.include_router(
 #     users_router,
 #     prefix="/users",
