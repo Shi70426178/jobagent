@@ -24,3 +24,6 @@ class ForgotPasswordRequest(BaseModel):
 class ResetPasswordRequest(BaseModel):
     token: str
     password: str
+
+class GoogleLoginRequest(BaseModel):
+    credential: str

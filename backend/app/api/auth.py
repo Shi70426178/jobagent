@@ -11,7 +11,8 @@ from app.db.database import get_db
 from app.schemas.user import UserCreate
 from app.services.auth_service import create_user
 from datetime import datetime, timedelta
-
+from app.schemas.user import GoogleLoginRequest
+from app.services.google_auth import verify_google_token
 from app.schemas.user import (
     ForgotPasswordRequest,
     ResetPasswordRequest,
@@ -81,6 +82,64 @@ def login(
         "token_type": "bearer"
     }
 
+@router.post("/google")
+def google_login(
+    request: GoogleLoginRequest,
+    db: Session = Depends(get_db)
+):
+    google_user = verify_google_token(request.credential)
+
+    if not google_user["email_verified"]:
+        raise HTTPException(
+            status_code=400,
+            detail="Google email not verified"
+        )
+
+    user = (
+        db.query(User)
+        .filter(User.email == google_user["email"])
+        .first()
+    )
+
+    # Existing user
+    if user:
+
+        if not user.google_id:
+            user.google_id = google_user["google_id"]
+
+        if not user.auth_provider:
+            user.auth_provider = "google"
+
+        if not user.profile_picture:
+            user.profile_picture = google_user["picture"]
+
+        db.commit()
+
+    else:
+        user = User(
+            email=google_user["email"],
+            full_name=google_user["name"],
+            hashed_password=None,
+            google_id=google_user["google_id"],
+            auth_provider="google",
+            profile_picture=google_user["picture"],
+        )
+
+        db.add(user)
+        db.commit()
+        db.refresh(user)
+
+    token = create_access_token(
+        {
+            "sub": str(user.id),
+            "email": user.email,
+        }
+    )
+
+    return {
+        "access_token": token,
+        "token_type": "bearer",
+    }
 
 @router.post("/forgot-password")
 def forgot_password(

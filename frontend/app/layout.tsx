@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import AppLayout from "@/components/AppLayout";
+import GoogleProvider from "@/components/GoogleProvider";
 import { GoogleAnalytics } from "@next/third-parties/google";
 
 const inter = Inter({
@@ -99,7 +100,9 @@ export default function RootLayout({
         <div className="fixed inset-0 -z-10 bg-black/40" />
 
         {/* Application */}
-<AppLayout>{children}</AppLayout>
+<GoogleProvider>
+  <AppLayout>{children}</AppLayout>
+</GoogleProvider>
 
 <GoogleAnalytics gaId="G-XG3ZY58ZFH" />
 </body>

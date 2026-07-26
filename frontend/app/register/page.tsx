@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 import { api } from "@/lib/axios";
+import GoogleLoginButton from "@/components/GoogleLoginButton";
+
 import { Eye, EyeOff } from "lucide-react";
 export default function RegisterPage() {
   const router = useRouter();
@@ -289,6 +291,18 @@ export default function RegisterPage() {
               <p className="mt-1.5 text-xs leading-5 text-zinc-400">
                 Join oneXjob and accelerate your job search with AI.
               </p>
+
+              <div className="mt-5">
+  <GoogleLoginButton />
+</div>
+
+<div className="my-5 flex items-center">
+  <div className="h-px flex-1 bg-white/10" />
+  <span className="px-2.5 text-[11px] text-zinc-500">
+    OR CONTINUE WITH EMAIL
+  </span>
+  <div className="h-px flex-1 bg-white/10" />
+</div>
 
               <div className="mt-5 space-y-3.5">
 
