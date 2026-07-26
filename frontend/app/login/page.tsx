@@ -6,6 +6,8 @@ import { Eye, EyeOff } from "lucide-react";
 import { api } from "@/lib/axios";
 import { useAuthStore } from "@/store/authStore";
 import Link from "next/link";
+import Swal from "sweetalert2";
+
 export default function LoginPage() {
   const router = useRouter();
   const { setToken } = useAuthStore();
@@ -14,28 +16,77 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const login = async () => {
-    try {
-      setLoading(true);
-      const response = await api.post("/auth/login", { email, password });
-      setToken(response.data.access_token);
-      router.push("/dashboard");
-    } catch (error) {
-      alert("Login failed");
-    } finally {
-      setLoading(false);
-    }
-  };
+ const login = async () => {
+  if (!email.trim()) {
+    Swal.fire({
+      icon: "warning",
+      title: "Email Required",
+      text: "Please enter your email address.",
+      background: "#18181b",
+      color: "#fff",
+      confirmButtonColor: "#ffffff",
+      customClass: {
+        popup: "rounded-2xl",
+      },
+    });
+    return;
+  }
+
+  if (!password.trim()) {
+    Swal.fire({
+      icon: "warning",
+      title: "Password Required",
+      text: "Please enter your password.",
+      background: "#18181b",
+      color: "#fff",
+      confirmButtonColor: "#ffffff",
+      customClass: {
+        popup: "rounded-2xl",
+      },
+    });
+    return;
+  }
+
+  try {
+    setLoading(true);
+
+    const response = await api.post("/auth/login", {
+      email,
+      password,
+    });
+
+    setToken(response.data.access_token);
+
+    await Swal.fire({
+      icon: "success",
+      title: "Welcome Back!",
+      text: "Login successful.",
+      timer: 1200,
+      showConfirmButton: false,
+      background: "#18181b",
+      color: "#fff",
+    });
+
+    router.push("/dashboard");
+  } catch (error: any) {
+   Swal.fire({
+  icon: "error",
+  title: "Login Failed",
+  text: "Invalid credentials",
+  confirmButtonText: "OK",
+});
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
-    // <div
-    //   className="relative min-h-screen overflow-x-hidden overflow-y-auto bg-cover bg-center bg-no-repeat"
-    //   style={{
-    //     backgroundImage: "url('/Login_BG.png')",
-    //   }}
-    // >
-
-    <div className="relative min-h-screen overflow-x-hidden bg-black-100">
+    <div
+      className="relative min-h-screen overflow-x-hidden overflow-y-auto bg-cover bg-center bg-no-repeat"
+      style={{
+        backgroundImage: "url('/Login_BG.png')",
+      }}
+    >
       {/* Dark Overlay */}
       <div className="absolute inset-0 bg-gradient-to-r from-black/55 via-black/35 to-black/45" />
 
@@ -200,22 +251,35 @@ export default function LoginPage() {
                 </div>
 
                 {/* Login Button */}
-                <button
-                  onClick={login}
-                  disabled={loading}
-                  className="
-                    w-full rounded-lg
-                    bg-gradient-to-r from-violet-600 via-indigo-600 to-cyan-500
-                    py-2.5
-                    text-sm font-semibold text-white
-                    transition-all duration-300
-                    md:hover:scale-[1.01]
-                    hover:shadow-[0_0_25px_rgba(99,102,241,.4)]
-                    disabled:opacity-60
-                  "
-                >
-                  {loading ? "Signing In..." : "Sign In"}
-                </button>
+               <button
+  onClick={login}
+  disabled={loading}
+  className="
+    w-full
+    rounded-xl
+    border
+    border-white
+    bg-gradient-to-b
+    from-white
+    via-zinc-100
+    to-zinc-300
+    py-3
+    text-sm
+    font-semibold
+    text-black
+    transition-all
+    duration-300
+    hover:from-zinc-50
+    hover:via-white
+    hover:to-zinc-200
+    hover:shadow-[0_0_24px_rgba(255,255,255,0.18)]
+    active:scale-[0.98]
+    disabled:opacity-60
+    disabled:cursor-not-allowed
+  "
+>
+  {loading ? "Signing In..." : "Sign In"}
+</button>
               </div>
 
 <Link
