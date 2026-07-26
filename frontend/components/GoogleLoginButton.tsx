@@ -39,7 +39,7 @@ export default function GoogleLoginButton() {
       shape="pill"
       text="continue_with"
       size="large"
-      width="100%"
+      width="340"
     />
   );
 }
