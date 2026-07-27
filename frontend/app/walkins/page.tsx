@@ -6,10 +6,6 @@ import {
   Search,
   RefreshCw,
   Building2,
-  MapPin,
-  Clock,
-  Briefcase,
-  Eye,
 } from "lucide-react";
 
 export default function WalkInsPage() {
@@ -249,23 +245,7 @@ export default function WalkInsPage() {
 
               )}
 
-              <details className="mt-6">
-
-                <summary className="cursor-pointer flex items-center gap-2 text-violet-400">
-
-                  <Eye size={18} />
-
-                  View Full Post
-
-                </summary>
-
-                <div className="mt-4 whitespace-pre-wrap leading-7 text-zinc-300">
-
-                  {job.post_text}
-
-                </div>
-
-              </details>
+              
 
             </div>
 
