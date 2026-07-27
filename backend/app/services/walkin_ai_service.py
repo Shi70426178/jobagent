@@ -15,6 +15,7 @@ Extract ONLY the following information and return valid JSON.
 
 {{
   "company": "",
+  "title": "",
   "location": "",
   "walkin_date": "",
   "walkin_time": "",
@@ -22,26 +23,31 @@ Extract ONLY the following information and return valid JSON.
   "experience": "",
   "positions": [],
   "skills": [],
+  "employment_type": "",
+  "salary": "",
   "contact_email": ""
 }}
 
 Rules:
 
-- company = company name.
+- company = company name if mentioned.
+- title = title of the walk-in drive or hiring event (example: "Walk-In Drive for IT Professionals", "Mega Walk-In Drive").
 - location = city/state if mentioned.
-- walkin_date = exact date or day (Monday, 25 July, etc.).
+- walkin_date = exact interview date or day.
 - walkin_time = interview timing.
-- venue = complete venue/address.
+- venue = complete interview venue/address.
 - experience = experience required.
-- positions = list of job positions.
-- skills = list of important skills.
+- positions = list of all job positions mentioned.
+- skills = list of required skills or technologies.
+- employment_type = Full Time, Internship, Contract, Part Time, etc. if mentioned.
+- salary = salary if mentioned, otherwise "".
 - contact_email = recruiter/company email if available.
 
-If any field is missing:
+If a field is not available:
 - Return "" for strings.
 - Return [] for arrays.
 
-Return ONLY JSON.
+Return ONLY valid JSON.
 
 POST:
 

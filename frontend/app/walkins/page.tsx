@@ -39,11 +39,11 @@ export default function WalkInsPage() {
     return jobs.filter((job) => {
       const value = search.toLowerCase();
 
-      return (
-        job.company?.toLowerCase().includes(value) ||
-        job.job_title?.toLowerCase().includes(value) ||
-        job.location?.toLowerCase().includes(value)
-      );
+     return (
+  (job.company || "").toLowerCase().includes(value) ||
+  (job.job_title || "").toLowerCase().includes(value) ||
+  (job.location || "").toLowerCase().includes(value)
+);
     });
   }, [jobs, search]);
 
@@ -124,8 +124,8 @@ export default function WalkInsPage() {
             >
 
               <h2 className="text-2xl font-bold">
-                {job.job_title}
-              </h2>
+  {job.job_title || "Walk-In Drive"}
+</h2>
 
               <div className="flex items-center gap-2 mt-2 text-violet-400">
 
@@ -135,57 +135,89 @@ export default function WalkInsPage() {
 
               </div>
 
-              <div className="grid md:grid-cols-3 gap-4 mt-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4 mt-6">
 
-                <div className="rounded-xl bg-zinc-800 p-4">
+  <div className="rounded-xl bg-zinc-800 p-4">
+    <div className="text-zinc-500 text-sm">
+      Walk-In Date
+    </div>
 
-                  <div className="text-zinc-500 text-sm">
-                    Location
-                  </div>
+    <div className="mt-2 text-lg font-semibold">
+      {job.walkin_date || "Not Mentioned"}
+    </div>
+  </div>
 
-                  <div className="mt-2 text-lg font-semibold flex items-center gap-2">
+  <div className="rounded-xl bg-zinc-800 p-4">
+    <div className="text-zinc-500 text-sm">
+      Walk-In Time
+    </div>
 
-                    <MapPin size={18} />
+    <div className="mt-2 text-lg font-semibold">
+      {job.walkin_time || "Not Mentioned"}
+    </div>
+  </div>
 
-                    {job.location || "Not Mentioned"}
+  <div className="rounded-xl bg-zinc-800 p-4">
+    <div className="text-zinc-500 text-sm">
+      Venue
+    </div>
 
-                  </div>
+    <div className="mt-2 text-lg font-semibold">
+      {job.venue || "Not Mentioned"}
+    </div>
+  </div>
 
-                </div>
+  <div className="rounded-xl bg-zinc-800 p-4">
+    <div className="text-zinc-500 text-sm">
+      Location
+    </div>
 
-                <div className="rounded-xl bg-zinc-800 p-4">
+    <div className="mt-2 text-lg font-semibold">
+      {job.location || "Not Mentioned"}
+    </div>
+  </div>
 
-                  <div className="text-zinc-500 text-sm">
-                    Posted
-                  </div>
+  <div className="rounded-xl bg-zinc-800 p-4">
+    <div className="text-zinc-500 text-sm">
+      Experience
+    </div>
 
-                  <div className="mt-2 text-lg font-semibold flex items-center gap-2">
+    <div className="mt-2 text-lg font-semibold">
+      {job.experience || "Not Mentioned"}
+    </div>
+  </div>
 
-                    <Clock size={18} />
+</div>
 
-                    {job.posted_time || "N/A"}
+{job.positions && job.positions.length > 0 && (
 
-                  </div>
+  <div className="mt-5">
 
-                </div>
+    <div className="text-zinc-500 mb-2">
+      Positions
+    </div>
 
-                <div className="rounded-xl bg-zinc-800 p-4">
+    <div className="flex flex-wrap gap-2">
 
-                  <div className="text-zinc-500 text-sm">
-                    Experience
-                  </div>
+      {(Array.isArray(job.positions)
+  ? job.positions
+  : String(job.positions).split(",")
+).map((position: string, index: number) => (
 
-                  <div className="mt-2 text-lg font-semibold flex items-center gap-2">
+        <span
+          key={index}
+          className="px-3 py-1 rounded-full bg-blue-500/10 text-blue-300 text-sm"
+        >
+          {position}
+        </span>
 
-                    <Briefcase size={18} />
+      ))}
 
-                    {job.experience || "N/A"}
+    </div>
 
-                  </div>
+  </div>
 
-                </div>
-
-              </div>
+)}
 
               {job.skills && (
 
@@ -197,18 +229,19 @@ export default function WalkInsPage() {
 
                   <div className="flex flex-wrap gap-2">
 
-                    {job.skills
-                      .split(",")
-                      .map((skill: string, index: number) => (
+                    {(Array.isArray(job.skills)
+  ? job.skills
+  : String(job.skills).split(",")
+).map((skill: string, index: number) => (
 
-                        <span
-                          key={index}
-                          className="px-3 py-1 rounded-full bg-violet-500/10 text-violet-300 text-sm"
-                        >
-                          {skill.trim()}
-                        </span>
+  <span
+    key={index}
+    className="px-3 py-1 rounded-full bg-violet-500/10 text-violet-300 text-sm"
+  >
+    {skill.trim()}
+  </span>
 
-                      ))}
+))}
 
                   </div>
 

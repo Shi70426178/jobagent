@@ -122,7 +122,7 @@ def collect_jobs(
 
                         company=walkin.get("company", "") or job.get("company", ""),
 
-                        job_title=job.get("job_title", ""),
+                        job_title=walkin.get("title", "") or job.get("job_title", ""),
 
                         department=job.get("department", ""),
 
@@ -134,9 +134,9 @@ def collect_jobs(
 
                         experience=walkin.get("experience", "") or job.get("experience", ""),
 
-                        employment_type=job.get("employment_type", ""),
+                        employment_type=walkin.get("employment_type", "") or job.get("employment_type", ""),
 
-                        salary=job.get("salary", ""),
+                        salary=walkin.get("salary", "") or job.get("salary", ""),
 
                         skills=walkin.get("skills", []) or job.get("skills", []),
 
