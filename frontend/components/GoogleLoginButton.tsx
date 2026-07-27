@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { GoogleLogin } from "@react-oauth/google";
 import { api } from "@/lib/axios";
 import { useAuthStore } from "@/store/authStore";
@@ -8,6 +9,29 @@ import { useRouter } from "next/navigation";
 export default function GoogleLoginButton() {
   const router = useRouter();
   const { setToken } = useAuthStore();
+
+  const [buttonWidth, setButtonWidth] = useState(270);
+
+  useEffect(() => {
+    const updateWidth = () => {
+      if (window.innerWidth < 640) {
+        // Mobile
+        setButtonWidth(300);
+      } else if (window.innerWidth < 1024) {
+        // Tablet
+        setButtonWidth(300);
+      } else {
+        // Desktop
+        setButtonWidth(270);
+      }
+    };
+
+    updateWidth();
+
+    window.addEventListener("resize", updateWidth);
+
+    return () => window.removeEventListener("resize", updateWidth);
+  }, []);
 
   return (
     <GoogleLogin
@@ -39,7 +63,7 @@ export default function GoogleLoginButton() {
       shape="pill"
       text="continue_with"
       size="large"
-      width="270"
+      width={buttonWidth}
     />
   );
 }
