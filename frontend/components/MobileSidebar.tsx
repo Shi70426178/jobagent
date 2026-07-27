@@ -53,6 +53,11 @@ export default function MobileSidebar() {
       href: "/new-jobs",
       icon: Globe,
     },
+    {
+         name: "Walkin Jobs",
+         href: "/walkins",
+         icon: Newspaper,
+    },
     // {
     //   name: "YC Jobs",
     //   href: "/hackernews",

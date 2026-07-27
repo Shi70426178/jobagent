@@ -48,6 +48,11 @@ export default function Sidebar() {
       href: "/new-jobs",
       icon: Globe,
     },
+     {
+      name: "Walkin Jobs",
+      href: "/walkins",
+      icon: Globe,
+    },
     // {
     //   name: "YC Jobs",
     //   href: "/hackernews",
