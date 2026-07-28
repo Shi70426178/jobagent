@@ -45,23 +45,10 @@ export default function LoginPage() {
   ];
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[#050505] text-white">
+<div className="app-bg min-h-screen overflow-hidden text-white">
+       {/* ================= BACKGROUND ================= */}
 
-      {/* ================= BACKGROUND ================= */}
 
-      <div className="absolute inset-0 overflow-hidden">
-
-        <div className="absolute left-1/2 top-[-260px] h-[850px] w-[850px] -translate-x-1/2 rounded-full bg-violet-600/10 blur-[180px]" />
-
-        <div className="absolute -left-32 bottom-[-150px] h-[420px] w-[420px] rounded-full bg-cyan-500/10 blur-[140px]" />
-
-        <div className="absolute -right-32 top-40 h-[420px] w-[420px] rounded-full bg-indigo-500/10 blur-[150px]" />
-
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,.06),transparent_55%)]" />
-
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-black/20 to-black/70" />
-
-      </div>
 
       {/* ================= CONTENT ================= */}
 
@@ -100,22 +87,14 @@ export default function LoginPage() {
               </span>
 
             </div>
+<h1 className="mt-8 text-4xl font-extrabold tracking-tight lg:text-5xl">
+  oneXjob
+</h1>
 
-            <h1 className="mt-8 text-6xl font-black tracking-tight leading-none">
-
-              one
-              <span className="text-violet-400">X</span>
-              job
-
-            </h1>
-
-            <h2 className="mt-5 text-5xl font-bold leading-tight">
-
-              WE GUARANTEE
-              <br />
-              JOB INTERVIEWS
-
-            </h2>
+<h3 className="mt-1 text-2xl font-bold leading-tight text-white lg:text-[1.5rem]">
+  WE GUARANTEE
+  JOB INTERVIEWS
+</h3>
 
             <p className="mt-5 max-w-md text-lg leading-8 text-zinc-400">
 
@@ -195,9 +174,7 @@ export default function LoginPage() {
 
               <h1 className="mt-5 text-4xl font-black tracking-tight">
 
-                one
-                <span className="text-violet-400">X</span>
-                job
+                oneXjob
 
               </h1>
 
@@ -418,33 +395,35 @@ export default function LoginPage() {
 
               {/* SIGN IN */}
 
-              <div className="mx-auto w-full max-w-full lg:max-w-[270px]">
-
-                <button
-                  onClick={login}
-                  disabled={loading}
-                  className="
+        <div className="mx-auto w-full max-w-full lg:max-w-[270px]">
+  <button
+    onClick={login}
+    disabled={loading}
+    className="
+      inline-flex
       h-11
       w-full
+      items-center
+      justify-center
       rounded-xl
-      bg-gradient-to-r
-      from-violet-600
-      via-indigo-600
-      to-cyan-500
+      border
+      border-white
+      bg-white
       text-sm
       font-semibold
-      text-white
+      text-black
       transition-all
       duration-300
-      hover:scale-[1.01]
-      hover:shadow-[0_0_25px_rgba(99,102,241,.35)]
+      hover:-translate-y-0.5
+      hover:bg-zinc-100
+      hover:shadow-[0_0_24px_rgba(255,255,255,.18)]
       disabled:cursor-not-allowed
       disabled:opacity-60
     "
-                >
-                  {loading ? "Signing In..." : "Sign In"}
-                </button>
-              </div>
+  >
+    {loading ? "Signing In..." : "Sign In"}
+  </button>
+</div>
             </div>
 
             {/* REGISTER */}

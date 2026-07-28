@@ -1,12 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { Fondamento } from "next/font/google";
-
-const fondamento = Fondamento({
-  subsets: ["latin"],
-  weight: "400",
-});
 
 export default function Home() {
   return (
@@ -125,26 +119,14 @@ export default function Home() {
 
   {/* Main Heading */}
 
-  <h1
-    className={`${fondamento.className} mt-8 max-w-5xl text-5xl leading-tight text-gray-100 md:text-7xl`}
-    style={{
-      textShadow:
-        "0 0 10px rgba(255,255,255,.15), 0 0 24px rgba(255,255,255,.08)",
-    }}
-  >
-    Find Your Dream Job
-    <br />
 
-    <span
-      className="text-gray-300"
-      style={{
-        textShadow:
-          "0 0 8px rgba(255,255,255,.12), 0 0 20px rgba(255,255,255,.05)",
-      }}
-    >
-      Faster in 5 Simple Steps
-    </span>
-  </h1>
+<h1 className="mt-8 max-w-4xl text-center text-4xl font-bold leading-[1.15] tracking-tight text-white sm:text-5xl md:text-5xl lg:text-6xl">
+  Find Your Dream Job
+  <br />
+  <span className="block text-zinc-300">
+    Faster in 5 Simple Steps
+  </span>
+</h1>
 
   {/* Subtitle */}
 
@@ -246,7 +228,7 @@ export default function Home() {
 
 <section
   id="how-it-works"
-  className="mx-auto max-w-7xl px-6 py-24"
+  className="mx-auto max-w-7xl px-6 pt-10 pb-16"
 >
   {/* Heading */}
 
@@ -258,17 +240,12 @@ export default function Home() {
       </span>
     </div>
 
-    <h2
-      className={`${fondamento.className} mt-6 text-4xl text-gray-200 md:text-5xl`}
-      style={{
-        textShadow:
-          "0 0 8px rgba(255,255,255,.15),0 0 18px rgba(255,255,255,.06)",
-      }}
-    >
-      Faster in 5 Simple Steps
-    </h2>
-
-    <p className="mx-auto mt-5 max-w-2xl text-base leading-8 text-zinc-400">
+    <div className="mt-6">
+  <h2 className="text-4xl font-bold tracking-tight text-white md:text-5xl">
+    Faster in 5 Simple Steps
+  </h2>
+</div>
+    <p className="mx-auto mt-3 max-w-2xl text-base leading-8 text-zinc-400">
       oneXjob automates your complete application process so you can focus on
       getting interviews instead of filling repetitive forms.
     </p>
@@ -468,7 +445,7 @@ export default function Home() {
 
 <section
   id="features"
-  className="mx-auto max-w-7xl px-6 py-24"
+  className="mx-auto max-w-7xl px-6 pt-10 pb-16"
 >
   {/* Heading */}
 
@@ -480,17 +457,13 @@ export default function Home() {
       </span>
     </div>
 
-    <h2
-      className={`${fondamento.className} mt-6 text-4xl text-gray-200 md:text-5xl`}
-      style={{
-        textShadow:
-          "0 0 10px rgba(255,255,255,.15),0 0 22px rgba(255,255,255,.06)",
-      }}
-    >
-      Everything You Need
-    </h2>
+  <div className="mt-6">
+  <h2 className="text-4xl font-bold tracking-tight text-white md:text-5xl">
+    Everything You Need
+  </h2>
+</div>
 
-    <p className="mx-auto mt-5 max-w-3xl text-base leading-8 text-zinc-400">
+    <p className="mx-auto mt-3 max-w-3xl text-base leading-8 text-zinc-400">
       oneXjob automates your complete job search journey—from discovering
       opportunities to generating recruiter-ready applications and tracking
       every response in one place.
@@ -654,18 +627,13 @@ export default function Home() {
 
       {/* Heading */}
 
-      <h2
-        className={`${fondamento.className} mt-8 text-4xl leading-tight text-gray-100 md:text-6xl`}
-        style={{
-          textShadow:
-            "0 0 10px rgba(255,255,255,.15),0 0 24px rgba(255,255,255,.06)",
-        }}
-      >
-        Ready to Land
-        <br />
-        Your Next Job?
-      </h2>
-
+      <div className="mt-8">
+  <h2 className="text-5xl font-bold leading-tight tracking-tight text-white md:text-6xl">
+    Ready to Land
+    <br />
+    Your Next Job?
+  </h2>
+</div>
       {/* Description */}
 
       <p className="mx-auto mt-8 max-w-3xl text-lg leading-9 text-zinc-400">
@@ -778,15 +746,9 @@ export default function Home() {
 
       <div className="md:col-span-2">
 
-        <h2
-          className={`${fondamento.className} text-4xl text-white`}
-          style={{
-            textShadow:
-              "0 0 8px rgba(255,255,255,.12),0 0 18px rgba(255,255,255,.05)",
-          }}
-        >
-          oneXjob
-        </h2>
+        <h2 className="text-4xl font-extrabold tracking-tight text-white md:text-5xl">
+  oneXjob
+</h2>
 
         <p className="mt-6 max-w-md leading-8 text-zinc-400">
           oneXjob is an AI-powered career platform that helps professionals
