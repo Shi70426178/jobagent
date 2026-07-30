@@ -728,12 +728,18 @@ bg-red-500/10
 
                         </p>
 
-                        <p className="mt-1 truncate text-sm font-semibold">
-
-                          {job.location || "N/A"}
-
-                        </p>
-
+     <p
+  className="
+    mt-1
+    text-sm
+    font-semibold
+    leading-5
+    whitespace-normal
+    break-words
+  "
+>
+  {job.location || "N/A"}
+</p>
                       </div>
 
                     </div>
@@ -783,11 +789,18 @@ bg-violet-500/10
 
                         </p>
 
-                        <p className="mt-1 truncate text-sm font-semibold">
-
-                          {job.venue || "N/A"}
-
-                        </p>
+                      <p
+  className="
+    mt-1
+    text-sm
+    font-semibold
+    leading-5
+    whitespace-normal
+    break-words
+  "
+>
+  {job.venue || "N/A"}
+</p>
 
                       </div>
 
