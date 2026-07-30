@@ -370,20 +370,28 @@ export default function WalkInsPage() {
 
             <div
               key={job.id}
-              className="
-    group
-    overflow-hidden
-    rounded-3xl
-    border
-    border-white/10
-    bg-gradient-to-b
-    from-[#111111]
-    via-[#0d0d0d]
-    to-black
-    transition-all
-    duration-300
-    hover:border-violet-500/30
-    hover:shadow-[0_0_35px_rgba(139,92,246,.12)]
+ className="
+group
+overflow-hidden
+rounded-3xl
+
+border
+border-white/40
+md:border-white/20
+
+bg-gradient-to-b
+from-[#111111]
+via-[#0d0d0d]
+to-black
+
+shadow-[0_0_0_1px_rgba(255,255,255,.10),0_0_24px_rgba(255,255,255,.10)]
+md:shadow-[0_0_0_1px_rgba(255,255,255,.04),0_0_18px_rgba(255,255,255,.04)]
+
+transition-all
+duration-300
+
+hover:border-white/50
+hover:shadow-[0_0_40px_rgba(255,255,255,.12)]
 "
             >
 
