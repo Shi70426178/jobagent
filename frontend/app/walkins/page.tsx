@@ -15,36 +15,29 @@ import {
   Sparkles,
   BadgeCheck,
   Cpu,
+  Users,
+  Flame,
+  CheckCircle2,
 } from "lucide-react";
 
 interface WalkInJob {
   id: number;
-
   company: string;
   job_title: string;
-
   location: string;
   venue: string;
-
   experience: string;
-
   walkin_date: string;
   walkin_time: string;
-
   positions: string[] | string;
-
   skills: string[] | string;
-
   contact_email: string;
 }
 
 export default function WalkInsPage() {
   const [jobs, setJobs] = useState<WalkInJob[]>([]);
-
   const [loading, setLoading] = useState(false);
-
   const [search, setSearch] = useState("");
-
   const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
@@ -54,9 +47,7 @@ export default function WalkInsPage() {
   async function fetchJobs() {
     try {
       setLoading(true);
-
       const response = await api.get("/walkin/jobs");
-
       setJobs(response.data || []);
     } catch (err) {
       console.error(err);
@@ -76,29 +67,16 @@ export default function WalkInsPage() {
 
     return jobs.filter((job) => {
       return (
-        (job.company || "")
-          .toLowerCase()
-          .includes(keyword) ||
-
-        (job.job_title || "")
-          .toLowerCase()
-          .includes(keyword) ||
-
-        (job.location || "")
-          .toLowerCase()
-          .includes(keyword) ||
-
-        (job.venue || "")
-          .toLowerCase()
-          .includes(keyword)
+        (job.company || "").toLowerCase().includes(keyword) ||
+        (job.job_title || "").toLowerCase().includes(keyword) ||
+        (job.location || "").toLowerCase().includes(keyword) ||
+        (job.venue || "").toLowerCase().includes(keyword)
       );
     });
   }, [jobs, search]);
 
   const totalCompanies = useMemo(() => {
-    return new Set(
-      jobs.map((x) => x.company)
-    ).size;
+    return new Set(jobs.map((x) => x.company)).size;
   }, [jobs]);
 
   const totalPositions = useMemo(() => {
@@ -107,269 +85,292 @@ export default function WalkInsPage() {
     jobs.forEach((job) => {
       if (Array.isArray(job.positions))
         total += job.positions.length;
-
       else if (job.positions)
-        total += String(job.positions)
-          .split(",")
-          .filter(Boolean).length;
+        total += String(job.positions).split(",").filter(Boolean).length;
     });
 
     return total;
   }, [jobs]);
 
- return (
-  <div className="relative min-h-screen overflow-x-hidden bg-[#030712] text-white">
+  return (
+    <div className="min-h-screen bg-[#09090B] text-white">
 
-  {/* Background Overlay */}
-  <div className="absolute inset-0 bg-gradient-to-br from-black via-[#050816] to-black" />
+      <div className="mx-auto w-full max-w-7xl px-3 sm:px-5 lg:px-6 py-5">
 
-  {/* Main Glow */}
-  <div className="pointer-events-none absolute left-1/2 top-0 h-[600px] w-[600px] -translate-x-1/2 rounded-full bg-white/5 blur-[180px]" />
+        {/* ================================================= */}
 
-  <div className="relative z-10">
+        {/* Header */}
 
-    <div className="mx-auto w-full max-w-[1450px] px-3 py-4 sm:px-5 lg:px-6">
+        {/* ================================================= */}
 
-  {/* ================= HEADER ================= */}
+        <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
 
-  <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div>
 
-    <div>
+            <div className="inline-flex items-center gap-2 rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1">
 
-      <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1">
+              <Sparkles
+                size={13}
+                className="text-violet-400"
+              />
 
-        <Sparkles size={13} className="text-white" />
+              <span className="text-[11px] font-medium uppercase tracking-[0.2em] text-violet-300">
 
-        <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-zinc-400">
-          AI Curated Walk-ins
-        </span>
+                AI Curated Walk-ins
 
-      </div>
+              </span>
 
-      <h1 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">
-        Walk-In Jobs
-      </h1>
+            </div>
 
-      <p className="mt-2 max-w-2xl text-xs text-zinc-500 sm:text-sm">
-        Discover verified walk-in interviews collected automatically from
-        LinkedIn and presented in one clean dashboard.
-      </p>
+            <h1 className="mt-4 text-3xl font-black tracking-tight sm:text-4xl">
 
-    </div>
+              Walk-In Jobs
 
-    <button
-      onClick={refreshJobs}
-      disabled={refreshing}
-      className="
-      inline-flex
-      items-center
-      gap-2
-      rounded-xl
-      border
-      border-white/15
-      bg-gradient-to-b
-      from-zinc-900
-      via-zinc-950
-      to-black
-      px-5
-      py-3
-      text-sm
-      font-semibold
-      text-white
-      shadow-[0_0_25px_rgba(255,255,255,.08)]
-      transition-all
-      duration-300
-      hover:border-white/30
-      hover:shadow-[0_0_35px_rgba(255,255,255,.16)]
-      disabled:opacity-60
-      "
-    >
+            </h1>
 
-      <RefreshCw
-        size={16}
-        className={refreshing ? "animate-spin" : ""}
-      />
+            <p className="mt-2 max-w-2xl text-sm text-zinc-500">
 
-      {refreshing ? "Refreshing..." : "Refresh"}
+              Discover verified walk-in opportunities collected from multiple
+              platforms in one premium dashboard.
 
-    </button>
+            </p>
 
-  </div>
+          </div>
 
-  {/* ================= SEARCH ================= */}
+          <button
+            onClick={refreshJobs}
+            disabled={refreshing}
+            className="
+              inline-flex
+              items-center
+              gap-2
+              rounded-xl
+              bg-violet-600
+              px-5
+              py-3
+              text-sm
+              font-semibold
+              transition
+              hover:bg-violet-500
+              disabled:opacity-60
+            "
+          >
 
-  <div className="mt-7">
+            <RefreshCw
+              size={16}
+              className={refreshing ? "animate-spin" : ""}
+            />
 
-    <div className="relative max-w-xl">
+            {refreshing ? "Refreshing..." : "Refresh Jobs"}
 
-      <Search
-        size={17}
-        className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500"
-      />
-
-      <input
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-        placeholder="Search company, job title or location..."
-        className="
-        h-12
-        w-full
-        rounded-2xl
-        border
-        border-white/10
-        bg-white/[0.03]
-backdrop-blur-2xl
-border-white/10
-        pl-11
-        pr-4
-        text-sm
-        text-white
-        outline-none
-        transition-all
-        placeholder:text-zinc-600
-        focus:border-white/25
-        focus:shadow-[0_0_20px_rgba(255,255,255,.08)]
-        "
-      />
-
-    </div>
-
-  </div>
-
-  {/* ================= STATS ================= */}
-
-  <div className="mt-7 grid grid-cols-2 gap-3 xl:grid-cols-4">
-
-    {/* Jobs */}
-
-    <div className="rounded-2xl border border-white/10 bg-white/[0.03]
-backdrop-blur-2xl
-border-white/10 p-5">
-
-      <div className="flex items-center justify-between">
-
-        <div>
-
-          <p className="text-[11px] uppercase tracking-widest text-zinc-500">
-            Jobs
-          </p>
-
-          <h2 className="mt-2 text-3xl font-black">
-            {filteredJobs.length}
-          </h2>
+          </button>
 
         </div>
 
-        <div className="rounded-xl border border-white/10 bg-black p-3">
+        {/* ================================================= */}
 
-          <BriefcaseBusiness size={20} />
+        {/* Search */}
 
-        </div>
+        {/* ================================================= */}
 
-      </div>
+        <div className="mt-7">
 
-    </div>
+          <div className="relative max-w-md">
 
-    {/* Companies */}
+            <Search
+              size={17}
+              className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500"
+            />
 
-    <div className="rounded-2xl border border-white/10 bg-white/[0.03]
-backdrop-blur-2xl
-border-white/10 p-5">
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search company, title or location..."
+              className="
+                h-12
+                w-full
+                rounded-xl
+                border
+                border-white/10
+                bg-zinc-900
+                pl-11
+                pr-4
+                text-sm
+                outline-none
+                transition
+                placeholder:text-zinc-500
+                focus:border-violet-500
+              "
+            />
 
-      <div className="flex items-center justify-between">
-
-        <div>
-
-          <p className="text-[11px] uppercase tracking-widest text-zinc-500">
-            Companies
-          </p>
-
-          <h2 className="mt-2 text-3xl font-black">
-            {totalCompanies}
-          </h2>
-
-        </div>
-
-        <div className="rounded-xl border border-white/10 bg-black p-3">
-
-          <Building2 size={20} />
-
-        </div>
-
-      </div>
-
-    </div>
-
-    {/* Positions */}
-
-    <div className="rounded-2xl border border-white/10 bg-white/[0.03]
-backdrop-blur-2xl
-border-white/10 p-5">
-
-      <div className="flex items-center justify-between">
-
-        <div>
-
-          <p className="text-[11px] uppercase tracking-widest text-zinc-500">
-            Positions
-          </p>
-
-          <h2 className="mt-2 text-3xl font-black">
-            {totalPositions}
-          </h2>
+          </div>
 
         </div>
 
-        <div className="rounded-xl border border-white/10 bg-black p-3">
+        {/* ================================================= */}
 
-          <BadgeCheck size={20} />
+        {/* Stats */}
+
+        {/* ================================================= */}
+
+        <div className="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
+
+          {/* Jobs */}
+
+          <div className="rounded-xl border border-white/10 bg-zinc-900/60 p-4">
+
+            <div className="flex items-center justify-between">
+
+              <div>
+
+                <p className="text-[11px] uppercase tracking-wider text-zinc-500">
+
+                  Walk-ins
+
+                </p>
+
+                <h2 className="mt-1 text-2xl font-bold">
+
+                  {filteredJobs.length}
+
+                </h2>
+
+              </div>
+
+              <div className="rounded-lg bg-violet-500/10 p-3">
+
+                <BriefcaseBusiness
+                  size={20}
+                  className="text-violet-400"
+                />
+
+              </div>
+
+            </div>
+
+          </div>
+
+          {/* Companies */}
+
+          <div className="rounded-xl border border-white/10 bg-zinc-900/60 p-4">
+
+            <div className="flex items-center justify-between">
+
+              <div>
+
+                <p className="text-[11px] uppercase tracking-wider text-zinc-500">
+
+                  Companies
+
+                </p>
+
+                <h2 className="mt-1 text-2xl font-bold">
+
+                  {totalCompanies}
+
+                </h2>
+
+              </div>
+
+              <div className="rounded-lg bg-cyan-500/10 p-3">
+
+                <Building2
+                  size={20}
+                  className="text-cyan-400"
+                />
+
+              </div>
+
+            </div>
+
+          </div>
+
+          {/* Positions */}
+
+          <div className="rounded-xl border border-white/10 bg-zinc-900/60 p-4">
+
+            <div className="flex items-center justify-between">
+
+              <div>
+
+                <p className="text-[11px] uppercase tracking-wider text-zinc-500">
+
+                  Positions
+
+                </p>
+
+                <h2 className="mt-1 text-2xl font-bold">
+
+                  {totalPositions}
+
+                </h2>
+
+              </div>
+
+              <div className="rounded-lg bg-orange-500/10 p-3">
+
+                <Users
+                  size={20}
+                  className="text-orange-400"
+                />
+
+              </div>
+
+            </div>
+
+          </div>
+
+          {/* Live */}
+
+          <div className="rounded-xl border border-white/10 bg-zinc-900/60 p-4">
+
+            <div className="flex items-center justify-between">
+
+              <div>
+
+                <p className="text-[11px] uppercase tracking-wider text-zinc-500">
+
+                  Status
+
+                </p>
+
+                <h2 className="mt-1 text-xl font-bold text-emerald-400">
+
+                  Live
+
+                </h2>
+
+              </div>
+
+              <div className="rounded-lg bg-emerald-500/10 p-3">
+
+                <Flame
+                  size={20}
+                  className="text-emerald-400"
+                />
+
+              </div>
+
+            </div>
+
+          </div>
 
         </div>
 
-      </div>
+        {/* ================================================= */}
 
-    </div>
+        {/* JOB LIST STARTS HERE */}
 
-    {/* Live */}
+        {/* ================================================= */}
 
-    <div className="rounded-2xl border border-white/10 bg-white/[0.03]
-backdrop-blur-2xl
-border-white/10 p-5">
+        <div className="mt-7 space-y-5">
 
-      <div className="flex items-center justify-between">
+          {filteredJobs.map((job) => (
 
-        <div>
 
-          <p className="text-[11px] uppercase tracking-widest text-zinc-500">
-            Status
-          </p>
-
-          <h2 className="mt-2 text-xl font-bold text-emerald-400">
-            Live
-          </h2>
-
-        </div>
-
-        <div className="rounded-xl border border-white/10 bg-black p-3">
-
-          <Cpu size={20} className="text-emerald-400" />
-
-        </div>
-
-      </div>
-
-    </div>
-
-  </div>
-
-  {/* ================= JOB LIST ================= */}
-
-  <div className="mt-8 space-y-4">
-    {filteredJobs.map((job) => (
-
-  <div
-    key={job.id}
-    className="
+            <div
+              key={job.id}
+              className="
     group
     overflow-hidden
     rounded-3xl
@@ -379,804 +380,1465 @@ border-white/10 p-5">
     from-[#111111]
     via-[#0d0d0d]
     to-black
-    shadow-[0_0_20px_rgba(255,255,255,.03)]
     transition-all
     duration-300
-    hover:border-white/20
-    hover:shadow-[0_0_35px_rgba(255,255,255,.08)]
-    "
-  >
-
-    <div className="p-5">
-
-      {/* ================= HEADER ================= */}
-
-      <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
-
-        <div className="flex gap-4 flex-1">
-
-          <div
-            className="
-            flex
-            h-14
-            w-14
-            shrink-0
-            items-center
-            justify-center
-            rounded-2xl
-            border
-            border-white/10
-            bg-white/5
-            "
-          >
-
-            <Building2
-              size={24}
-              className="text-white"
-            />
-
-          </div>
-
-          <div className="min-w-0 flex-1">
-
-            <h2
-              className="
-              truncate
-              text-xl
-              font-bold
-              tracking-tight
-              text-white
-              "
+    hover:border-violet-500/30
+    hover:shadow-[0_0_35px_rgba(139,92,246,.12)]
+"
             >
-              {job.job_title || "Walk-In Drive"}
-            </h2>
 
-            <div className="mt-2 flex items-center gap-2">
+              <div className="p-5 lg:p-7">
 
-              <Building2
-                size={14}
-                className="text-zinc-400"
-              />
+                {/* ================================================= */}
 
-              <span className="truncate text-sm text-zinc-300">
+                {/* HEADER */}
 
-                {job.company}
+                {/* ================================================= */}
 
-              </span>
+               <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
 
-            </div>
+  {/* Left */}
+  <div className="flex flex-1 gap-4 min-w-0">
 
-            <div className="mt-4 flex flex-wrap gap-2">
+    {/* Company Icon */}
+    <div
+      className="
+        flex
+        h-16
+        w-16
+        shrink-0
+        items-center
+        justify-center
+        rounded-2xl
+        border
+        border-violet-500/20
+        bg-violet-500/10
+      "
+    >
+      <Building2
+        size={28}
+        className="text-violet-400"
+      />
+    </div>
 
-              <span
-                className="
-                rounded-full
-                border
-                border-emerald-500/30
-                bg-emerald-500/10
-                px-3
-                py-1
-                text-[11px]
-                font-semibold
-                text-emerald-400
-                "
-              >
-                Walk-In
-              </span>
+    {/* Details */}
+    <div className="min-w-0 flex-1">
 
-              <span
-                className="
-                rounded-full
-                border
-                border-white/10
-                bg-white/5
-                px-3
-                py-1
-                text-[11px]
-                text-zinc-300
-                "
-              >
-                Verified
-              </span>
+      <h2 className="text-xl sm:text-2xl font-bold leading-tight text-white">
+        {job.job_title || "Walk-In Drive"}
+      </h2>
 
-            </div>
+      <div className="mt-2 flex items-center gap-2 text-zinc-400">
+        <Building2 size={15} />
+        <span className="truncate">
+          {job.company}
+        </span>
+      </div>
 
-          </div>
+      {/* Mobile Badges */}
+      <div className="mt-4 flex flex-wrap gap-2 lg:hidden">
 
-        </div>
-
-        {/* Right Side */}
-
-        <div
+        <span
           className="
-          flex
-          items-center
-          gap-3
-          rounded-2xl
-          border
-          border-white/10
-          bg-black
-          px-5
-          py-4
+            inline-flex
+            items-center
+            gap-1.5
+            rounded-full
+            border
+            border-emerald-500/30
+            bg-emerald-500/10
+            px-3
+            py-1
+            text-xs
+            font-medium
+            text-emerald-400
           "
         >
+          <CheckCircle2 size={14} />
+          Walk-In
+        </span>
 
-          <div
-            className="
-            flex
-            h-11
-            w-11
+        <span
+          className="
+            inline-flex
             items-center
-            justify-center
-            rounded-xl
+            gap-1.5
+            rounded-full
             border
-            border-white/10
-            bg-white/5
-            "
-          >
-
-            <Sparkles
-              size={18}
-              className="text-white"
-            />
-
-          </div>
-
-          <div>
-
-            <p className="text-[10px] uppercase tracking-widest text-zinc-500">
-
-              AI Status
-
-            </p>
-
-            <h3 className="mt-1 text-sm font-semibold text-white">
-
-              Recommended
-
-            </h3>
-
-          </div>
-
-        </div>
+            border-sky-500/30
+            bg-sky-500/10
+            px-3
+            py-1
+            text-xs
+            font-medium
+            text-sky-400
+          "
+        >
+          <BadgeCheck size={14} />
+          Verified
+        </span>
 
       </div>
-
-      {/* Divider */}
-
-      <div className="my-6 border-t border-white/10"></div>
-
-      {/* ================= INFO GRID START ================= */}
-
-      <div
-        className="
-        grid
-        gap-3
-        sm:grid-cols-2
-        xl:grid-cols-5
-        "
-      >
-                {/* Walk-In Date */}
-
-        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 transition-all duration-300 hover:border-white/20 hover:bg-white/[0.05]">
-
-          <div className="flex items-center gap-2">
-
-            <CalendarDays size={16} className="text-white" />
-
-            <span className="text-[11px] uppercase tracking-widest text-zinc-500">
-              Date
-            </span>
-
-          </div>
-
-          <p className="mt-3 text-sm font-semibold leading-6 text-white">
-
-            {job.walkin_date || "Not Mentioned"}
-
-          </p>
-
-        </div>
-
-        {/* Walk-In Time */}
-
-        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 transition-all duration-300 hover:border-white/20 hover:bg-white/[0.05]">
-
-          <div className="flex items-center gap-2">
-
-            <Clock3 size={16} className="text-white" />
-
-            <span className="text-[11px] uppercase tracking-widest text-zinc-500">
-              Time
-            </span>
-
-          </div>
-
-          <p className="mt-3 text-sm font-semibold leading-6 text-white">
-
-            {job.walkin_time || "Not Mentioned"}
-
-          </p>
-
-        </div>
-
-        {/* Location */}
-
-        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 transition-all duration-300 hover:border-white/20 hover:bg-white/[0.05]">
-
-          <div className="flex items-center gap-2">
-
-            <MapPin size={16} className="text-white" />
-
-            <span className="text-[11px] uppercase tracking-widest text-zinc-500">
-              Location
-            </span>
-
-          </div>
-
-          <p className="mt-3 text-sm font-semibold leading-6 text-white break-words">
-
-            {job.location || "Not Mentioned"}
-
-          </p>
-
-        </div>
-
-        {/* Venue */}
-
-        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 transition-all duration-300 hover:border-white/20 hover:bg-white/[0.05]">
-
-          <div className="flex items-center gap-2">
-
-            <Building2 size={16} className="text-white" />
-
-            <span className="text-[11px] uppercase tracking-widest text-zinc-500">
-              Venue
-            </span>
-
-          </div>
-
-          <p className="mt-3 text-sm font-semibold leading-6 text-white break-words">
-
-            {job.venue || "Not Mentioned"}
-
-          </p>
-
-        </div>
-
-        {/* Experience */}
-
-        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 transition-all duration-300 hover:border-white/20 hover:bg-white/[0.05]">
-
-          <div className="flex items-center gap-2">
-
-            <BriefcaseBusiness size={16} className="text-white" />
-
-            <span className="text-[11px] uppercase tracking-widest text-zinc-500">
-              Experience
-            </span>
-
-          </div>
-
-          <p className="mt-3 text-sm font-semibold leading-6 text-white">
-
-            {job.experience || "Not Mentioned"}
-
-          </p>
-
-        </div>
-
-      </div>
-
-      {/* ================= OPEN POSITIONS ================= */}
-            {job.positions &&
-        (Array.isArray(job.positions)
-          ? job.positions.length > 0
-          : String(job.positions).trim() !== "") && (
-
-        <div className="mt-6">
-
-          <div className="mb-3 flex items-center gap-2">
-
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 bg-white/5">
-
-              <BriefcaseBusiness size={15} className="text-white" />
-
-            </div>
-
-            <div>
-
-              <h3 className="text-sm font-semibold text-white">
-                Open Positions
-              </h3>
-
-              <p className="text-[11px] text-zinc-500">
-                Available hiring roles
-              </p>
-
-            </div>
-
-          </div>
-
-          <div className="flex flex-wrap gap-2">
-
-            {(Array.isArray(job.positions)
-              ? job.positions
-              : String(job.positions).split(",")
-            ).map((position: string, index: number) => (
-
-              <span
-                key={index}
-                className="
-                inline-flex
-                items-center
-                gap-2
-                rounded-full
-                border
-                border-white/10
-                bg-white/[0.04]
-                px-3
-                py-1.5
-                text-xs
-                font-medium
-                text-zinc-200
-                transition-all
-                duration-300
-                hover:border-white/20
-                hover:bg-white/[0.08]
-                "
-              >
-
-                <BadgeCheck
-                  size={13}
-                  className="text-white"
-                />
-
-                {position.trim()}
-
-              </span>
-
-            ))}
-
-          </div>
-
-        </div>
-
-      )}
-
-      {/* ================= REQUIRED SKILLS ================= */}
-
-      {job.skills &&
-        (Array.isArray(job.skills)
-          ? job.skills.length > 0
-          : String(job.skills).trim() !== "") && (
-
-        <div className="mt-6">
-
-          <div className="mb-3 flex items-center gap-2">
-
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 bg-white/5">
-
-              <Cpu size={15} className="text-white" />
-
-            </div>
-
-            <div>
-
-              <h3 className="text-sm font-semibold text-white">
-                Required Skills
-              </h3>
-
-              <p className="text-[11px] text-zinc-500">
-                Skills mentioned by recruiter
-              </p>
-
-            </div>
-
-          </div>
-
-          <div className="flex flex-wrap gap-2">
-
-            {(Array.isArray(job.skills)
-              ? job.skills
-              : String(job.skills).split(",")
-            ).map((skill: string, index: number) => (
-
-              <span
-                key={index}
-                className="
-                inline-flex
-                items-center
-                rounded-full
-                border
-                border-white/10
-                bg-black
-                px-3
-                py-1.5
-                text-xs
-                font-medium
-                text-white
-                shadow-[0_0_10px_rgba(255,255,255,.05)]
-                transition-all
-                duration-300
-                hover:border-white/25
-                hover:shadow-[0_0_15px_rgba(255,255,255,.10)]
-                "
-              >
-
-                {skill.trim()}
-
-              </span>
-
-            ))}
-
-          </div>
-
-        </div>
-
-      )}
-
-      {/* ================= CONTACT EMAIL ================= */}
-            {job.contact_email && (
-
-        <div className="mt-6 border-t border-white/10 pt-5">
-
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-
-            {/* Left */}
-
-            <div>
-
-              <div className="flex items-center gap-2">
-
-                <div
-                  className="
-                  flex
-                  h-9
-                  w-9
-                  items-center
-                  justify-center
-                  rounded-xl
-                  border
-                  border-white/10
-                  bg-white/[0.04]
-                  "
-                >
-
-                  <Mail
-                    size={16}
-                    className="text-white"
-                  />
-
-                </div>
-
-                <div>
-
-                  <h3 className="text-sm font-semibold text-white">
-
-                    Recruiter Contact
-
-                  </h3>
-
-                  <p className="text-[11px] text-zinc-500">
-
-                    Contact email provided by recruiter
-
-                  </p>
-
-                </div>
-
-              </div>
-
-            </div>
-
-            {/* Right */}
-
-            <a
-              href={`mailto:${job.contact_email}`}
-              className="
-              inline-flex
-              items-center
-              gap-2
-              rounded-xl
-              border
-              border-white/15
-              bg-gradient-to-b
-              from-zinc-900
-              via-zinc-950
-              to-black
-              px-5
-              py-3
-              text-sm
-              font-semibold
-              text-white
-              shadow-[0_0_20px_rgba(255,255,255,.06)]
-              transition-all
-              duration-300
-              hover:border-white/30
-              hover:shadow-[0_0_30px_rgba(255,255,255,.15)]
-            "
-            >
-
-              <Mail size={16} />
-
-              <span className="truncate max-w-[250px]">
-
-                {job.contact_email}
-
-              </span>
-
-            </a>
-
-          </div>
-
-        </div>
-
-      )}
 
     </div>
 
   </div>
 
-))}
+  {/* Desktop Badges */}
+  <div className="hidden lg:flex items-center gap-2 shrink-0">
 
-{/* ================= EMPTY STATE STARTS ================= */}
-      {filteredJobs.length === 0 && !loading && (
+    <span
+      className="
+        inline-flex
+        items-center
+        gap-1.5
+        rounded-full
+        border
+        border-emerald-500/30
+        bg-emerald-500/10
+        px-3
+        py-1.5
+        text-xs
+        font-semibold
+        text-emerald-400
+      "
+    >
+      <CheckCircle2 size={14} />
+      Walk-In
+    </span>
 
-        <div
-          className="
-          rounded-3xl
-          border
-          border-white/10
-          bg-gradient-to-b
-          from-[#111111]
-          via-[#0d0d0d]
-          to-black
-          px-6
-          py-20
-          text-center
-          shadow-[0_0_30px_rgba(255,255,255,.03)]
-          "
-        >
+    <span
+      className="
+        inline-flex
+        items-center
+        gap-1.5
+        rounded-full
+        border
+        border-sky-500/30
+        bg-sky-500/10
+        px-3
+        py-1.5
+        text-xs
+        font-semibold
+        text-sky-400
+      "
+    >
+      <BadgeCheck size={14} />
+      Verified
+    </span>
 
-          <div
-            className="
-            mx-auto
-            flex
-            h-20
-            w-20
-            items-center
-            justify-center
-            rounded-3xl
-            border
-            border-white/10
-            bg-white/[0.04]
-            shadow-[0_0_25px_rgba(255,255,255,.05)]
-            "
-          >
+  </div>
 
-            <Search
-              size={34}
-              className="text-white"
-            />
+</div>
 
-          </div>
+                {/* Divider */}
 
-          <h2 className="mt-7 text-3xl font-black tracking-tight">
+                <div className="relative my-7">
 
-            No Walk-In Jobs Found
+                  <div className="border-t border-white/10" />
 
-          </h2>
+                  <div
+                    className="
+absolute
+top-0
+left-0
+h-px
+w-28
+bg-gradient-to-r
+from-violet-500
+to-transparent
+"
+                  />
 
-          <p
-            className="
-            mx-auto
-            mt-4
-            max-w-xl
-            text-sm
-            leading-7
-            text-zinc-500
-            "
-          >
+                </div>
 
-            We couldn't find any walk-in jobs matching your search.
-            Try searching using another company name,
-            designation or location.
+                {/* ================================================= */}
 
-          </p>
+                {/* INFO GRID */}
 
-          <div className="mt-8 flex flex-wrap justify-center gap-3">
+                {/* ================================================= */}
 
-            <button
-              onClick={() => setSearch("")}
-              className="
-              rounded-xl
-              border
-              border-white/15
-              bg-gradient-to-b
-              from-zinc-900
-              via-zinc-950
-              to-black
-              px-6
-              py-3
-              text-sm
-              font-semibold
-              shadow-[0_0_20px_rgba(255,255,255,.08)]
-              transition-all
-              duration-300
-              hover:border-white/30
-              hover:shadow-[0_0_35px_rgba(255,255,255,.15)]
-              "
-            >
+                <div
+                  className="
+grid
+grid-cols-2
+lg:grid-cols-5
+gap-3
+"
+                >
 
-              Clear Search
+                  {/* Date */}
 
-            </button>
+                  <div
+                    className="
+rounded-2xl
+border
+border-white/10
+bg-zinc-900/60
+p-4
+hover:border-orange-500/30
+transition
+"
+                  >
 
-            <button
-              onClick={refreshJobs}
-              className="
-              rounded-xl
-              bg-white
-              px-6
-              py-3
-              text-sm
-              font-semibold
-              text-black
-              transition-all
-              duration-300
-              hover:scale-[1.03]
-              "
-            >
+                    <div className="flex items-center gap-3">
 
-              Refresh Jobs
+                      <div
+                        className="
+flex
+h-10
+w-10
+items-center
+justify-center
+rounded-xl
+bg-orange-500/10
+"
+                      >
 
-            </button>
+                        <CalendarDays
+                          size={18}
+                          className="text-orange-400"
+                        />
 
-          </div>
+                      </div>
 
-        </div>
+                      <div>
 
-      )}
+                        <p className="text-[10px] uppercase tracking-widest text-zinc-500">
 
-      {/* ================= LOADING STARTS ================= */}
-            {loading && (
+                          Date
 
-        <div
-          className="
-          rounded-3xl
-          border
-          border-white/10
-          bg-gradient-to-b
-          from-[#111111]
-          via-[#0d0d0d]
-          to-black
-          px-6
-          py-24
-          "
-        >
+                        </p>
 
-          <div className="flex flex-col items-center">
+                        <p className="mt-1 text-sm font-semibold">
 
-            {/* Animated Loader */}
+                          {job.walkin_date || "N/A"}
 
-            <div className="relative h-24 w-24">
+                        </p>
 
-              <div
-                className="
-                absolute
-                inset-0
-                rounded-full
-                border-2
-                border-white/10
-                "
-              />
+                      </div>
 
-              <div
-                className="
-                absolute
-                inset-0
-                rounded-full
-                border-t-2
-                border-white
-                animate-spin
-                "
-              />
+                    </div>
 
-              <div
-                className="
-                absolute
-                inset-4
-                rounded-full
-                border
-                border-white/10
-                "
-              />
+                  </div>
 
-              <div
-                className="
-                absolute
-                inset-4
-                rounded-full
-                border-t-2
-                border-zinc-400
-                animate-spin
-                "
-                style={{
-                  animationDuration: "1.8s",
-                }}
-              />
+                  {/* Time */}
 
-              <div
-                className="
-                absolute
-                inset-8
-                flex
-                items-center
-                justify-center
-                rounded-full
-                bg-white
-                text-black
-                "
-              >
+                  <div
+                    className="
+rounded-2xl
+border
+border-white/10
+bg-zinc-900/60
+p-4
+hover:border-cyan-500/30
+transition
+"
+                  >
 
-                <Building2 size={22} />
+                    <div className="flex items-center gap-3">
+
+                      <div
+                        className="
+flex
+h-10
+w-10
+items-center
+justify-center
+rounded-xl
+bg-cyan-500/10
+"
+                      >
+
+                        <Clock3
+                          size={18}
+                          className="text-cyan-400"
+                        />
+
+                      </div>
+
+                      <div>
+
+                        <p className="text-[10px] uppercase tracking-widest text-zinc-500">
+
+                          Time
+
+                        </p>
+
+                        <p className="mt-1 text-sm font-semibold">
+
+                          {job.walkin_time || "N/A"}
+
+                        </p>
+
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                  {/* Location */}
+
+                  <div
+                    className="
+rounded-2xl
+border
+border-white/10
+bg-zinc-900/60
+p-4
+hover:border-red-500/30
+transition
+"
+                  >
+
+                    <div className="flex items-center gap-3">
+
+                      <div
+                        className="
+flex
+h-10
+w-10
+items-center
+justify-center
+rounded-xl
+bg-red-500/10
+"
+                      >
+
+                        <MapPin
+                          size={18}
+                          className="text-red-400"
+                        />
+
+                      </div>
+
+                      <div className="min-w-0">
+
+                        <p className="text-[10px] uppercase tracking-widest text-zinc-500">
+
+                          Location
+
+                        </p>
+
+                        <p className="mt-1 truncate text-sm font-semibold">
+
+                          {job.location || "N/A"}
+
+                        </p>
+
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                  {/* Venue */}
+
+                  <div
+                    className="
+rounded-2xl
+border
+border-white/10
+bg-zinc-900/60
+p-4
+hover:border-violet-500/30
+transition
+"
+                  >
+
+                    <div className="flex items-center gap-3">
+
+                      <div
+                        className="
+flex
+h-10
+w-10
+items-center
+justify-center
+rounded-xl
+bg-violet-500/10
+"
+                      >
+
+                        <Building2
+                          size={18}
+                          className="text-violet-400"
+                        />
+
+                      </div>
+
+                      <div className="min-w-0">
+
+                        <p className="text-[10px] uppercase tracking-widest text-zinc-500">
+
+                          Venue
+
+                        </p>
+
+                        <p className="mt-1 truncate text-sm font-semibold">
+
+                          {job.venue || "N/A"}
+
+                        </p>
+
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                  {/* Experience */}
+
+                  <div
+                    className="
+rounded-2xl
+border
+border-white/10
+bg-zinc-900/60
+p-4
+hover:border-emerald-500/30
+transition
+"
+                  >
+
+                    <div className="flex items-center gap-3">
+
+                      <div
+                        className="
+flex
+h-10
+w-10
+items-center
+justify-center
+rounded-xl
+bg-emerald-500/10
+"
+                      >
+
+                        <BriefcaseBusiness
+                          size={18}
+                          className="text-emerald-400"
+                        />
+
+                      </div>
+
+                      <div>
+
+                        <p className="text-[10px] uppercase tracking-widest text-zinc-500">
+
+                          Experience
+
+                        </p>
+
+                        <p className="mt-1 text-sm font-semibold">
+
+                          {job.experience || "N/A"}
+
+                        </p>
+
+                      </div>
+
+                    </div>
+
+                  </div>
+
+                </div>
+                {/* ========================================================= */}
+
+                {/* OPEN POSITIONS */}
+
+                {/* ========================================================= */}
+
+                {job.positions &&
+                  (Array.isArray(job.positions)
+                    ? job.positions.length > 0
+                    : String(job.positions).trim() !== "") && (
+
+                    <div className="mt-8">
+
+                      <div className="flex flex-col gap-5 lg:flex-row lg:items-start">
+
+                        {/* Left */}
+
+                        <div className="flex items-center gap-4 shrink-0 lg:w-72">
+
+                          <div
+                            className="
+flex
+h-12
+w-12
+items-center
+justify-center
+rounded-2xl
+bg-violet-500/10
+border
+border-violet-500/20
+"
+                          >
+
+                            <BriefcaseBusiness
+                              size={22}
+                              className="text-violet-400"
+                            />
+
+                          </div>
+
+                          <div>
+
+                            <h3 className="text-lg font-bold">
+
+                              Open Positions
+
+                            </h3>
+
+                            <p className="text-sm text-zinc-500">
+
+                              Hiring Roles Available
+
+                            </p>
+
+                          </div>
+
+                        </div>
+
+                        {/* Right */}
+
+                        <div className="flex flex-wrap gap-3 flex-1">
+
+                          {(Array.isArray(job.positions)
+                            ? job.positions
+                            : String(job.positions).split(","))
+
+                            .filter((x) => x.trim())
+
+                            .map((position: string, index: number) => (
+
+                              <span
+                                key={index}
+                                className="
+inline-flex
+items-center
+gap-2
+
+rounded-full
+
+border
+border-violet-500/20
+
+bg-gradient-to-r
+from-violet-500/10
+to-cyan-500/10
+
+px-4
+py-2
+
+text-sm
+font-medium
+
+text-white
+
+transition-all
+duration-300
+
+hover:border-violet-400
+hover:scale-105
+hover:shadow-[0_0_20px_rgba(139,92,246,.18)]
+"
+                              >
+
+                                <BriefcaseBusiness
+                                  size={15}
+                                  className="text-violet-300"
+                                />
+
+                                {position.trim()}
+
+                              </span>
+
+                            ))}
+
+                        </div>
+
+                      </div>
+
+                    </div>
+
+                  )}
+
+                {/* Divider */}
+
+                <div className="relative my-8">
+
+                  <div className="border-t border-white/10" />
+
+                  <div
+                    className="
+absolute
+top-0
+left-0
+h-px
+w-24
+bg-gradient-to-r
+from-cyan-500
+to-transparent
+"
+                  />
+
+                </div>
+
+                {/* ========================================================= */}
+
+                {/* REQUIRED SKILLS */}
+
+                {/* ========================================================= */}
+
+                {job.skills &&
+                  (Array.isArray(job.skills)
+                    ? job.skills.length > 0
+                    : String(job.skills).trim() !== "") && (
+
+                    <div>
+
+                      <div className="flex flex-col gap-5 lg:flex-row lg:items-start">
+
+                        {/* Left */}
+
+                        <div className="flex items-center gap-4 shrink-0 lg:w-72">
+
+                          <div
+                            className="
+flex
+h-12
+w-12
+items-center
+justify-center
+rounded-2xl
+
+bg-yellow-500/10
+
+border
+border-yellow-500/20
+"
+                          >
+
+                            <Cpu
+                              size={22}
+                              className="text-yellow-400"
+                            />
+
+                          </div>
+
+                          <div>
+
+                            <h3 className="text-lg font-bold">
+
+                              Required Skills
+
+                            </h3>
+
+                            <p className="text-sm text-zinc-500">
+
+                              Technologies & Expertise
+
+                            </p>
+
+                          </div>
+
+                        </div>
+
+                        {/* Right */}
+
+                        <div className="flex flex-wrap gap-3 flex-1">
+
+                          {(Array.isArray(job.skills)
+                            ? job.skills
+                            : String(job.skills).split(","))
+
+                            .filter((x) => x.trim())
+
+                            .map((skill: string, index: number) => (
+
+                              <span
+                                key={index}
+                                className="
+inline-flex
+items-center
+gap-2
+
+rounded-full
+
+border
+border-yellow-500/20
+
+bg-gradient-to-r
+from-yellow-500/10
+to-orange-500/10
+
+px-4
+py-2
+
+text-sm
+
+font-medium
+
+transition-all
+duration-300
+
+hover:border-yellow-400
+hover:scale-105
+hover:shadow-[0_0_20px_rgba(234,179,8,.18)]
+"
+                              >
+
+                                <Sparkles
+                                  size={13}
+                                  className="text-yellow-400"
+                                />
+
+                                {skill.trim()}
+
+                              </span>
+
+                            ))}
+
+                        </div>
+
+                      </div>
+
+                    </div>
+
+                  )}
+
+                {/* Divider */}
+
+                <div className="relative my-8">
+
+                  <div className="border-t border-white/10" />
+
+                  <div
+                    className="
+absolute
+top-0
+left-0
+h-px
+w-24
+bg-gradient-to-r
+from-emerald-500
+to-transparent
+"
+                  />
+
+                </div>
+
+                {/* ========================================================= */}
+
+                {/* CONTACT */}
+
+                {/* ========================================================= */}
+
+                {job.contact_email && (
+
+                  <div
+                    className="
+flex
+flex-col
+
+gap-5
+
+lg:flex-row
+lg:items-center
+lg:justify-between
+
+rounded-2xl
+
+border
+border-white/10
+
+bg-zinc-900/40
+
+p-5
+"
+                  >
+
+                    <div className="flex items-center gap-4">
+
+                      <div
+                        className="
+flex
+
+h-12
+w-12
+
+items-center
+justify-center
+
+rounded-2xl
+
+bg-cyan-500/10
+
+border
+border-cyan-500/20
+"
+                      >
+
+                        <Mail
+                          size={22}
+                          className="text-cyan-400"
+                        />
+
+                      </div>
+
+                      <div>
+
+                        <h3 className="text-lg font-bold">
+
+                          Recruiter Contact
+
+                        </h3>
+
+                        <p className="text-sm text-zinc-500">
+
+                          Direct recruiter email
+
+                        </p>
+
+                        <div className="mt-2 text-sm text-white break-all">
+
+                          {job.contact_email}
+
+                        </div>
+
+                      </div>
+
+                    </div>
+
+                    <a
+                      href={`mailto:${job.contact_email}`}
+                      className="
+inline-flex
+
+items-center
+
+justify-center
+
+gap-2
+
+rounded-xl
+
+bg-white
+
+px-6
+py-3
+
+font-semibold
+
+text-black
+
+transition-all
+
+hover:scale-[1.03]
+
+hover:bg-zinc-200
+"
+                    >
+
+                      <Mail size={17} />
+
+                      Send Email
+
+                    </a>
+
+                  </div>
+
+                )}
 
               </div>
 
             </div>
 
-            <h2 className="mt-8 text-2xl font-black">
+          ))}
+          {/* ================================================= */}
 
-              Fetching Walk-In Jobs
+          {/* EMPTY STATE */}
 
-            </h2>
+          {/* ================================================= */}
 
-            <p className="mt-3 max-w-md text-center text-sm leading-7 text-zinc-500">
+          {filteredJobs.length === 0 && !loading && (
 
-              Please wait while we collect the latest
-              walk-in interviews from different companies.
+            <div
+              className="
+rounded-3xl
+border
+border-white/10
 
-            </p>
+bg-gradient-to-b
+from-[#121212]
+via-[#0d0d0d]
+to-black
 
-            {/* Skeleton Cards */}
+px-6
+py-20
 
-            <div className="mt-12 grid w-full gap-4">
+text-center
 
-              {[1, 2, 3].map((item) => (
+shadow-[0_0_30px_rgba(255,255,255,.03)]
+"
+            >
 
-                <div
-                  key={item}
+              <div
+                className="
+mx-auto
+
+flex
+h-24
+w-24
+
+items-center
+justify-center
+
+rounded-3xl
+
+bg-violet-500/10
+
+border
+border-violet-500/20
+"
+              >
+
+                <Search
+                  size={38}
+                  className="text-violet-400"
+                />
+
+              </div>
+
+              <h2
+                className="
+mt-8
+text-3xl
+font-black
+tracking-tight
+"
+              >
+
+                No Walk-In Jobs Found
+
+              </h2>
+
+              <p
+                className="
+mx-auto
+mt-4
+max-w-xl
+
+text-sm
+leading-7
+
+text-zinc-500
+"
+              >
+
+                We couldn't find any walk-in opportunities matching your search.
+                Try another company name, designation or location.
+
+              </p>
+
+              <div
+                className="
+mt-8
+
+flex
+flex-wrap
+
+justify-center
+
+gap-3
+"
+              >
+
+                <button
+                  onClick={() => setSearch("")}
                   className="
-                  animate-pulse
-                  rounded-2xl
-                  border
-                  border-white/10
-                  bg-white/[0.03]
-                  p-5
-                  "
+rounded-xl
+
+border
+border-white/10
+
+bg-zinc-900
+
+px-6
+py-3
+
+font-medium
+
+transition
+
+hover:border-violet-500
+hover:bg-zinc-800
+"
                 >
 
-                  <div className="h-6 w-2/5 rounded bg-white/10" />
+                  Clear Search
 
-                  <div className="mt-4 h-4 w-1/3 rounded bg-white/10" />
+                </button>
 
-                  <div className="mt-6 grid gap-3 md:grid-cols-5">
+                <button
+                  onClick={refreshJobs}
+                  className="
+rounded-xl
 
-                    {[1,2,3,4,5].map((x)=>(
+bg-violet-600
 
-                      <div
-                        key={x}
-                        className="h-20 rounded-xl bg-white/10"
-                      />
+px-6
+py-3
 
-                    ))}
+font-semibold
+
+transition
+
+hover:bg-violet-500
+"
+                >
+
+                  Refresh Jobs
+
+                </button>
+
+              </div>
+
+            </div>
+
+          )}
+
+          {/* ================================================= */}
+
+          {/* LOADING */}
+
+          {/* ================================================= */}
+
+          {loading && (
+
+            <div
+              className="
+rounded-3xl
+
+border
+border-white/10
+
+bg-zinc-900/40
+
+p-10
+"
+            >
+
+              <div className="flex flex-col items-center">
+
+                <div className="relative h-24 w-24">
+
+                  <div
+                    className="
+absolute
+inset-0
+
+rounded-full
+
+border-2
+border-white/10
+"
+                  />
+
+                  <div
+                    className="
+absolute
+inset-0
+
+rounded-full
+
+border-t-2
+border-violet-500
+
+animate-spin
+"
+                  />
+
+                  <div
+                    className="
+absolute
+inset-4
+
+rounded-full
+
+border
+border-white/10
+"
+                  />
+
+                  <div
+                    className="
+absolute
+inset-4
+
+rounded-full
+
+border-t-2
+border-cyan-500
+
+animate-spin
+"
+                    style={{
+                      animationDuration: "2s",
+                    }}
+                  />
+
+                  <div
+                    className="
+absolute
+inset-8
+
+flex
+items-center
+justify-center
+
+rounded-full
+
+bg-white
+
+text-black
+"
+                  >
+
+                    <Building2 size={22} />
 
                   </div>
 
                 </div>
 
-              ))}
+                <h2 className="mt-8 text-2xl font-bold">
+
+                  Fetching Walk-In Jobs
+
+                </h2>
+
+                <p
+                  className="
+mt-3
+
+max-w-md
+
+text-center
+
+text-sm
+
+leading-7
+
+text-zinc-500
+"
+                >
+
+                  Please wait while we collect the latest walk-in opportunities.
+
+                </p>
+
+                <div
+                  className="
+mt-12
+
+grid
+
+w-full
+
+gap-4
+"
+                >
+
+                  {[1, 2, 3].map((item) => (
+
+                    <div
+                      key={item}
+                      className="
+animate-pulse
+
+rounded-3xl
+
+border
+border-white/10
+
+bg-zinc-900
+
+p-6
+"
+                    >
+
+                      <div className="h-7 w-56 rounded bg-white/10" />
+
+                      <div className="mt-5 h-5 w-40 rounded bg-white/10" />
+
+                      <div
+                        className="
+mt-8
+
+grid
+
+gap-3
+
+md:grid-cols-5
+"
+                      >
+
+                        {[1, 2, 3, 4, 5].map((x) => (
+
+                          <div
+                            key={x}
+                            className="
+h-24
+
+rounded-2xl
+
+bg-white/10
+"
+                          />
+
+                        ))}
+
+                      </div>
+
+                      <div className="mt-8 flex gap-3 flex-wrap">
+
+                        {[1, 2, 3, 4].map((x) => (
+
+                          <div
+                            key={x}
+                            className="
+h-10
+w-40
+
+rounded-full
+
+bg-white/10
+"
+                          />
+
+                        ))}
+
+                      </div>
+
+                    </div>
+
+                  ))}
+
+                </div>
+
+              </div>
+
+            </div>
+
+          )}
+
+          {/* ================================================= */}
+
+          {/* FOOTER */}
+
+          {/* ================================================= */}
+
+          <div
+            className="
+mt-10
+
+rounded-3xl
+
+border
+border-white/10
+
+bg-gradient-to-b
+from-[#101010]
+via-[#0c0c0c]
+to-black
+
+p-6
+"
+          >
+
+            <div
+              className="
+flex
+
+flex-col
+
+gap-8
+
+lg:flex-row
+lg:justify-between
+lg:items-center
+"
+            >
+
+              <div className="flex flex-wrap gap-6">
+
+                <div className="flex items-center gap-3">
+
+                  <div
+                    className="
+flex
+
+h-12
+w-12
+
+items-center
+justify-center
+
+rounded-xl
+
+bg-violet-500/10
+"
+                  >
+
+                    <BriefcaseBusiness
+                      size={22}
+                      className="text-violet-400"
+                    />
+
+                  </div>
+
+                  <div>
+
+                    <p className="text-xs uppercase tracking-widest text-zinc-500">
+
+                      Walk-In Jobs
+
+                    </p>
+
+                    <h3 className="text-lg font-bold">
+
+                      {filteredJobs.length}
+
+                    </h3>
+
+                  </div>
+
+                </div>
+
+                <div className="hidden h-10 w-px bg-white/10 lg:block" />
+
+                <div className="flex items-center gap-3">
+
+                  <div
+                    className="
+flex
+
+h-12
+w-12
+
+items-center
+justify-center
+
+rounded-xl
+
+bg-emerald-500/10
+"
+                  >
+
+                    <CheckCircle2
+                      size={22}
+                      className="text-emerald-400"
+                    />
+
+                  </div>
+
+                  <div>
+
+                    <p className="text-xs uppercase tracking-widest text-zinc-500">
+
+                      Status
+
+                    </p>
+
+                    <h3 className="font-semibold text-emerald-400">
+
+                      Live Collection
+
+                    </h3>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+              <div className="flex flex-wrap gap-3">
+
+                <span
+                  className="
+rounded-full
+
+bg-violet-500/10
+
+border
+border-violet-500/20
+
+px-4
+py-2
+
+text-xs
+
+font-medium
+
+text-violet-300
+"
+                >
+
+                  AI Curated
+
+                </span>
+
+                <span
+                  className="
+rounded-full
+
+bg-cyan-500/10
+
+border
+border-cyan-500/20
+
+px-4
+py-2
+
+text-xs
+
+font-medium
+
+text-cyan-300
+"
+                >
+
+                  Updated Live
+
+                </span>
+
+                <span
+                  className="
+rounded-full
+
+bg-emerald-500/10
+
+border
+border-emerald-500/20
+
+px-4
+py-2
+
+text-xs
+
+font-medium
+
+text-emerald-300
+"
+                >
+
+                  Responsive UI
+
+                </span>
+
+              </div>
 
             </div>
 
@@ -1184,115 +1846,8 @@ border-white/10 p-5">
 
         </div>
 
-      )}
-
+      </div>
     </div>
 
-  </div>
-
-  {/* ================= FOOTER STARTS ================= */}
-    {/* ================= FOOTER STARTS ================= */}
-
-  <div className="mt-10 rounded-3xl border border-white/10 bg-gradient-to-b from-[#101010] via-[#0c0c0c] to-black px-6 py-5">
-
-    <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-
-      {/* Left */}
-
-      <div className="flex flex-wrap items-center gap-5">
-
-        <div className="flex items-center gap-3">
-
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04]">
-
-            <Building2 size={20} />
-
-          </div>
-
-          <div>
-
-            <p className="text-[11px] uppercase tracking-widest text-zinc-500">
-              Total Jobs
-            </p>
-
-            <h3 className="text-lg font-bold">
-              {filteredJobs.length}
-            </h3>
-
-          </div>
-
-        </div>
-
-        <div className="h-10 w-px bg-white/10 hidden lg:block" />
-
-        <div className="flex items-center gap-3">
-
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-white/[0.04]">
-
-            <BadgeCheck
-              size={20}
-              className="text-emerald-400"
-            />
-
-          </div>
-
-          <div>
-
-            <p className="text-[11px] uppercase tracking-widest text-zinc-500">
-              Status
-            </p>
-
-            <h3 className="font-semibold text-emerald-400">
-              Live Collection
-            </h3>
-
-          </div>
-
-        </div>
-
-      </div>
-
-      {/* Right */}
-
-      <div className="flex flex-wrap items-center gap-3">
-
-        <div className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2">
-
-          <span className="text-xs font-medium text-zinc-300">
-
-            AI Curated
-
-          </span>
-
-        </div>
-
-        <div className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2">
-
-          <span className="text-xs font-medium text-zinc-300">
-
-            Updated Live
-
-          </span>
-
-        </div>
-
-        <div className="rounded-full border border-white/10 bg-white/[0.04] px-4 py-2">
-
-          <span className="text-xs font-medium text-zinc-300">
-
-            Responsive UI
-
-          </span>
-
-        </div>
-
-      </div>
-
-    </div>
-
-</div>
-</div>
-</div>
-
-);
+  );
 }
