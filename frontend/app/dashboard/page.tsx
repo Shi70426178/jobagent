@@ -32,7 +32,7 @@ const swalTheme = {
     popup: "rounded-xl border border-zinc-800",
     title: "text-base font-semibold",
     htmlContainer: "text-xs",
-    confirmButton: "text-xs px-4 py-2 rounded-lg",
+    confirmButton: "text-xs px-4 py-2 rounded-lg bg-zinc-800 text-white",
     icon: "swal-small-icon",
   },
 };
@@ -53,7 +53,7 @@ const showError = (message: string) => {
     icon: "error",
     title: "Please Enter Job Keywords!",
     text: message,
-    confirmButtonColor: "#7c3aed",
+    confirmButtonColor: "#27272a",
     ...swalTheme,
   });
 };
@@ -62,7 +62,7 @@ const showWarning = (message: string) => {
   Swal.fire({
     title: "Warning",
     text: message,
-    confirmButtonColor: "#f59e0b",
+    confirmButtonColor: "#27272a",
     ...swalTheme,
   });
 };
@@ -260,50 +260,50 @@ export default function Dashboard() {
       label: "Agent Status",
       value: loading ? "Running" : "Ready",
       sub: "AI Automation Engine",
-      icon: <Activity className="h-4 w-4 text-green-400" />,
-      iconBg: "bg-green-500/15",
-      valueClass: loading ? "text-yellow-400" : "text-green-400",
+      icon: <Activity className="h-4 w-4 text-zinc-300" />,
+      iconBg: "bg-zinc-800/50",
+      valueClass: "text-zinc-100",
       subClass: "text-zinc-500",
     },
     {
       label: "Jobs Found",
       value: jobsFound,
       sub: "↑ AI Discovered Jobs",
-      icon: <BriefcaseBusiness className="h-4 w-4 text-cyan-400" />,
-      iconBg: "bg-cyan-500/15",
-      subClass: "text-green-400",
+      icon: <BriefcaseBusiness className="h-4 w-4 text-zinc-300" />,
+      iconBg: "bg-zinc-800/50",
+      subClass: "text-zinc-400",
     },
     {
       label: "Applications",
       value: applicationsSent,
       sub: "Emails Sent",
-      icon: <Send className="h-4 w-4 text-purple-400" />,
-      iconBg: "bg-purple-500/15",
-      subClass: "text-purple-300",
+      icon: <Send className="h-4 w-4 text-zinc-300" />,
+      iconBg: "bg-zinc-800/50",
+      subClass: "text-zinc-400",
     },
     {
       label: "Resume Match",
       value: "91%",
       sub: "ATS Optimized",
-      icon: <ShieldCheck className="h-4 w-4 text-blue-400" />,
-      iconBg: "bg-blue-500/15",
-      subClass: "text-blue-300",
+      icon: <ShieldCheck className="h-4 w-4 text-zinc-300" />,
+      iconBg: "bg-zinc-800/50",
+      subClass: "text-zinc-400",
     },
     {
       label: "YC Jobs",
       value: 5,
       sub: "Gmail Responses",
-      icon: <Mail className="h-4 w-4 text-orange-400" />,
-      iconBg: "bg-orange-500/15",
-      subClass: "text-orange-300",
+      icon: <Mail className="h-4 w-4 text-zinc-300" />,
+      iconBg: "bg-zinc-800/50",
+      subClass: "text-zinc-400",
     },
     {
       label: "Success Rate",
       value: "94%",
       sub: "Automation Accuracy",
-      icon: <CheckCircle2 className="h-4 w-4 text-green-400" />,
-      iconBg: "bg-green-500/15",
-      subClass: "text-green-400",
+      icon: <CheckCircle2 className="h-4 w-4 text-zinc-300" />,
+      iconBg: "bg-zinc-800/50",
+      subClass: "text-zinc-400",
     },
   ];
 
@@ -331,17 +331,17 @@ export default function Dashboard() {
 
   const liveActivity = [
     {
-      dot: "bg-green-400 animate-pulse",
+      dot: "bg-zinc-400 animate-pulse",
       title: "New Backend Job Found",
       sub: "LinkedIn • 2 minutes ago",
     },
     {
-      dot: "bg-blue-400",
+      dot: "bg-zinc-500",
       title: "Resume Matched 91%",
       sub: "AI Matching Engine",
     },
     {
-      dot: "bg-purple-400",
+      dot: "bg-zinc-500",
       title: "Personalized Email Generated",
       sub: "Gmail Outreach",
     },
@@ -354,7 +354,7 @@ export default function Dashboard() {
           {/* ================= HERO ================= */}
           <section>
             {/* <div className="inline-flex items-center gap-1.5 rounded-full border border-zinc-800 bg-zinc-900 px-3 py-1"> */}
-              {/* <Sparkles className="h-3 w-3 text-cyan-400" /> */}
+              {/* <Sparkles className="h-3 w-3 text-zinc-300" /> */}
               {/* <span className="text-[11px] tracking-wide text-zinc-300">
                 AI Powered Job Automation
               </span> */}
@@ -371,7 +371,7 @@ export default function Dashboard() {
             </p> */}
 
             {/* Quick Buttons */}
-            {/* <div className="mt-6 flex flex-wrap gap-3">
+            <div className="mt-6 flex flex-wrap gap-3">
               {quickButtons.map(({ icon: Icon, label }) => (
                 <button
                   key={label}
@@ -389,7 +389,7 @@ export default function Dashboard() {
                   <span>{label}</span>
                 </button>
               ))}
-            </div> */}
+            </div>
           </section>
 
           {/* ================= AGENT CONFIGURATION ================= */}
@@ -410,7 +410,7 @@ export default function Dashboard() {
               >
                 <div className="flex items-center justify-between gap-4">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-800 text-cyan-400">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-800 text-zinc-200">
                       <Bot className="h-5 w-5" />
                     </div>
                     <div>
@@ -423,7 +423,7 @@ export default function Dashboard() {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="rounded-full bg-green-500/10 px-2 py-0.5 text-[10px] font-semibold text-green-400 border border-green-500/20">
+                    <span className="rounded-full bg-zinc-800/60 px-2 py-0.5 text-[10px] font-semibold text-zinc-300 border border-zinc-700/50">
                       Ready
                     </span>
                     <ArrowRight className="h-4 w-4 text-zinc-400 transition-transform group-hover:translate-x-1" />
@@ -506,7 +506,7 @@ export default function Dashboard() {
                       key={f}
                       className="flex items-center gap-2 text-xs sm:text-sm"
                     >
-                      <CircleCheckBig className="h-4 w-4 text-green-400 flex-shrink-0" />
+                      <CircleCheckBig className="h-4 w-4 text-zinc-400 flex-shrink-0" />
                       <span className="text-zinc-300">{f}</span>
                     </div>
                   ))}
@@ -554,7 +554,7 @@ export default function Dashboard() {
                 <div className="flex-1">
                   <div className="flex items-center gap-3">
                     <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center">
-                      <Bot className="h-5 w-5 sm:h-6 sm:w-6 text-cyan-400" />
+                      <Bot className="h-5 w-5 sm:h-6 sm:w-6 text-zinc-300" />
                     </div>
                     <div>
                       <h2 className="text-lg sm:text-xl font-black text-white">
@@ -589,7 +589,7 @@ export default function Dashboard() {
                         className="flex justify-between items-center text-xs"
                       >
                         <span className="text-zinc-500">{t}</span>
-                        <CircleCheckBig className="text-green-400 h-4 w-4" />
+                        <CircleCheckBig className="text-zinc-400 h-4 w-4" />
                       </div>
                     ))}
                   </div>
