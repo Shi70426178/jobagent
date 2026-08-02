@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, Suspense } from "react";
 import { api } from "@/lib/axios";
 import { useRouter, useSearchParams } from "next/navigation";
 import Swal from "sweetalert2";
@@ -16,7 +16,8 @@ import {
   CheckCircle2,
 } from "lucide-react";
 
-export default function LinkedinPage() {
+// 1. Move your main component logic into an inner component
+function LinkedinPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -210,7 +211,7 @@ export default function LinkedinPage() {
       <Sidebar />
 
       <main className="flex-1 p-8 w-full bg-black">
-        {/* Header Bar - Styled identical to Profile Header */}
+        {/* Header Bar */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 border-b border-zinc-800/80 pb-5">
           <div>
             <h1 className="text-3xl font-bold tracking-tight text-white">
@@ -690,5 +691,20 @@ export default function LinkedinPage() {
         </div>
       )}
     </div>
+  );
+}
+
+// 2. Export default wrapper wrapped in Suspense boundary
+export default function LinkedinPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center bg-black text-xs text-zinc-400">
+          Loading page...
+        </div>
+      }
+    >
+      <LinkedinPageContent />
+    </Suspense>
   );
 }
