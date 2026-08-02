@@ -1,314 +1,203 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
 import {
+  Menu,
+  X,
   LayoutDashboard,
+  Bot,
+  Globe,
+  Newspaper,
   FileText,
   Mail,
   User,
-  Bot,
   FileBadge,
-  Globe,
-  Newspaper,
   Sparkles,
   ChevronRight,
-  Cpu,
   LogOut,
 } from "lucide-react";
 
 import { useAuthStore } from "@/store/authStore";
 
+const MENU_ITEMS = [
+  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { name: "Job Agent", href: "/agent", icon: Bot },
+  { name: "View Jobs", href: "/new-jobs", icon: Globe },
+  { name: "Walkin Jobs", href: "/walkins", icon: Newspaper },
+  { name: "Applications", href: "/applications", icon: FileText },
+  { name: "Gmail", href: "/gmail", icon: Mail },
+  { name: "Profile", href: "/profile", icon: User },
+  { name: "Resume", href: "/resume", icon: FileBadge },
+];
+
 export default function Sidebar() {
   const pathname = usePathname();
-
   const router = useRouter();
-
+  const [mobileOpen, setMobileOpen] = useState(false);
   const { logout } = useAuthStore();
 
   const handleLogout = () => {
     logout();
+    setMobileOpen(false);
     router.push("/login");
   };
 
-  const menuItems = [
-    {
-      name: "Dashboard",
-      href: "/dashboard",
-      icon: LayoutDashboard,
-    },
-    {
-      name: "Job Agent",
-      href: "/agent",
-      icon: Bot,
-    },
-    {
-      name: "View Jobs",
-      href: "/new-jobs",
-      icon: Globe,
-    },
-     {
-      name: "Walkin Jobs",
-      href: "/walkins",
-      icon: Globe,
-    },
-    // {
-    //   name: "YC Jobs",
-    //   href: "/hackernews",
-    //   icon: Newspaper,
-    // },
-    {
-      name: "Applications",
-      href: "/applications",
-      icon: FileText,
-    },
-    {
-      name: "Gmail",
-      href: "/gmail",
-      icon: Mail,
-    },
-    {
-      name: "Profile",
-      href: "/profile",
-      icon: User,
-    },
-    {
-      name: "Resume",
-      href: "/resume",
-      icon: FileBadge,
-    },
-  ];
+  const isLinkActive = (href: string) => {
+    if (pathname === href) return true;
+    if (href !== "/" && pathname.startsWith(`${href}/`)) return true;
+    return false;
+  };
 
-  return (
-    <aside
-      className="
-      fixed
-      top-0
-      left-0
-      z-50
-      hidden
-      lg:flex
-      w-72
-      h-screen
-      overflow-hidden
-      border-r
-      border-white/10
-      bg-black/35
-      backdrop-blur-2xl
-      flex-col
-    "
-    >
-      {/* Background Glow */}
+  const BrandHeader = ({ isLarge = false }: { isLarge?: boolean }) => (
+    <div className="flex items-center gap-3">
+      <div
+        className={`flex items-center justify-center rounded-xl bg-gradient-to-br from-cyan-500 via-blue-600 to-purple-600 ${
+          isLarge
+            ? "h-12 w-12 rounded-xl shadow-lg shadow-cyan-500/20"
+            : "h-10 w-10"
+        }`}
+      >
+        <Sparkles className={isLarge ? "h-6 w-6 text-white" : "h-5 w-5 text-white"} />
+      </div>
+      <div>
+        <h1
+          className={`font-extrabold ${
+            isLarge
+              ? "bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-xl text-transparent"
+              : "text-lg text-white"
+          }`}
+        >
+          oneXjob
+        </h1>
+        <p className="text-[10px] text-zinc-400">AI Career Assistant</p>
+      </div>
+    </div>
+  );
 
-      <div className="absolute -top-20 -left-20 h-72 w-72 rounded-full bg-cyan-500/10 blur-[140px]" />
+  const NavigationLinks = ({ isMobile = false }: { isMobile?: boolean }) => (
+    <div className="space-y-1.5">
+      {MENU_ITEMS.map((item) => {
+        const Icon = item.icon;
+        const active = isLinkActive(item.href);
 
-      <div className="absolute bottom-0 right-0 h-72 w-72 rounded-full bg-purple-600/10 blur-[140px]" />
-
-      <div className="relative flex h-full flex-col">
-
-        {/* Header */}
-
-        <div className="border-b border-white/10 p-7">
-
-          <div className="flex items-center gap-4">
-
-            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-500 via-blue-500 to-purple-600 shadow-xl shadow-cyan-500/20">
-
-              <Sparkles className="h-7 w-7 text-white" />
-
-            </div>
-
-            <div>
-
-              <h1 className="bg-gradient-to-r from-cyan-300 via-blue-400 to-purple-500 bg-clip-text text-2xl font-extrabold text-transparent">
-                oneXjob
-              </h1>
-
-              <p className="mt-1 text-xs text-zinc-400">
-                AI Career Assistant
-              </p>
-
-            </div>
-
-          </div>
-
-        </div>
-
-              {/* Navigation */}
-
-      <div className="flex-1 overflow-y-auto px-4 py-6">
-
-        <div className="space-y-2">
-
-          {menuItems.map((item) => {
-
-            const Icon = item.icon;
-
-            const isActive = pathname === item.href;
-
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`
-                  group
-                  relative
-                  flex
-                  items-center
-                  justify-between
-                  rounded-2xl
-                  px-4
-                  py-3
-                  transition-all
-                  duration-300
-
-                  ${
-                    isActive
-                      ? "border border-cyan-500/30 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 text-white shadow-lg shadow-cyan-500/10"
-                      : "text-zinc-400 hover:bg-white/5 hover:text-white"
-                  }
-                `}
-              >
-
-                <div className="flex items-center gap-4">
-
-                  <div
-                    className={`
-                      flex
-                      h-11
-                      w-11
-                      items-center
-                      justify-center
-                      rounded-xl
-                      transition-all
-                      duration-300
-
-                      ${
-                        isActive
-                          ? "bg-cyan-500/20 text-cyan-300"
-                          : "bg-zinc-800/60 text-zinc-400 group-hover:bg-cyan-500/10 group-hover:text-cyan-300"
-                      }
-                    `}
-                  >
-                    <Icon size={19} />
-                  </div>
-
-                  <span className="font-medium">
-                    {item.name}
-                  </span>
-
-                </div>
-
-                <ChevronRight
-                  size={18}
-                  className={`
-                    transition-all
-                    duration-300
-
-                    ${
-                      isActive
-                        ? "translate-x-0 text-cyan-300 opacity-100"
-                        : "-translate-x-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-100"
-                    }
-                  `}
-                />
-
-                {isActive && (
-                  <div
-                    className="
-                      absolute
-                      left-0
-                      top-3
-                      h-8
-                      w-1
-                      rounded-r-full
-                      bg-gradient-to-b
-                      from-cyan-400
-                      to-blue-500
-                    "
-                  />
-                )}
-
-              </Link>
-            );
-
-          })}
-
-          {/* Logout */}
-
-          <button
-            onClick={handleLogout}
-            className="
-              group
-              relative
-              flex
-              w-full
-              items-center
-              justify-between
-              rounded-2xl
-              px-4
-              py-3
-              text-zinc-400
-              transition-all
-              duration-300
-              hover:bg-white/5
-              hover:text-red-400
-            "
+        return (
+          <Link
+            key={item.href}
+            href={item.href}
+            onClick={() => isMobile && setMobileOpen(false)}
+            className={`group relative flex items-center justify-between rounded-xl px-3.5 py-2.5 transition-all duration-200 ${
+              active
+                ? "border border-cyan-500/30 bg-gradient-to-r from-cyan-950/40 to-blue-950/30 text-white"
+                : "text-zinc-400 hover:bg-zinc-900 hover:text-white"
+            }`}
           >
-
-            <div className="flex items-center gap-4">
-
+            <div className="flex items-center gap-3.5">
               <div
-                className="
-                  flex
-                  h-11
-                  w-11
-                  items-center
-                  justify-center
-                  rounded-xl
-                  bg-zinc-800/60
-                  text-zinc-400
-                  transition-all
-                  duration-300
-                  group-hover:bg-red-500/10
-                  group-hover:text-red-400
-                "
+                className={`flex h-9 w-9 items-center justify-center rounded-lg transition-all duration-200 ${
+                  active
+                    ? "bg-cyan-500/20 text-cyan-400"
+                    : "bg-zinc-900 text-zinc-400 group-hover:bg-zinc-800 group-hover:text-cyan-400"
+                }`}
               >
-
-                <LogOut size={19} />
-
+                <Icon size={18} />
               </div>
-
-              <span className="font-medium">
-                Logout
+              <span className={`text-sm font-medium ${active ? "text-white font-semibold" : "text-zinc-300"}`}>
+                {item.name}
               </span>
-
             </div>
 
             <ChevronRight
-              size={18}
-              className="
-                -translate-x-2
-                opacity-0
-                transition-all
-                duration-300
-                group-hover:translate-x-0
-                group-hover:opacity-100
-                group-hover:text-red-400
-              "
+              size={16}
+              className={`transition-all duration-200 ${
+                active
+                  ? "translate-x-0 opacity-100 text-cyan-400"
+                  : "-translate-x-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-100"
+              }`}
             />
 
-          </button>
+            {active && !isMobile && (
+              <div className="absolute left-0 top-2.5 h-7 w-1 rounded-r-full bg-cyan-400 shadow-sm shadow-cyan-400" />
+            )}
+          </Link>
+        );
+      })}
 
+      <button
+        onClick={handleLogout}
+        className="group relative flex w-full items-center justify-between rounded-xl px-3.5 py-2.5 text-zinc-400 transition-all duration-200 hover:bg-red-500/10 hover:text-red-400"
+      >
+        <div className="flex items-center gap-3.5">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-900 text-zinc-400 transition-all duration-200 group-hover:bg-red-500/20 group-hover:text-red-400">
+            <LogOut size={18} />
+          </div>
+          <span className="text-sm font-medium">Logout</span>
         </div>
+        <ChevronRight
+          size={16}
+          className="-translate-x-2 opacity-0 transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100 group-hover:text-red-400"
+        />
+      </button>
+    </div>
+  );
 
+  return (
+    <>
+      {/* MOBILE BAR & DRAWER */}
+      <div className="fixed top-0 left-0 right-0 z-[60] flex h-16 items-center justify-between border-b border-zinc-800/80 bg-black px-4 lg:hidden">
+        <button
+          onClick={() => setMobileOpen(true)}
+          className="rounded-xl border border-zinc-800 bg-zinc-900 p-2 text-white"
+          aria-label="Open menu"
+        >
+          <Menu size={22} />
+        </button>
+        <BrandHeader />
+        <div className="w-8" />
       </div>
 
-       
+      {mobileOpen && (
+        <div
+          onClick={() => setMobileOpen(false)}
+          className="fixed inset-0 z-[65] bg-black/80 backdrop-blur-sm lg:hidden"
+        />
+      )}
 
-    </div>
+      <aside
+        className={`fixed top-0 left-0 z-[70] flex h-screen w-64 flex-col border-r border-zinc-800/80 bg-black transition-transform duration-300 lg:hidden ${
+          mobileOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        <div className="flex items-center justify-between border-b border-zinc-800/80 p-4">
+          <BrandHeader />
+          <button
+            onClick={() => setMobileOpen(false)}
+            className="rounded-lg p-2 text-zinc-400 hover:bg-zinc-900 hover:text-white"
+            aria-label="Close menu"
+          >
+            <X size={20} />
+          </button>
+        </div>
 
-  </aside>
-);
+        <div className="flex-1 overflow-y-auto p-3">
+          <NavigationLinks isMobile />
+        </div>
+      </aside>
+
+      {/* DESKTOP SIDEBAR (Pure Black Theme) */}
+      <aside className="fixed top-0 left-0 z-50 hidden h-screen w-64 flex-col border-r border-zinc-800/80 bg-black lg:flex">
+        <div className="flex h-full flex-col">
+          <div className="border-b border-zinc-800/80 p-5">
+            <BrandHeader isLarge />
+          </div>
+
+          <div className="flex-1 overflow-y-auto p-3">
+            <NavigationLinks />
+          </div>
+        </div>
+      </aside>
+    </>
+  );
 }

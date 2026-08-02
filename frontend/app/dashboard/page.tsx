@@ -6,7 +6,7 @@ import { api } from "@/lib/axios";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 import Select from "react-select";
-import { MapPin, Loader2 } from "lucide-react";
+import { MapPin } from "lucide-react";
 import {
   Bot,
   Mail,
@@ -23,22 +23,19 @@ import {
   BarChart3,
 } from "lucide-react";
 
-
-
 const swalTheme = {
   width: "250px",
   padding: "0.75rem",
-  background: "#0f172a",
+  background: "#0a0a0a",
   color: "#fff",
   customClass: {
-    popup: "rounded-xl",
+    popup: "rounded-xl border border-zinc-800",
     title: "text-base font-semibold",
     htmlContainer: "text-xs",
     confirmButton: "text-xs px-4 py-2 rounded-lg",
     icon: "swal-small-icon",
   },
 };
-
 
 const showSuccess = (message: string) => {
   Swal.fire({
@@ -70,16 +67,6 @@ const showWarning = (message: string) => {
   });
 };
 
-const showInfo = (message: string) => {
-  Swal.fire({
-    icon: "info",
-    title: "Information",
-    text: message,
-    confirmButtonColor: "#06b6d4",
-    ...swalTheme,
-  });
-};
-// ---------- Component ----------
 export default function Dashboard() {
   const router = useRouter();
 
@@ -92,117 +79,107 @@ export default function Dashboard() {
 
   const [jobsFound, setJobsFound] = useState(0);
   const [applicationsSent, setApplicationsSent] = useState(0);
+  const [keywordOptions, setKeywordOptions] = useState<
+    { value: string; label: string }[]
+  >([]);
 
- useEffect(() => {
-  loadData();
-  loadStats();
-  loadKeywords();
-}, []);
-const [keywordOptions, setKeywordOptions] = useState<
-  { value: string; label: string }[]
->([]);
+  useEffect(() => {
+    loadData();
+    loadStats();
+    loadKeywords();
+  }, []);
 
-const locationOptions = [
-  { value: "", label: "All Locations" },
-  { value: "Remote", label: "🌍 Remote" },
-  { value: "Anywhere", label: "🌎 Anywhere" },
-  { value: "Bangalore", label: "Bangalore" },
-  { value: "Hyderabad", label: "Hyderabad" },
-  { value: "Pune", label: "Pune" },
-  { value: "Mumbai", label: "Mumbai" },
-  { value: "Delhi NCR", label: "Delhi NCR" },
-  { value: "Gurugram", label: "Gurugram" },
-  { value: "Noida", label: "Noida" },
-  { value: "New Delhi", label: "New Delhi" },
-  { value: "Chennai", label: "Chennai" },
-  { value: "Kolkata", label: "Kolkata" },
-  { value: "Ahmedabad", label: "Ahmedabad" },
-  { value: "Dubai", label: "Dubai" },
-  { value: "Singapore", label: "Singapore" },
-  { value: "London", label: "London" },
-  { value: "United States", label: "United States" },
-];
+  const locationOptions = [
+    { value: "", label: "All Locations" },
+    { value: "Remote", label: "🌍 Remote" },
+    { value: "Anywhere", label: "🌎 Anywhere" },
+    { value: "Bangalore", label: "Bangalore" },
+    { value: "Hyderabad", label: "Hyderabad" },
+    { value: "Pune", label: "Pune" },
+    { value: "Mumbai", label: "Mumbai" },
+    { value: "Delhi NCR", label: "Delhi NCR" },
+    { value: "Gurugram", label: "Gurugram" },
+    { value: "Noida", label: "Noida" },
+    { value: "New Delhi", label: "New Delhi" },
+    { value: "Chennai", label: "Chennai" },
+    { value: "Kolkata", label: "Kolkata" },
+    { value: "Ahmedabad", label: "Ahmedabad" },
+    { value: "Dubai", label: "Dubai" },
+    { value: "Singapore", label: "Singapore" },
+    { value: "London", label: "London" },
+    { value: "United States", label: "United States" },
+  ];
 
-const loadKeywords = async () => {
-  try {
-    const response = await api.get("/agent/keywords");
-    setKeywordOptions(response.data);
-  } catch (err) {
-    console.error(err);
-  }
-};
+  const loadKeywords = async () => {
+    try {
+      const response = await api.get("/agent/keywords");
+      setKeywordOptions(response.data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
-const selectStyles = {
-  control: (base: any, state: any) => ({
-    ...base,
-    minHeight: "48px",
-    backgroundColor: "rgba(255,255,255,.03)",
-    border: state.isFocused
-      ? "1px solid rgba(6,182,212,.45)"
-      : "1px solid rgba(255,255,255,.10)",
-    borderRadius: "12px",
-    boxShadow: state.isFocused
-      ? "0 0 0 3px rgba(6,182,212,.15)"
-      : "none",
-    "&:hover": {
-      border: "1px solid rgba(6,182,212,.35)",
-    },
-  }),
+  const selectStyles = {
+    control: (base: any, state: any) => ({
+      ...base,
+      minHeight: "48px",
+      backgroundColor: "#0a0a0a",
+      border: state.isFocused
+        ? "1px solid rgba(255,255,255,0.2)"
+        : "1px solid rgba(255,255,255,0.1)",
+      borderRadius: "12px",
+      boxShadow: "none",
+      "&:hover": {
+        border: "1px solid rgba(255,255,255,0.2)",
+      },
+    }),
+    valueContainer: (base: any) => ({
+      ...base,
+      padding: "0 14px",
+    }),
+    input: (base: any) => ({
+      ...base,
+      color: "#fff",
+    }),
+    singleValue: (base: any) => ({
+      ...base,
+      color: "#fff",
+    }),
+    placeholder: (base: any) => ({
+      ...base,
+      color: "#71717a",
+    }),
+    menu: (base: any) => ({
+      ...base,
+      backgroundColor: "#0a0a0a",
+      border: "1px solid rgba(255,255,255,0.1)",
+      borderRadius: "12px",
+      overflow: "hidden",
+      zIndex: 9999,
+    }),
+    menuList: (base: any) => ({
+      ...base,
+      backgroundColor: "#0a0a0a",
+    }),
+    option: (base: any, state: any) => ({
+      ...base,
+      backgroundColor: state.isSelected
+        ? "#18181b"
+        : state.isFocused
+        ? "#27272a"
+        : "#0a0a0a",
+      color: "#fff",
+      cursor: "pointer",
+    }),
+    indicatorSeparator: () => ({
+      display: "none",
+    }),
+    menuPortal: (base: any) => ({
+      ...base,
+      zIndex: 9999,
+    }),
+  };
 
-  valueContainer: (base: any) => ({
-    ...base,
-    padding: "0 14px",
-  }),
-
-  input: (base: any) => ({
-    ...base,
-    color: "#fff",
-  }),
-
-  singleValue: (base: any) => ({
-    ...base,
-    color: "#fff",
-  }),
-
-  placeholder: (base: any) => ({
-    ...base,
-    color: "#71717a",
-  }),
-
-  menu: (base: any) => ({
-    ...base,
-    backgroundColor: "#09090b",
-    border: "1px solid rgba(255,255,255,.08)",
-    borderRadius: "12px",
-    overflow: "hidden",
-    zIndex: 9999,
-  }),
-
-  menuList: (base: any) => ({
-    ...base,
-    backgroundColor: "#09090b",
-  }),
-
-  option: (base: any, state: any) => ({
-    ...base,
-    backgroundColor: state.isSelected
-      ? "rgba(6,182,212,.18)"
-      : state.isFocused
-      ? "rgba(255,255,255,.06)"
-      : "#09090b",
-    color: "#fff",
-    cursor: "pointer",
-  }),
-
-  indicatorSeparator: () => ({
-    display: "none",
-  }),
-
-  menuPortal: (base: any) => ({
-    ...base,
-    zIndex: 9999,
-  }),
-};
   const loadData = async () => {
     try {
       const appRes = await api.get("/applications");
@@ -224,68 +201,60 @@ const selectStyles = {
       console.error(err);
     }
   };
-const showLoading = (
-  title: string = "Running...",
-  message: string = "Please wait..."
-) => {
-  Swal.fire({
-    title,
-    html: message,
-    width: "280px",
-    padding: "1rem",
-    background: "#0f172a",
-    color: "#fff",
-    allowOutsideClick: false,
-    allowEscapeKey: false,
-    showConfirmButton: false,
-    customClass: {
-      popup: "rounded-xl",
-      title: "text-base font-semibold",
-      htmlContainer: "text-xs",
-    },
-    didOpen: () => {
-      Swal.showLoading();
-    },
-  });
-};
-const startAgent = async () => {
-  if (!keywords.trim()) {
-    showWarning("Please enter job keywords.");
-    return;
-  }
 
-  setLoading(true);
+  const showLoading = (
+    title: string = "Running...",
+    message: string = "Please wait..."
+  ) => {
+    Swal.fire({
+      title,
+      html: message,
+      width: "280px",
+      padding: "1rem",
+      background: "#0a0a0a",
+      color: "#fff",
+      allowOutsideClick: false,
+      allowEscapeKey: false,
+      showConfirmButton: false,
+      customClass: {
+        popup: "rounded-xl border border-zinc-800",
+        title: "text-base font-semibold",
+        htmlContainer: "text-xs",
+      },
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+  };
 
-  showLoading();
+  const startAgent = async () => {
+    if (!keywords.trim()) {
+      showWarning("Please enter job keywords.");
+      return;
+    }
 
-try {
-  const response = await api.post("/agent/start", {
-    keywords,
-    location,
-  });
+    setLoading(true);
+    showLoading();
 
-  Swal.close();
+    try {
+      const response = await api.post("/agent/start", {
+        keywords,
+        location,
+      });
 
-  showSuccess(
-    response.data.message || "AI Agent started successfully."
-  );
+      Swal.close();
+      showSuccess(response.data.message || "AI Agent started successfully.");
+      loadStats();
+      router.push("/new-jobs");
+    } catch (err) {
+      Swal.close();
+      console.error(err);
+      showError("Failed to start AI Agent.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  loadStats();
-
-  // Redirect to New Jobs page
-  router.push("/new-jobs");
-
-} catch (err) {
-  Swal.close();
-
-  console.error(err);
-
-  showError("Failed to start AI Agent.");
-} finally {
-  setLoading(false);
-}
-};
-  // ---------- Stat cards config ----------
   const stats = [
     {
       label: "Agent Status",
@@ -335,7 +304,6 @@ try {
       icon: <CheckCircle2 className="h-4 w-4 text-green-400" />,
       iconBg: "bg-green-500/15",
       subClass: "text-green-400",
-      highlight: true,
     },
   ];
 
@@ -349,9 +317,9 @@ try {
   ];
 
   const quickButtons = [
-    { icon: Search, label: "Search Jobs", color: "cyan" },
-    { icon: FileCheck, label: "Resume Match", color: "emerald" },
-    { icon: BarChart3, label: "Analytics", color: "violet" },
+    { icon: Search, label: "Search Jobs" },
+    { icon: FileCheck, label: "Resume Match" },
+    { icon: BarChart3, label: "Analytics" },
   ];
 
   const agentSteps = [
@@ -378,46 +346,16 @@ try {
       sub: "Gmail Outreach",
     },
   ];
-const colorClasses = {
-  cyan: {
-    border: "hover:border-cyan-400/40",
-    bg: "hover:bg-cyan-500/10",
-    text: "text-cyan-400",
-  },
-  emerald: {
-    border: "hover:border-emerald-400/40",
-    bg: "hover:bg-emerald-500/10",
-    text: "text-emerald-400",
-  },
-  violet: {
-    border: "hover:border-violet-400/40",
-    bg: "hover:bg-violet-500/10",
-    text: "text-violet-400",
-  },
-};
+
   return (
     <ProtectedRoute>
-      <div className="relative overflow-hidden min-h-screen">
-        {/* Background blur image */}
-        {/* <div
-          className="fixed top-0 right-0 bottom-0 hidden lg:block left-72 z-0 bg-no-repeat"
-          style={{
-            backgroundImage: "url('/Login_BG.png')",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            filter: "blur(12px)",
-            opacity: 0.3,
-          }}
-        /> */}
-        <div className="fixed inset-0 -z-10 bg-gradient-to-r from-[#030712] via-[#030712]/80 to-transparent" />
-        <div className="absolute inset-0 opacity-[0.05] bg-[linear-gradient(rgba(255,255,255,.15)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.15)_1px,transparent_1px)] bg-[size:50px_50px]" />
-
+      <div className="relative overflow-hidden min-h-screen bg-black text-white">
         <div className="relative z-10 mx-auto max-w-[1500px] px-4 sm:px-5 lg:px-7 py-5 sm:py-6 lg:py-7">
           {/* ================= HERO ================= */}
           <section>
-            <div className="inline-flex items-center gap-1.5 rounded-full border border-cyan-500/30 bg-cyan-500/10 px-3 py-1">
+            <div className="inline-flex items-center gap-1.5 rounded-full border border-zinc-800 bg-zinc-900 px-3 py-1">
               <Sparkles className="h-3 w-3 text-cyan-400" />
-              <span className="text-[11px] tracking-wide text-cyan-300">
+              <span className="text-[11px] tracking-wide text-zinc-300">
                 AI Powered Job Automation
               </span>
             </div>
@@ -434,61 +372,29 @@ const colorClasses = {
 
             {/* Quick Buttons */}
             <div className="mt-6 flex flex-wrap gap-3">
-             {quickButtons.map(({ icon: Icon, label, color }) => {
-  const styles = colorClasses[color as keyof typeof colorClasses];
-
-  return (
-    <button
-      key={label}
-      className={`
-        group flex items-center gap-2
-        rounded-xl border border-white/10 bg-white/5
-        backdrop-blur-xl
-        px-4 sm:px-5 py-2.5 sm:py-3
-        text-sm font-medium text-white
-        transition-all duration-300
-        md:hover:-translate-y-0.5
-        ${styles.border}
-        ${styles.bg}
-        active:scale-95
-      `}
-    >
-      <Icon className={`h-4 w-4 ${styles.text}`} />
-      <span>{label}</span>
-    </button>
-  );
-})}
+              {quickButtons.map(({ icon: Icon, label }) => (
+                <button
+                  key={label}
+                  className="
+                    group flex items-center gap-2
+                    rounded-xl border border-zinc-800 bg-zinc-900/50
+                    px-4 sm:px-5 py-2.5 sm:py-3
+                    text-sm font-medium text-zinc-300
+                    transition-all duration-300
+                    hover:border-zinc-700 hover:text-white hover:bg-zinc-800
+                    active:scale-95
+                  "
+                >
+                  <Icon className="h-4 w-4 text-zinc-400 group-hover:text-white" />
+                  <span>{label}</span>
+                </button>
+              ))}
             </div>
           </section>
 
           {/* ================= AGENT CONFIGURATION ================= */}
-<section
-  className="
-    mt-8
-    rounded-2xl
-    border
-    border-white/10
-    bg-white/[0.04]
-    backdrop-blur-2xl
-    overflow-hidden
-    shadow-[0_0_35px_rgba(255,255,255,0.12)]
-  "
->            {/* Header */}
-            <div className="
-  border-b
-  border-white/20
-  bg-white/[0.02]
-  px-4
-  sm:px-6
-  py-4
-  sm:py-5
-  flex
-  flex-col
-  xl:flex-row
-  justify-between
-  xl:items-center
-  gap-4
-">
+          <section className="mt-8 rounded-2xl border border-zinc-800 bg-[#0a0a0a] overflow-hidden">
+            <div className="border-b border-zinc-800 bg-zinc-900/20 px-4 sm:px-6 py-4 sm:py-5 flex flex-col xl:flex-row justify-between xl:items-center gap-4">
               <div>
                 <h2 className="text-xl sm:text-2xl font-black text-white">
                   Agent Configuration
@@ -500,23 +406,15 @@ const colorClasses = {
 
               <div
                 onClick={() => router.push("/agent")}
-                className="
-                  group cursor-pointer
-                  rounded-xl border border-cyan-400/20
-                  bg-gradient-to-r from-cyan-500/10 via-sky-500/10 to-purple-500/10
-                  px-4 py-3
-                  transition-all duration-300
-                  md:hover:-translate-y-0.5
-                  hover:border-cyan-400/50
-                "
+                className="group cursor-pointer rounded-xl border border-zinc-800 bg-zinc-900/50 px-4 py-3 transition hover:border-zinc-700 hover:bg-zinc-900"
               >
                 <div className="flex items-center justify-between gap-4">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-500/20 group-hover:bg-cyan-500/30 transition-all">
-                      <Bot className="h-5 w-5 text-cyan-400" />
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-zinc-800 text-cyan-400">
+                      <Bot className="h-5 w-5" />
                     </div>
                     <div>
-                      <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-cyan-300">
+                      <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-zinc-400">
                         AI Automation
                       </p>
                       <h3 className="text-sm font-bold text-white">
@@ -525,10 +423,10 @@ const colorClasses = {
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
-                    <span className="rounded-full bg-green-500/20 px-2 py-0.5 text-[10px] font-semibold text-green-400">
+                    <span className="rounded-full bg-green-500/10 px-2 py-0.5 text-[10px] font-semibold text-green-400 border border-green-500/20">
                       Ready
                     </span>
-                    <ArrowRight className="h-4 w-4 text-cyan-400 transition-transform group-hover:translate-x-1" />
+                    <ArrowRight className="h-4 w-4 text-zinc-400 transition-transform group-hover:translate-x-1" />
                   </div>
                 </div>
               </div>
@@ -538,75 +436,65 @@ const colorClasses = {
             <div className="p-4 sm:p-6">
               <div className="grid grid-cols-1 lg:grid-cols-[1fr_1fr_auto] gap-4 items-end">
                 <div>
-  <label className="mb-2 flex items-center gap-2 text-xs font-medium text-zinc-300">
-    <Search className="h-4 w-4 text-cyan-400" />
-    Job Keywords
-  </label>
+                  <label className="mb-2 flex items-center gap-2 text-xs font-medium text-zinc-300">
+                    <Search className="h-4 w-4 text-zinc-400" />
+                    Job Keywords
+                  </label>
 
-  <Select
-    options={keywordOptions}
-    isSearchable
-    isClearable
-    placeholder="Search job role..."
-    value={
-      keywordOptions.find((o) => o.value === keywords) || null
-    }
-    onChange={(selected) =>
-      setKeywords(selected?.value || "")
-    }
-    styles={selectStyles}
-    menuPortalTarget={
-      typeof window !== "undefined"
-        ? document.body
-        : undefined
-    }
-    menuPosition="fixed"
-  />
-</div>
+                  <Select
+                    options={keywordOptions}
+                    isSearchable
+                    isClearable
+                    placeholder="Search job role..."
+                    value={
+                      keywordOptions.find((o) => o.value === keywords) || null
+                    }
+                    onChange={(selected) => setKeywords(selected?.value || "")}
+                    styles={selectStyles}
+                    menuPortalTarget={
+                      typeof window !== "undefined" ? document.body : undefined
+                    }
+                    menuPosition="fixed"
+                  />
+                </div>
+
                 <div>
-  <label className="mb-2 flex items-center gap-2 text-xs font-medium text-zinc-300">
-    <MapPin className="h-4 w-4 text-cyan-400" />
-    Preferred Location
-  </label>
+                  <label className="mb-2 flex items-center gap-2 text-xs font-medium text-zinc-300">
+                    <MapPin className="h-4 w-4 text-zinc-400" />
+                    Preferred Location
+                  </label>
 
-  <Select
-    options={locationOptions}
-    isSearchable
-    isClearable
-    placeholder="Search location..."
-    value={
-      locationOptions.find((option) => option.value === location) || null
-    }
-    onChange={(selected) => {
-      setLocation(selected?.value || "");
-    }}
-    styles={selectStyles}
-    menuPortalTarget={
-      typeof window !== "undefined" ? document.body : undefined
-    }
-    menuPosition="fixed"
-  />
-</div>
+                  <Select
+                    options={locationOptions}
+                    isSearchable
+                    isClearable
+                    placeholder="Search location..."
+                    value={
+                      locationOptions.find((option) => option.value === location) ||
+                      null
+                    }
+                    onChange={(selected) => setLocation(selected?.value || "")}
+                    styles={selectStyles}
+                    menuPortalTarget={
+                      typeof window !== "undefined" ? document.body : undefined
+                    }
+                    menuPosition="fixed"
+                  />
+                </div>
+
                 <button
                   onClick={startAgent}
                   disabled={loading}
                   className="
-                    group h-11 px-5
-                    rounded-xl border border-slate-700
-                    bg-slate-900/70 text-white text-sm font-semibold
-                    backdrop-blur-md transition-all duration-300
-                    md:hover:-translate-y-0.5
-                    hover:border-slate-500
-                    hover:bg-slate-800
-                    active:scale-95
-                    disabled:opacity-60
+                    h-11 px-6 rounded-xl border border-zinc-700 bg-white text-black text-sm font-semibold
+                    transition-all duration-300 hover:bg-zinc-200 active:scale-95 disabled:opacity-60
                   "
                 >
-                  {loading ? "Searching..." : " Start AI Agent"}
+                  {loading ? "Searching..." : "Start AI Agent"}
                 </button>
               </div>
 
-              <div className="my-6 h-px bg-white/10" />
+              <div className="my-6 h-px bg-zinc-800" />
 
               <div>
                 <h3 className="text-base sm:text-lg font-bold text-white">
@@ -632,16 +520,7 @@ const colorClasses = {
             {stats.map((s) => (
               <div
                 key={s.label}
-                className={`
-                  rounded-2xl border border-white/10
-                  ${
-                    s.highlight
-                      ? "bg-gradient-to-br from-cyan-500/10 to-purple-500/10"
-                      : "bg-white/[0.03]"
-                  }
-                  backdrop-blur-2xl p-4
-                  hover:border-cyan-400/30 transition-all
-                `}
+                className="rounded-2xl border border-zinc-800 bg-[#0a0a0a] p-4 hover:border-zinc-700 transition-all"
               >
                 <div className="flex items-center justify-between">
                   <span className="text-[11px] sm:text-xs text-zinc-400">
@@ -670,60 +549,56 @@ const colorClasses = {
           {/* ================= MAIN DASHBOARD ================= */}
           <section className="mt-8 grid grid-cols-1 xl:grid-cols-[1.6fr_360px] gap-5 xl:gap-6">
             {/* LEFT — AI Job Agent */}
-            <div className="rounded-2xl overflow-hidden border border-cyan-500/20 bg-gradient-to-r from-cyan-500/10 via-blue-500/5 to-purple-500/10">
-              <div className="rounded-2xl bg-[#08111f] p-5 sm:p-6">
-                <div className="flex flex-col xl:flex-row justify-between gap-6">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3">
-                      <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl bg-cyan-500/15 flex items-center justify-center">
-                        <Bot className="h-5 w-5 sm:h-6 sm:w-6 text-cyan-400" />
-                      </div>
-                      <div>
-                        <h2 className="text-lg sm:text-xl font-black text-white">
-                          AI Job Agent
-                        </h2>
-                        <p className="text-xs text-zinc-500 mt-0.5">
-                          Intelligent Automation Engine
-                        </p>
-                      </div>
+            <div className="rounded-2xl border border-zinc-800 bg-[#0a0a0a] p-5 sm:p-6">
+              <div className="flex flex-col xl:flex-row justify-between gap-6">
+                <div className="flex-1">
+                  <div className="flex items-center gap-3">
+                    <div className="h-10 w-10 sm:h-12 sm:w-12 rounded-xl bg-zinc-900 border border-zinc-800 flex items-center justify-center">
+                      <Bot className="h-5 w-5 sm:h-6 sm:w-6 text-cyan-400" />
                     </div>
-                    <p className="mt-5 max-w-2xl text-sm leading-6 text-zinc-400">
-                      Your AI agent continuously scans LinkedIn, HackerNews and
-                      other job sources, matches your resume, generates
-                      personalized emails, tracks recruiter responses and keeps
-                      every application organized automatically.
-                    </p>
+                    <div>
+                      <h2 className="text-lg sm:text-xl font-black text-white">
+                        AI Job Agent
+                      </h2>
+                      <p className="text-xs text-zinc-500 mt-0.5">
+                        Intelligent Automation Engine
+                      </p>
+                    </div>
+                  </div>
+                  <p className="mt-5 max-w-2xl text-sm leading-6 text-zinc-400">
+                    Your AI agent continuously scans LinkedIn, HackerNews and
+                    other job sources, matches your resume, generates
+                    personalized emails, tracks recruiter responses and keeps
+                    every application organized automatically.
+                  </p>
+                </div>
+
+                <div className="w-full xl:w-[240px]">
+                  <div className="flex justify-between text-xs">
+                    <span className="text-zinc-400">Automation Progress</span>
+                    <span className="text-white">82%</span>
+                  </div>
+                  <div className="mt-2 h-2 rounded-full bg-zinc-900 overflow-hidden border border-zinc-800">
+                    <div className="h-full w-[82%] rounded-full bg-white" />
                   </div>
 
-                  <div className="w-full xl:w-[240px]">
-                    <div className="flex justify-between text-xs">
-                      <span className="text-zinc-400">Automation Progress</span>
-                      <span className="text-white">82%</span>
-                    </div>
-                    <div className="mt-2 h-2 rounded-full bg-zinc-800 overflow-hidden">
-                      <div className="h-full w-[82%] rounded-full bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-500" />
-                    </div>
-
-                    <div className="mt-5 space-y-2">
-                      {agentSteps.map((t) => (
-                        <div
-                          key={t}
-                          className="flex justify-between items-center text-xs"
-                        >
-                          <span className="text-zinc-500">{t}</span>
-                          <CircleCheckBig className="text-green-400 h-4 w-4" />
-                        </div>
-                      ))}
-                    </div>
-
-                   
+                  <div className="mt-5 space-y-2">
+                    {agentSteps.map((t) => (
+                      <div
+                        key={t}
+                        className="flex justify-between items-center text-xs"
+                      >
+                        <span className="text-zinc-500">{t}</span>
+                        <CircleCheckBig className="text-green-400 h-4 w-4" />
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
             </div>
 
             {/* RIGHT — Live Activity */}
-            <aside className="rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-2xl p-5">
+            <aside className="rounded-2xl border border-zinc-800 bg-[#0a0a0a] p-5">
               <h2 className="text-base sm:text-lg font-bold text-white">
                 Live Activity
               </h2>
@@ -746,7 +621,7 @@ const colorClasses = {
           </section>
 
           {/* ================= FOOTER ================= */}
-          <footer className="mt-12 border-t border-zinc-800 pt-5 text-center text-xs text-zinc-500">
+          <footer className="mt-12 border-t border-zinc-900 pt-5 text-center text-xs text-zinc-500">
             <a href="/privacy" className="hover:text-white transition">
               Privacy Policy
             </a>
