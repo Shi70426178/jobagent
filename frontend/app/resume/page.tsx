@@ -1,19 +1,21 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
 import Sidebar from "@/components/Sidebar";
 import { api } from "@/lib/axios";
+import { 
+  UploadCloud, 
+  FileText, 
+  GraduationCap, 
+  Briefcase, 
+  Sparkles, 
+  CheckCircle2 
+} from "lucide-react";
 
 export default function ResumePage() {
-  const [file, setFile] =
-    useState<File | null>(null);
-
-  const [resume, setResume] =
-    useState<any>(null);
-
-  const [uploading, setUploading] =
-    useState(false);
+  const [file, setFile] = useState<File | null>(null);
+  const [resume, setResume] = useState<any>(null);
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     loadResume();
@@ -21,11 +23,7 @@ export default function ResumePage() {
 
   const loadResume = async () => {
     try {
-      const response =
-        await api.get(
-          "/resume/latest"
-        );
-
+      const response = await api.get("/resume/latest");
       setResume(response.data);
     } catch (error) {
       console.error(error);
@@ -37,251 +35,165 @@ export default function ResumePage() {
 
     try {
       setUploading(true);
+      const formData = new FormData();
+      formData.append("file", file);
 
-      const formData =
-        new FormData();
+      await api.post("/resume/upload", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
 
-      formData.append(
-        "file",
-        file
-      );
-
-      await api.post(
-        "/resume/upload",
-        formData,
-        {
-          headers: {
-            "Content-Type":
-              "multipart/form-data",
-          },
-        }
-      );
-
-      alert(
-        "Resume uploaded successfully"
-      );
-
+      alert("Resume uploaded successfully");
+      setFile(null);
       loadResume();
     } catch (error) {
       console.error(error);
-
-      alert(
-        "Failed to upload resume"
-      );
+      alert("Failed to upload resume");
     } finally {
       setUploading(false);
     }
   };
 
   return (
-    <div className="flex">
+    <div className="flex min-h-screen bg-black text-white">
       <Sidebar />
 
-      <main className="flex-1 bg-black/40 backdrop-blur-xl min-h-screen text-white p-10">
-
-        <div className="mb-12">
-
-          <h1 className="text-5xl font-semibold tracking-tight">
+      <main className="flex-1 p-6 sm:p-8 lg:p-10 max-w-[1400px] mx-auto">
+        {/* Header Section */}
+        <div className="mb-8 sm:mb-10">
+          <div className="inline-flex items-center gap-1.5 rounded-full border border-zinc-800 bg-zinc-900 px-3 py-1 mb-3">
+            <Sparkles className="h-3.5 w-3.5 text-cyan-400" />
+            <span className="text-xs text-zinc-300">AI Resume Parser</span>
+          </div>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight text-white">
             Resume Profile
           </h1>
+          <p className="text-zinc-400 mt-2 text-sm sm:text-base max-w-2xl">
+            Upload your resume and let AI analyze your experience, education, and extracted skills.
+          </p>
+        </div>
 
-          <p className="text-zinc-500 mt-3">
-            Upload your resume and let AI
-            analyze your experience,
-            education, and skills.
+        {/* Outer Dark Card Container */}
+        <section className="bg-[#0a0a0a] border border-zinc-800 rounded-2xl p-6 sm:p-8 mb-8">
+          <h2 className="text-xl font-bold text-white mb-2">Upload Resume</h2>
+          <p className="text-zinc-400 text-sm mb-6">
+            Upload your latest resume in PDF format. AI will automatically extract your skills, experience, and education.
           </p>
 
-        </div>
+          {/* Dark Inner Upload Area */}
+          <label
+            htmlFor="resume-upload"
+            className="
+              flex flex-col items-center justify-center
+              h-48 sm:h-56 w-full rounded-xl
+              border-2 border-dashed border-zinc-700 bg-zinc-900/50
+              cursor-pointer transition-all duration-200
+              hover:border-zinc-500 hover:bg-zinc-900
+              px-4 text-center group
+            "
+          >
+            <UploadCloud className="w-10 h-10 text-zinc-400 mb-3 group-hover:scale-110 group-hover:text-white transition-all duration-200" />
 
-        <div className="bg-zinc-900/60 backdrop-blur-xl border border-zinc-800 rounded-2xl p-8 mb-10">
+            <p className="text-base sm:text-lg font-bold text-zinc-200 group-hover:text-white">
+              Click to upload your resume
+            </p>
 
-          <h2 className="text-2xl font-semibold mb-6">
-            Upload Resume
-          </h2>
+            <p className="text-xs text-zinc-500 mt-1">
+              PDF only • Max 5 MB
+            </p>
 
-         <div className="bg-zinc-900/60 backdrop-blur-xl border border-zinc-800 rounded-2xl p-8 mb-10">
+            {file && (
+              <div className="mt-4 flex items-center gap-2 rounded-lg bg-zinc-800 border border-zinc-700 px-3 py-1.5 text-zinc-200 text-xs font-semibold">
+                <FileText className="h-4 w-4 text-zinc-400" />
+                <span>{file.name}</span>
+              </div>
+            )}
+          </label>
 
-  {/* <h2 className="text-xl sm:text-2xl font-semibold mb-2">
-    Upload Resume
-  </h2> */}
+          <input
+            id="resume-upload"
+            type="file"
+            accept=".pdf"
+            className="hidden"
+            onChange={(e) => setFile(e.target.files?.[0] || null)}
+          />
 
-  <p className="text-zinc-400 text-sm mb-6">
-    Upload your latest resume in PDF format. AI will automatically extract your
-    skills, experience and education.
-  </p>
+          {/* White Button with High Contrast */}
+          <button
+            onClick={uploadResume}
+            disabled={!file || uploading}
+            className="
+              mt-5 w-full h-11 rounded-xl
+              bg-white text-black font-bold text-sm shadow-md
+              transition-all duration-200 hover:bg-zinc-200 active:scale-[0.99]
+              disabled:bg-zinc-800 disabled:text-zinc-500 disabled:shadow-none disabled:cursor-not-allowed
+            "
+          >
+            {uploading ? "Uploading & Parsing Resume..." : "Upload Resume"}
+          </button>
+        </section>
 
-  <label
-    htmlFor="resume-upload"
-    className="
-  flex flex-col items-center justify-center
-  h-40 sm:h-56
-  w-full
-  rounded-2xl
-  border-2 border-dashed border-zinc-700
-  bg-zinc-950/40
-  cursor-pointer
-  transition-all
-  hover:border-cyan-500
-  hover:bg-zinc-900
-  px-4
-  text-center
-"
-  >
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      className="w-9 h-9 sm:w-12 sm:h-12 text-cyan-400 mb-3"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={1.8}
-        d="M7 16a4 4 0 01-.88-7.903A5 5 0 0116.9 6.1A4.5 4.5 0 0117.5 15H15m-3-3v9m0-9l-3 3m3-3l3 3"
-      />
-    </svg>
-
-    <p className="text-sm sm:text-lg font-medium text-white">
-      Click to upload your resume
-    </p>
-
-    <p className="text-sm text-zinc-500 mt-2">
-      PDF only • Max 5 MB
-    </p>
-
-    {file && (
-      <div className="mt-5 rounded-xl bg-cyan-500/10 border border-cyan-500/30 px-4 py-2 text-cyan-300 text-sm">
-        📄 {file.name}
-      </div>
-    )}
-  </label>
-
-  <input
-    id="resume-upload"
-    type="file"
-    accept=".pdf"
-    className="hidden"
-    onChange={(e) =>
-      setFile(e.target.files?.[0] || null)
-    }
-  />
-
-  <button
-    onClick={uploadResume}
-    disabled={!file || uploading}
-    className="
-      mt-6
-      w-full
-      h-12
-      rounded-xl
-      bg-cyan-500
-      text-black
-      font-semibold
-      transition
-      hover:bg-cyan-400
-      disabled:opacity-50
-      disabled:cursor-not-allowed
-    "
-  >
-    {uploading ? "Uploading Resume..." : "Upload Resume"}
-  </button>
-
-</div>
-
-        </div>
-
+        {/* Resume Extracted Details */}
         {resume && (
-
-          <>
-            <div className="grid md:grid-cols-3 gap-6 mb-10">
-
-              <div className="bg-zinc-900/60 backdrop-blur-xl border border-zinc-800 rounded-2xl p-6">
-
-                <p className="text-zinc-500 text-sm">
+          <div className="space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="bg-[#0a0a0a] border border-zinc-800 rounded-2xl p-5">
+                <div className="flex items-center gap-2 text-zinc-400 text-xs font-medium mb-2">
+                  <GraduationCap className="h-4 w-4 text-cyan-400" />
                   Education
+                </div>
+                <p className="text-sm font-medium text-white leading-relaxed">
+                  {resume.education || "Not Available"}
                 </p>
-
-                <p className="mt-3">
-                  {resume.education ||
-                    "Not Available"}
-                </p>
-
               </div>
 
-              <div className="bg-zinc-900/60 backdrop-blur-xl border border-zinc-800 rounded-2xl p-6">
-
-                <p className="text-zinc-500 text-sm">
+              <div className="bg-[#0a0a0a] border border-zinc-800 rounded-2xl p-5">
+                <div className="flex items-center gap-2 text-zinc-400 text-xs font-medium mb-2">
+                  <Briefcase className="h-4 w-4 text-emerald-400" />
                   Experience
+                </div>
+                <p className="text-sm font-medium text-white leading-relaxed">
+                  {resume.experience || "Not Available"}
                 </p>
-
-                <p className="mt-3">
-                  {resume.experience ||
-                    "Not Available"}
-                </p>
-
               </div>
 
-              <div className="bg-zinc-900/60 backdrop-blur-xl border border-zinc-800 rounded-2xl p-6">
-
-                <p className="text-zinc-500 text-sm">
+              <div className="bg-[#0a0a0a] border border-zinc-800 rounded-2xl p-5">
+                <div className="flex items-center gap-2 text-zinc-400 text-xs font-medium mb-2">
+                  <CheckCircle2 className="h-4 w-4 text-purple-400" />
                   Skills Count
-                </p>
-
-                <h2 className="text-3xl font-bold mt-3">
-                  {resume.skills
-                    ? resume.skills.split(
-                        ","
-                      ).length
-                    : 0}
+                </div>
+                <h2 className="text-2xl font-black text-white mt-1">
+                  {resume.skills ? resume.skills.split(",").length : 0}
                 </h2>
-
               </div>
-
             </div>
 
-            <div className="bg-zinc-900/60 backdrop-blur-xl border border-zinc-800 rounded-2xl p-8">
-
-              <h2 className="text-2xl font-semibold mb-6">
+            <div className="bg-[#0a0a0a] border border-zinc-800 rounded-2xl p-6 sm:p-8">
+              <h2 className="text-lg font-bold text-white mb-4">
                 Extracted Skills
               </h2>
 
-              <div className="flex flex-wrap gap-3">
-
+              <div className="flex flex-wrap gap-2">
                 {resume.skills
                   ?.split(",")
-                  .map(
-                    (
-                      skill: string,
-                      index: number
-                    ) => (
-                      <span
-                        key={index}
-                        className="
-                          bg-zinc-900/60 backdrop-blur-xl
-                          border
-                          border-zinc-700
-                          px-4
-                          py-2
-                          rounded-full
-                          text-sm
-                        "
-                      >
-                        {skill.trim()}
-                      </span>
-                    )
-                  )}
-
+                  .map((skill: string, index: number) => (
+                    <span
+                      key={index}
+                      className="
+                        bg-zinc-900 border border-zinc-800
+                        px-3 py-1.5 rounded-xl
+                        text-xs text-zinc-300 font-medium
+                      "
+                    >
+                      {skill.trim()}
+                    </span>
+                  ))}
               </div>
-
             </div>
-
-          </>
-
+          </div>
         )}
-
       </main>
-
     </div>
   );
 }

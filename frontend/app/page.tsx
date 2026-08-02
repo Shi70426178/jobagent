@@ -87,12 +87,13 @@ export default function Home() {
           <div className="mt-14 relative mx-auto max-w-5xl rounded-xl border border-zinc-800 bg-[#0a0a0a] p-2 sm:p-3 backdrop-blur-sm shadow-2xl overflow-hidden">
             <div className="relative aspect-[16/9] w-full rounded-lg bg-black border border-zinc-800 overflow-hidden">
               <Image
-                src="/dashboard-preview.png"
-                alt="oneXjob AI Job Agent Dashboard"
-                fill
-                className="object-cover object-top"
-                priority
-              />
+  src="/dashboard-preview-v2.png"
+  alt="Dashboard Preview"
+  width={1200}
+  height={675}
+  className="w-full h-auto rounded-2xl border border-zinc-800 object-cover"
+  priority
+/>
             </div>
           </div>
         </section>

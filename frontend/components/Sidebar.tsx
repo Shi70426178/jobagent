@@ -51,28 +51,33 @@ export default function Sidebar() {
     return false;
   };
 
+  // Fixed Branding Header to match active Cyan menu theme
   const BrandHeader = ({ isLarge = false }: { isLarge?: boolean }) => (
     <div className="flex items-center gap-3">
+      {/* Cyan Translucent Icon Box */}
       <div
-        className={`flex items-center justify-center rounded-xl bg-gradient-to-br from-cyan-500 via-blue-600 to-purple-600 ${
+        className={`flex items-center justify-center rounded-xl bg-cyan-500/10 border border-cyan-500/30 ${
           isLarge
-            ? "h-12 w-12 rounded-xl shadow-lg shadow-cyan-500/20"
-            : "h-10 w-10"
+            ? "h-11 w-11 shadow-sm shadow-cyan-500/20"
+            : "h-9 w-9"
         }`}
       >
-        <Sparkles className={isLarge ? "h-6 w-6 text-white" : "h-5 w-5 text-white"} />
+        <Sparkles className={`text-cyan-400 ${isLarge ? "h-5 w-5" : "h-4 w-4"}`} />
       </div>
+
+      {/* Brand Text without out-of-place gradients */}
       <div>
-        <h1
-          className={`font-extrabold ${
-            isLarge
-              ? "bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-xl text-transparent"
-              : "text-lg text-white"
-          }`}
-        >
-          oneXjob
-        </h1>
-        <p className="text-[10px] text-zinc-400">AI Career Assistant</p>
+        <div className="flex items-center gap-0.5">
+          <span className={`font-black tracking-tight text-cyan-400 ${isLarge ? "text-xl" : "text-lg"}`}>
+            oneX
+          </span>
+          <span className={`font-black tracking-tight text-white ${isLarge ? "text-xl" : "text-lg"}`}>
+            job
+          </span>
+        </div>
+        <p className="text-[10px] font-medium text-zinc-400 tracking-wider uppercase">
+          AI Career Assistant
+        </p>
       </div>
     </div>
   );
@@ -186,7 +191,7 @@ export default function Sidebar() {
         </div>
       </aside>
 
-      {/* DESKTOP SIDEBAR (Pure Black Theme) */}
+      {/* DESKTOP SIDEBAR */}
       <aside className="fixed top-0 left-0 z-50 hidden h-screen w-64 flex-col border-r border-zinc-800/80 bg-black lg:flex">
         <div className="flex h-full flex-col">
           <div className="border-b border-zinc-800/80 p-5">

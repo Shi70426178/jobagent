@@ -353,25 +353,25 @@ export default function Dashboard() {
         <div className="relative z-10 mx-auto max-w-[1500px] px-4 sm:px-5 lg:px-7 py-5 sm:py-6 lg:py-7">
           {/* ================= HERO ================= */}
           <section>
-            <div className="inline-flex items-center gap-1.5 rounded-full border border-zinc-800 bg-zinc-900 px-3 py-1">
-              <Sparkles className="h-3 w-3 text-cyan-400" />
-              <span className="text-[11px] tracking-wide text-zinc-300">
+            {/* <div className="inline-flex items-center gap-1.5 rounded-full border border-zinc-800 bg-zinc-900 px-3 py-1"> */}
+              {/* <Sparkles className="h-3 w-3 text-cyan-400" /> */}
+              {/* <span className="text-[11px] tracking-wide text-zinc-300">
                 AI Powered Job Automation
-              </span>
-            </div>
+              </span> */}
+            {/* </div> */}
 
             <h1 className="mt-4 text-2xl sm:text-3xl lg:text-4xl font-black tracking-[-0.03em] leading-[1.05] text-white">
               AI Job Dashboard
             </h1>
 
-            <p className="mt-3 max-w-3xl text-sm sm:text-base leading-6 sm:leading-7 text-zinc-400">
+            {/* <p className="mt-3 max-w-3xl text-sm sm:text-base leading-6 sm:leading-7 text-zinc-400">
               Automate your complete job search workflow with AI. Discover jobs,
               analyse resumes, send personalized Gmail outreach, track replies
               and manage every application from one intelligent workspace.
-            </p>
+            </p> */}
 
             {/* Quick Buttons */}
-            <div className="mt-6 flex flex-wrap gap-3">
+            {/* <div className="mt-6 flex flex-wrap gap-3">
               {quickButtons.map(({ icon: Icon, label }) => (
                 <button
                   key={label}
@@ -389,7 +389,7 @@ export default function Dashboard() {
                   <span>{label}</span>
                 </button>
               ))}
-            </div>
+            </div> */}
           </section>
 
           {/* ================= AGENT CONFIGURATION ================= */}
