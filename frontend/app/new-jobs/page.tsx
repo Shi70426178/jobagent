@@ -163,11 +163,12 @@ export default function LinkedinPage() {
     }
   };
 
-  const getScoreColor = (score: number) => {
-    if (score <= 20) return "border-zinc-700 text-zinc-500";
-    if (score <= 60) return "border-zinc-500 text-zinc-300";
-    return "border-zinc-100 text-white";
-  };
+// NEW CODE (Red, Yellow, Green color scheme)
+const getScoreColor = (score: number) => {
+  if (score <= 40) return "border-red-500 text-red-500";
+  if (score <= 70) return "border-yellow-500 text-yellow-500";
+  return "border-emerald-500 text-emerald-500";
+};
 
   const highestMatch = useMemo(() => {
     return posts.length
