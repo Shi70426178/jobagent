@@ -2,8 +2,9 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { api } from "@/lib/axios";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Swal from "sweetalert2";
+import Sidebar from "@/components/Sidebar";
 
 import {
   Sparkles,
@@ -17,15 +18,11 @@ import {
 
 export default function LinkedinPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const searchId = searchParams.get("search_id");
 
   const [searches, setSearches] = useState([]);
-  const [searchId, setSearchId] = useState<string | null>(null);
-
-  useEffect(() => {
-    const id = new URLSearchParams(window.location.search).get("search_id");
-    setSearchId(id);
-  }, []);
-
   const [generatingId, setGeneratingId] = useState<number | null>(null);
   const [applyingId, setApplyingId] = useState<number | null>(null);
   const [posts, setPosts] = useState<any[]>([]);
@@ -50,9 +47,12 @@ export default function LinkedinPage() {
   }, []);
 
   const loadSearches = async () => {
-    const res = await api.get("/agent/searches");
-    console.log("Searches API:", res.data);
-    setSearches(res.data);
+    try {
+      const res = await api.get("/agent/searches");
+      setSearches(res.data.searches || res.data || []);
+    } catch (error) {
+      console.error("Error loading searches:", error);
+    }
   };
 
   const loadPosts = async () => {
@@ -62,18 +62,21 @@ export default function LinkedinPage() {
         : `/linkedin/posts?page=${page}&page_size=5`;
 
       const response = await api.get(url);
+      const postsData =
+        response.data.posts ||
+        response.data.data ||
+        (Array.isArray(response.data) ? response.data : []);
 
-      setPosts(response.data.posts);
-      setTotalPages(response.data.total_pages);
+      setPosts(postsData);
+      setTotalPages(response.data.total_pages || 1);
     } catch (error) {
-      console.error(error);
+      console.error("Error loading posts:", error);
     }
   };
 
   const generateMail = async (id: number) => {
     try {
       setGeneratingId(id);
-
       await api.post(`/linkedin/generate-email/${id}`);
       await loadPosts();
 
@@ -81,7 +84,7 @@ export default function LinkedinPage() {
         icon: "success",
         title: "Email Generated",
         text: "AI-generated email has been created successfully.",
-        background: "#18181b",
+        background: "#09090b",
         color: "#f4f4f5",
         confirmButtonColor: "#27272a",
         timer: 1800,
@@ -89,14 +92,11 @@ export default function LinkedinPage() {
       });
     } catch (error: any) {
       console.error(error);
-
       Swal.fire({
         icon: "error",
         title: "Generation Failed",
-        text:
-          error?.response?.data?.message ||
-          "Unable to generate the email.",
-        background: "#18181b",
+        text: error?.response?.data?.message || "Unable to generate the email.",
+        background: "#09090b",
         color: "#f4f4f5",
         confirmButtonColor: "#27272a",
       });
@@ -108,7 +108,6 @@ export default function LinkedinPage() {
   const applyLead = async (id: number) => {
     try {
       setApplyingId(id);
-
       const response = await api.post(`/linkedin/apply/${id}`);
 
       if (response.data.gmail_connected === false) {
@@ -116,12 +115,11 @@ export default function LinkedinPage() {
           icon: "warning",
           title: "Gmail Not Connected",
           text: response.data.message,
-          background: "#18181b",
+          background: "#09090b",
           color: "#f4f4f5",
           confirmButtonText: "Connect Gmail",
           confirmButtonColor: "#27272a",
         });
-
         router.push("/gmail");
         return;
       }
@@ -140,21 +138,20 @@ export default function LinkedinPage() {
             </span>
           </div>
         `,
-        background: "#18181b",
+        background: "#09090b",
         color: "#f4f4f5",
         confirmButtonText: "OK",
         confirmButtonColor: "#27272a",
       });
     } catch (error: any) {
       console.error(error);
-
       Swal.fire({
         icon: "error",
         title: "Application Failed",
         text:
           error?.response?.data?.message ||
           "Something went wrong while sending the application.",
-        background: "#18181b",
+        background: "#09090b",
         color: "#f4f4f5",
         confirmButtonColor: "#27272a",
       });
@@ -163,12 +160,11 @@ export default function LinkedinPage() {
     }
   };
 
-// NEW CODE (Red, Yellow, Green color scheme)
-const getScoreColor = (score: number) => {
-  if (score <= 40) return "border-red-500 text-red-500";
-  if (score <= 70) return "border-yellow-500 text-yellow-500";
-  return "border-emerald-500 text-emerald-500";
-};
+  const getScoreColor = (score: number) => {
+    if (score <= 40) return "border-red-500 text-red-500";
+    if (score <= 70) return "border-yellow-500 text-yellow-500";
+    return "border-emerald-500 text-emerald-500";
+  };
 
   const highestMatch = useMemo(() => {
     return posts.length
@@ -183,9 +179,7 @@ const getScoreColor = (score: number) => {
         post.job_title?.toLowerCase().includes(search.toLowerCase()) ||
         post.recruiter_name?.toLowerCase().includes(search.toLowerCase());
 
-      if (filter === "applied")
-        return matches && post.status === "applied";
-
+      if (filter === "applied") return matches && post.status === "applied";
       if (filter === "high")
         return matches && (post.match_score || 0) === highestMatch;
 
@@ -196,7 +190,6 @@ const getScoreColor = (score: number) => {
   const nextPage = async () => {
     try {
       setLoadingNext(true);
-
       const next = page + 1;
 
       await api.post("/agent/start", {
@@ -213,76 +206,80 @@ const getScoreColor = (score: number) => {
   };
 
   return (
-    <main className="min-h-screen bg-zinc-950 text-zinc-100">
-      <div className="mx-auto w-full max-w-7xl px-3 sm:px-5 lg:px-6 py-4 sm:py-6">
-        
-        {/* Header */}
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between border-b border-zinc-800/80 pb-5">
+    <div className="flex min-h-screen bg-black text-zinc-100 font-sans">
+      <Sidebar />
+
+      <main className="flex-1 p-8 w-full bg-black">
+        {/* Header Bar - Styled identical to Profile Header */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 border-b border-zinc-800/80 pb-5">
           <div>
-            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-zinc-100">
+            <h1 className="text-3xl font-bold tracking-tight text-white">
               Recruiter Leads
             </h1>
-            <p className="mt-1 text-xs sm:text-sm text-zinc-400">
+            <p className="mt-1 text-sm text-zinc-400">
               AI ranked recruiter opportunities.
             </p>
           </div>
 
           <button
             onClick={loadPosts}
-            className="inline-flex items-center justify-center gap-2 rounded-lg bg-zinc-100 text-zinc-900 px-4 py-2 text-xs sm:text-sm font-medium transition hover:bg-zinc-300"
+            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold bg-zinc-900 border border-zinc-800 hover:border-zinc-700 text-zinc-300 hover:text-white transition shadow-sm"
           >
-            <RefreshCw size={15} />
+            <RefreshCw size={14} />
             Refresh
           </button>
         </div>
 
-        {/* My Searches */}
-        <div className="mt-6 mb-6">
-          <h2 className="text-sm font-medium text-zinc-400 mb-3">
-            My Searches
-          </h2>
-
-          <div className="flex flex-wrap gap-2">
-            {searches.map((item: any) => (
-              <button
-                key={item.id}
-                onClick={() => {
-                  window.location.href = `/new-jobs?search_id=${item.id}`;
-                }}
-                className={`px-3.5 py-1.5 rounded-md text-xs sm:text-sm font-medium transition ${
-                  Number(searchId) === item.id
-                    ? "bg-zinc-100 text-zinc-900"
-                    : "bg-zinc-900 text-zinc-300 border border-zinc-800 hover:bg-zinc-800 hover:text-zinc-100"
-                }`}
-              >
-                {item.keywords} <span className="opacity-60">({item.total_jobs})</span>
-              </button>
-            ))}
+        {/* My Searches Pills */}
+        {searches.length > 0 && (
+          <div className="mb-6">
+            <h2 className="text-xs font-medium text-zinc-500 mb-2">
+              My Searches
+            </h2>
+            <div className="flex flex-wrap gap-2">
+              {searches.map((item: any) => (
+                <button
+                  key={item.id}
+                  onClick={() => {
+                    setPage(1);
+                    router.push(`/new-jobs?search_id=${item.id}`);
+                  }}
+                  className={`px-3 py-1 rounded-md text-xs font-medium transition ${
+                    Number(searchId) === item.id
+                      ? "bg-zinc-100 text-black font-semibold"
+                      : "bg-zinc-900 text-zinc-400 border border-zinc-800 hover:bg-zinc-800 hover:text-white"
+                  }`}
+                >
+                  {item.keywords}{" "}
+                  <span className="opacity-50">({item.total_jobs})</span>
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Search & Filter Bar */}
-        <div className="mt-5 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-          <div className="relative w-full max-w-sm">
+        <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="relative w-full max-w-xs">
             <Search
-              size={16}
+              size={14}
               className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500"
             />
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search jobs..."
-              className="w-full rounded-lg border border-zinc-800 bg-zinc-900 py-2 pl-9 pr-3 text-xs sm:text-sm text-zinc-100 placeholder-zinc-500 outline-none transition focus:border-zinc-500"
+              className="w-full rounded-lg border border-zinc-800 bg-zinc-900/50 py-1.5 pl-8 pr-3 text-xs text-zinc-100 placeholder-zinc-500 outline-none transition focus:border-zinc-700"
             />
           </div>
 
-          <div className="flex flex-wrap gap-2">
+          <div className="flex items-center gap-2">
             <button
               onClick={() => setFilter("all")}
-              className={`rounded-lg px-3.5 py-2 text-xs sm:text-sm font-medium transition ${
+              className={`rounded-lg px-3 py-1.5 text-xs font-medium transition ${
                 filter === "all"
-                  ? "bg-zinc-100 text-zinc-900"
-                  : "bg-zinc-900 text-zinc-400 border border-zinc-800 hover:bg-zinc-800 hover:text-zinc-200"
+                  ? "bg-zinc-100 text-black font-semibold"
+                  : "bg-zinc-900 text-zinc-400 border border-zinc-800 hover:bg-zinc-800 hover:text-white"
               }`}
             >
               All
@@ -290,10 +287,10 @@ const getScoreColor = (score: number) => {
 
             <button
               onClick={() => setFilter("high")}
-              className={`rounded-lg px-3.5 py-2 text-xs sm:text-sm font-medium transition ${
+              className={`rounded-lg px-3 py-1.5 text-xs font-medium transition ${
                 filter === "high"
-                  ? "bg-zinc-100 text-zinc-900"
-                  : "bg-zinc-900 text-zinc-400 border border-zinc-800 hover:bg-zinc-800 hover:text-zinc-200"
+                  ? "bg-zinc-100 text-black font-semibold"
+                  : "bg-zinc-900 text-zinc-400 border border-zinc-800 hover:bg-zinc-800 hover:text-white"
               }`}
             >
               High Match
@@ -301,10 +298,10 @@ const getScoreColor = (score: number) => {
 
             <button
               onClick={() => setFilter("applied")}
-              className={`rounded-lg px-3.5 py-2 text-xs sm:text-sm font-medium transition ${
+              className={`rounded-lg px-3 py-1.5 text-xs font-medium transition ${
                 filter === "applied"
-                  ? "bg-zinc-100 text-zinc-900"
-                  : "bg-zinc-900 text-zinc-400 border border-zinc-800 hover:bg-zinc-800 hover:text-zinc-200"
+                  ? "bg-zinc-100 text-black font-semibold"
+                  : "bg-zinc-900 text-zinc-400 border border-zinc-800 hover:bg-zinc-800 hover:text-white"
               }`}
             >
               Applied
@@ -313,116 +310,107 @@ const getScoreColor = (score: number) => {
         </div>
 
         {/* Statistics Cards */}
-        <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-3">
-          {/* Total */}
-          <div className="rounded-xl border border-zinc-800 bg-zinc-900/60 p-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+          <div className="rounded-xl border border-zinc-800/80 bg-zinc-900/40 p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-[10px] uppercase font-semibold tracking-wider text-zinc-500">
-                  Total Leads
+                <p className="text-[11px] font-medium text-zinc-400">
+                  TOTAL LEADS
                 </p>
-                <h2 className="mt-1 text-xl sm:text-2xl font-bold text-zinc-100">
+                <h2 className="mt-2 text-2xl font-bold text-white">
                   {filteredPosts.length}
                 </h2>
               </div>
-              <div className="rounded-lg bg-zinc-800 p-2 text-zinc-300">
+              <div className="text-zinc-500">
                 <Building2 size={18} />
               </div>
             </div>
           </div>
 
-          {/* Emails */}
-          <div className="rounded-xl border border-zinc-800 bg-zinc-900/60 p-4">
+          <div className="rounded-xl border border-zinc-800/80 bg-zinc-900/40 p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-[10px] uppercase font-semibold tracking-wider text-zinc-500">
-                  Emails Found
+                <p className="text-[11px] font-medium text-zinc-400">
+                  EMAILS FOUND
                 </p>
-                <h2 className="mt-1 text-xl sm:text-2xl font-bold text-zinc-100">
+                <h2 className="mt-2 text-2xl font-bold text-white">
                   {filteredPosts.filter((p) => p.email).length}
                 </h2>
               </div>
-              <div className="rounded-lg bg-zinc-800 p-2 text-zinc-300">
+              <div className="text-zinc-500">
                 <Mail size={18} />
               </div>
             </div>
           </div>
 
-          {/* Applied */}
-          <div className="rounded-xl border border-zinc-800 bg-zinc-900/60 p-4">
+          <div className="rounded-xl border border-zinc-800/80 bg-zinc-900/40 p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-[10px] uppercase font-semibold tracking-wider text-zinc-500">
-                  Applied
+                <p className="text-[11px] font-medium text-zinc-400">
+                  APPLIED
                 </p>
-                <h2 className="mt-1 text-xl sm:text-2xl font-bold text-zinc-100">
+                <h2 className="mt-2 text-2xl font-bold text-white">
                   {filteredPosts.filter((p) => p.status === "applied").length}
                 </h2>
               </div>
-              <div className="rounded-lg bg-zinc-800 p-2 text-zinc-300">
+              <div className="text-zinc-500">
                 <CheckCircle2 size={18} />
               </div>
             </div>
           </div>
 
-          {/* Match */}
-          <div className="rounded-xl border border-zinc-800 bg-zinc-900/60 p-4">
+          <div className="rounded-xl border border-zinc-800/80 bg-zinc-900/40 p-4">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-[10px] uppercase font-semibold tracking-wider text-zinc-500">
-                  High Match
+                <p className="text-[11px] font-medium text-zinc-400">
+                  HIGH MATCH
                 </p>
-                <h2 className="mt-1 text-xl sm:text-2xl font-bold text-zinc-100">
+                <h2 className="mt-2 text-2xl font-bold text-white">
                   {highestMatch}%
                 </h2>
               </div>
-              <div className="rounded-lg bg-zinc-800 p-2 text-zinc-300">
+              <div className="text-zinc-500">
                 <Users size={18} />
               </div>
             </div>
           </div>
         </div>
 
-        {/* Lead List */}
-        <div className="mt-6 space-y-4">
+        {/* Lead List / Card Stream */}
+        <div className="space-y-4">
           {filteredPosts.map((post) => (
             <div
               key={post.id}
-              className="rounded-xl border border-zinc-800 bg-zinc-900/40 p-5 transition hover:border-zinc-700"
+              className="rounded-xl border border-zinc-800/80 bg-zinc-900/40 p-5 transition hover:border-zinc-700"
             >
-              {/* Header */}
               <div className="flex flex-col lg:flex-row gap-5">
                 <div className="flex gap-3.5 flex-1">
-                  {/* Company Icon */}
-                  <div className="flex h-12 w-12 sm:h-14 sm:w-14 shrink-0 items-center justify-center rounded-xl bg-zinc-800 border border-zinc-700/50 text-zinc-300">
-                    <Building2 size={22} />
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-zinc-800/80 border border-zinc-700/50 text-zinc-300">
+                    <Building2 size={20} />
                   </div>
 
-                  {/* Job Info */}
                   <div className="flex-1 min-w-0">
-                    <h2 className="text-base sm:text-lg lg:text-xl font-bold leading-tight text-zinc-100">
+                    <h2 className="text-base font-bold leading-tight text-white">
                       {post.job_title}
                     </h2>
 
-                    <div className="mt-1 flex items-center gap-2 text-xs sm:text-sm text-zinc-400">
-                      <Building2 size={14} />
+                    <div className="mt-1 flex items-center gap-2 text-xs text-zinc-400">
+                      <Building2 size={13} />
                       <span className="truncate">{post.company}</span>
                     </div>
 
-                    {/* Small Meta Info */}
                     <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-zinc-400">
                       <span>👤 {post.recruiter_name || "Unknown"}</span>
-                      <span className="text-zinc-700">•</span>
+                      <span className="text-zinc-800">•</span>
                       <span>📍 {post.location || "N/A"}</span>
-                      <span className="text-zinc-700">•</span>
+                      <span className="text-zinc-800">•</span>
                       <span>💼 {post.experience || "N/A"}</span>
-                      <span className="text-zinc-700">•</span>
+                      <span className="text-zinc-800">•</span>
                       <span>🕒 {post.posted_time || "N/A"}</span>
                     </div>
 
-                    {/* Email Tag */}
-                    <div className="mt-3 inline-flex items-center gap-2 rounded-lg border border-zinc-800 bg-zinc-900/80 px-3 py-1.5 text-xs text-zinc-300">
-                      <Mail size={14} className="text-zinc-400" />
+                    <div className="mt-3 inline-flex items-center gap-2 rounded-lg border border-zinc-800/80 bg-zinc-900/50 px-2.5 py-1 text-xs text-zinc-300">
+                      <Mail size={13} className="text-zinc-500" />
                       <span className="truncate">
                         {post.email || "Email not found"}
                       </span>
@@ -430,46 +418,41 @@ const getScoreColor = (score: number) => {
                   </div>
                 </div>
 
-                {/* Match Score Display */}
-                <div className="flex flex-row lg:flex-col items-center gap-3 lg:gap-2 self-start lg:self-auto">
+                <div className="flex flex-row lg:flex-col items-center gap-2 self-start lg:self-auto">
                   <div
-                    className={`h-16 w-16 sm:h-18 sm:w-18 rounded-full border-[4px] flex items-center justify-center ${getScoreColor(
+                    className={`h-14 w-14 rounded-full border-[3px] flex items-center justify-center ${getScoreColor(
                       post.match_score || 0
                     )}`}
                   >
                     <div className="text-center">
-                      <div className="text-base sm:text-lg font-bold">
+                      <div className="text-sm font-bold">
                         {post.match_score || 0}
                       </div>
-                      <div className="text-[9px] uppercase tracking-wider text-zinc-500">
+                      <div className="text-[8px] uppercase tracking-wider text-zinc-500">
                         Match
                       </div>
                     </div>
                   </div>
 
-                  <span className="rounded-full bg-zinc-800 px-2.5 py-0.5 text-[10px] uppercase font-semibold tracking-wider text-zinc-400 border border-zinc-700/50">
+                  <span className="rounded-full bg-zinc-800/80 px-2 py-0.5 text-[10px] uppercase font-semibold text-zinc-400 border border-zinc-700/50">
                     AI Match
                   </span>
                 </div>
               </div>
 
-              <div className="my-4 border-t border-zinc-800/80"></div>
+              <div className="my-4 border-t border-zinc-800/60"></div>
 
               {/* AI Insights Section */}
-              <div className="rounded-lg border border-zinc-800 bg-zinc-950/50">
-                <div className="flex items-center gap-2.5 border-b border-zinc-800/80 px-4 py-2.5">
-                  <div className="flex h-7 w-7 items-center justify-center rounded-md bg-zinc-800 text-zinc-300">
-                    <Sparkles size={14} />
-                  </div>
-                  <div>
-                    <h3 className="text-xs font-semibold text-zinc-200">
-                      AI Insights
-                    </h3>
-                  </div>
+              <div className="rounded-lg border border-zinc-800/80 bg-zinc-900/30">
+                <div className="flex items-center gap-2 border-b border-zinc-800/60 px-3.5 py-2">
+                  <Sparkles size={13} className="text-zinc-400" />
+                  <h3 className="text-xs font-semibold text-zinc-300">
+                    AI Insights
+                  </h3>
                 </div>
 
-                <div className="p-3 sm:p-4">
-                  <p className="text-xs sm:text-sm leading-relaxed text-zinc-400">
+                <div className="p-3">
+                  <p className="text-xs leading-relaxed text-zinc-400">
                     {post.match_reason || "No AI analysis available."}
                   </p>
                 </div>
@@ -477,20 +460,15 @@ const getScoreColor = (score: number) => {
 
               {/* Generated Email Accordion / Edit Mode */}
               {post.generated_email && (
-                <div className="mt-3 rounded-lg border border-zinc-800 bg-zinc-950/30 overflow-hidden">
+                <div className="mt-3 rounded-lg border border-zinc-800/80 bg-zinc-900/20 overflow-hidden">
                   <details className="group">
-                    <summary className="flex cursor-pointer items-center justify-between px-4 py-3 hover:bg-zinc-900/50 transition">
-                      <div className="flex items-center gap-3">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-md bg-zinc-800 text-zinc-300">
-                          <Mail size={15} />
-                        </div>
+                    <summary className="flex cursor-pointer items-center justify-between px-3.5 py-2.5 hover:bg-zinc-900/50 transition">
+                      <div className="flex items-center gap-2.5">
+                        <Mail size={14} className="text-zinc-400" />
                         <div>
-                          <h3 className="text-xs sm:text-sm font-medium text-zinc-200">
+                          <h3 className="text-xs font-medium text-zinc-200">
                             Generated Email
                           </h3>
-                          <p className="text-[11px] text-zinc-500">
-                            Click to preview email body
-                          </p>
                         </div>
                       </div>
 
@@ -500,17 +478,17 @@ const getScoreColor = (score: number) => {
                     </summary>
 
                     {editingId !== post.id ? (
-                      <div className="border-t border-zinc-800 p-4 bg-zinc-900/20">
-                        <pre className="whitespace-pre-wrap break-words text-xs sm:text-sm leading-relaxed text-zinc-300 font-sans">
+                      <div className="border-t border-zinc-800/60 p-3.5 bg-black">
+                        <pre className="whitespace-pre-wrap break-words text-xs leading-relaxed text-zinc-300 font-sans">
                           {post.generated_email}
                         </pre>
                       </div>
                     ) : (
-                      <div className="border-t border-zinc-800 p-4">
+                      <div className="border-t border-zinc-800/60 p-3.5 bg-black">
                         <textarea
                           value={editedEmail}
                           onChange={(e) => setEditedEmail(e.target.value)}
-                          className="h-44 sm:h-56 w-full rounded-lg border border-zinc-700 bg-zinc-900 p-3 text-xs sm:text-sm text-zinc-100 outline-none focus:border-zinc-400 resize-none"
+                          className="h-40 w-full rounded-lg border border-zinc-800 bg-zinc-900 p-3 text-xs text-zinc-100 outline-none focus:border-zinc-700 resize-none"
                         />
                       </div>
                     )}
@@ -519,14 +497,13 @@ const getScoreColor = (score: number) => {
               )}
 
               {/* Card Footer Actions */}
-              <div className="mt-4 flex flex-col gap-3 border-t border-zinc-800/80 pt-4 lg:flex-row lg:items-center lg:justify-between">
-                {/* Status Indicator */}
-                <div className="flex items-center gap-2.5">
+              <div className="mt-4 flex flex-col gap-3 border-t border-zinc-800/60 pt-3.5 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex items-center gap-2">
                   <span
-                    className={`rounded-full px-2.5 py-0.5 text-xs font-medium border ${
+                    className={`rounded-full px-2 py-0.5 text-[11px] font-medium border ${
                       post.status === "applied"
-                        ? "border-zinc-700 bg-zinc-800 text-zinc-200"
-                        : "border-zinc-800 bg-zinc-900 text-zinc-500"
+                        ? "border-zinc-700 bg-zinc-900 text-zinc-200"
+                        : "border-zinc-800 bg-black text-zinc-500"
                     }`}
                   >
                     {post.status === "applied" ? "Applied" : "Pending"}
@@ -534,14 +511,13 @@ const getScoreColor = (score: number) => {
                   <span className="text-xs text-zinc-500">Status</span>
                 </div>
 
-                {/* Button Controls */}
-                <div className="flex flex-wrap items-center justify-start lg:justify-end gap-2">
+                <div className="flex items-center gap-2">
                   <button
                     onClick={() => {
                       setSelectedSkills(post.skills || "");
                       setShowSkills(true);
                     }}
-                    className="rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-1.5 text-xs sm:text-sm font-medium text-zinc-300 transition hover:bg-zinc-800 hover:text-zinc-100"
+                    className="rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-1.5 text-xs font-medium text-zinc-300 transition hover:bg-zinc-800 hover:text-white"
                   >
                     Skills
                   </button>
@@ -550,41 +526,33 @@ const getScoreColor = (score: number) => {
                     <button
                       onClick={() => generateMail(post.id)}
                       disabled={generatingId === post.id}
-                      className="rounded-lg bg-zinc-100 px-3 py-1.5 text-xs sm:text-sm font-medium text-zinc-900 transition hover:bg-zinc-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="rounded-lg bg-zinc-100 px-3 py-1.5 text-xs font-medium text-black transition hover:bg-zinc-300 disabled:opacity-50"
                     >
-                      {generatingId === post.id ? (
-                        <div className="flex items-center gap-2">
-                          <RefreshCw className="h-3.5 w-3.5 animate-spin" />
-                          Generating...
-                        </div>
-                      ) : (
-                        "Generate"
-                      )}
+                      {generatingId === post.id ? "Generating..." : "Generate"}
                     </button>
                   )}
 
                   {editingId === post.id && (
-                    <button
-                      onClick={async () => {
-                        await api.put(`/linkedin/email/${post.id}`, {
-                          generated_email: editedEmail,
-                        });
-                        setEditingId(null);
-                        await loadPosts();
-                      }}
-                      className="rounded-lg bg-zinc-100 px-3 py-1.5 text-xs sm:text-sm font-medium text-zinc-900 transition hover:bg-zinc-300"
-                    >
-                      Save
-                    </button>
-                  )}
-
-                  {editingId === post.id && (
-                    <button
-                      onClick={() => setEditingId(null)}
-                      className="rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-1.5 text-xs sm:text-sm font-medium text-zinc-400 transition hover:bg-zinc-800 hover:text-zinc-200"
-                    >
-                      Cancel
-                    </button>
+                    <>
+                      <button
+                        onClick={async () => {
+                          await api.put(`/linkedin/email/${post.id}`, {
+                            generated_email: editedEmail,
+                          });
+                          setEditingId(null);
+                          await loadPosts();
+                        }}
+                        className="rounded-lg bg-zinc-100 px-3 py-1.5 text-xs font-medium text-black transition hover:bg-zinc-300"
+                      >
+                        Save
+                      </button>
+                      <button
+                        onClick={() => setEditingId(null)}
+                        className="rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-1.5 text-xs font-medium text-zinc-400 transition hover:bg-zinc-800 hover:text-white"
+                      >
+                        Cancel
+                      </button>
+                    </>
                   )}
 
                   {editingId !== post.id && post.generated_email && (
@@ -593,7 +561,7 @@ const getScoreColor = (score: number) => {
                         setEditingId(post.id);
                         setEditedEmail(post.generated_email);
                       }}
-                      className="rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-1.5 text-xs sm:text-sm font-medium text-zinc-300 transition hover:bg-zinc-800 hover:text-zinc-100"
+                      className="rounded-lg border border-zinc-800 bg-zinc-900 px-3 py-1.5 text-xs font-medium text-zinc-300 transition hover:bg-zinc-800 hover:text-white"
                     >
                       Edit
                     </button>
@@ -602,22 +570,17 @@ const getScoreColor = (score: number) => {
                   <button
                     disabled={!post.generated_email || applyingId === post.id}
                     onClick={() => applyLead(post.id)}
-                    className={`rounded-lg px-4 py-1.5 text-xs sm:text-sm font-medium transition ${
+                    className={`rounded-lg px-3.5 py-1.5 text-xs font-medium transition ${
                       post.generated_email
-                        ? "bg-zinc-100 text-zinc-900 hover:bg-zinc-300"
-                        : "cursor-not-allowed border border-zinc-800 bg-zinc-900 text-zinc-600"
+                        ? "bg-zinc-100 text-black hover:bg-zinc-300 font-medium"
+                        : "cursor-not-allowed border border-zinc-800/80 bg-zinc-900 text-zinc-600"
                     } disabled:opacity-50`}
                   >
-                    {applyingId === post.id ? (
-                      <div className="flex items-center gap-2">
-                        <RefreshCw className="h-3.5 w-3.5 animate-spin" />
-                        Applying...
-                      </div>
-                    ) : post.status === "applied" ? (
-                      "Applied"
-                    ) : (
-                      "Apply"
-                    )}
+                    {applyingId === post.id
+                      ? "Applying..."
+                      : post.status === "applied"
+                      ? "Applied"
+                      : "Apply"}
                   </button>
                 </div>
               </div>
@@ -626,88 +589,88 @@ const getScoreColor = (score: number) => {
 
           {/* Empty State */}
           {filteredPosts.length === 0 && (
-            <div className="mt-8 rounded-xl border border-dashed border-zinc-800 bg-zinc-900/30 py-14 text-center">
-              <Search size={36} className="mx-auto text-zinc-600" />
-              <h2 className="mt-4 text-lg font-semibold text-zinc-200">
+            <div className="rounded-xl border border-zinc-800/80 bg-zinc-900/40 py-16 text-center">
+              <Search size={32} className="mx-auto text-zinc-600" />
+              <h2 className="mt-3 text-sm font-medium text-zinc-300">
                 No recruiter leads found
               </h2>
-              <p className="mt-1 text-xs sm:text-sm text-zinc-500">
+              <p className="mt-1 text-xs text-zinc-500">
                 Try another search or refresh the recruiter list.
               </p>
               <button
                 onClick={loadPosts}
-                className="mt-5 rounded-lg bg-zinc-100 px-4 py-2 text-xs sm:text-sm font-medium text-zinc-900 transition hover:bg-zinc-300"
+                className="mt-4 rounded-lg bg-zinc-100 px-3.5 py-1.5 text-xs font-medium text-black transition hover:bg-zinc-300"
               >
                 Refresh
               </button>
             </div>
           )}
 
-          {/* Pagination Controls */}
-          <div className="flex justify-center items-center gap-4 mt-8 pt-4 border-t border-zinc-800/60">
+          {/* Pagination */}
+          <div className="flex justify-center items-center gap-4 mt-6 pt-4 border-t border-zinc-800/60">
             <button
               disabled={page === 1}
               onClick={() => setPage(page - 1)}
-              className="px-4 py-2 text-xs sm:text-sm font-medium rounded-lg border border-zinc-800 bg-zinc-900 text-zinc-300 transition hover:bg-zinc-800 hover:text-zinc-100 disabled:opacity-40 disabled:cursor-not-allowed"
+              className="px-3 py-1.5 text-xs font-medium rounded-lg border border-zinc-800 bg-zinc-900 text-zinc-300 transition hover:bg-zinc-800 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed"
             >
               Previous
             </button>
 
-            <span className="text-xs sm:text-sm text-zinc-400">
-              Page <span className="font-semibold text-zinc-200">{page}</span> of{" "}
-              <span className="font-semibold text-zinc-200">{totalPages}</span>
+            <span className="text-xs text-zinc-400">
+              Page <span className="font-medium text-white">{page}</span> of{" "}
+              <span className="font-medium text-white">{totalPages}</span>
             </span>
 
             <button
               disabled={page === totalPages || loadingNext}
               onClick={nextPage}
-              className="px-4 py-2 text-xs sm:text-sm font-medium rounded-lg border border-zinc-800 bg-zinc-900 text-zinc-300 transition hover:bg-zinc-800 hover:text-zinc-100 disabled:opacity-40 disabled:cursor-not-allowed"
+              className="px-3 py-1.5 text-xs font-medium rounded-lg border border-zinc-800 bg-zinc-900 text-zinc-300 transition hover:bg-zinc-800 hover:text-white disabled:opacity-40 disabled:cursor-not-allowed"
             >
               {loadingNext ? "Loading..." : "Next"}
             </button>
           </div>
         </div>
-      </div>
+      </main>
 
       {/* Skills Modal */}
       {showSkills && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
-          <div className="w-full max-w-lg rounded-xl border border-zinc-800 bg-zinc-900 shadow-2xl overflow-hidden">
-            <div className="flex items-center justify-between border-b border-zinc-800 px-5 py-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+          <div className="w-full max-w-md rounded-xl border border-zinc-800 bg-zinc-950 shadow-2xl overflow-hidden">
+            <div className="flex items-center justify-between border-b border-zinc-800 px-4 py-3">
               <div>
-                <h2 className="text-base font-semibold text-zinc-100">
+                <h2 className="text-xs font-semibold text-white">
                   Required Skills
                 </h2>
-                <p className="text-xs text-zinc-500">
+                <p className="text-[11px] text-zinc-500">
                   Skills extracted from this opportunity.
                 </p>
               </div>
 
               <button
                 onClick={() => setShowSkills(false)}
-                className="rounded-lg bg-zinc-800 p-1.5 text-xs text-zinc-400 transition hover:bg-zinc-700 hover:text-zinc-100"
+                className="rounded-lg bg-zinc-900 p-1 text-xs text-zinc-400 transition hover:bg-zinc-800 hover:text-white"
               >
                 ✕
               </button>
             </div>
 
-            <div className="max-h-[300px] overflow-y-auto p-5">
+            <div className="max-h-[250px] overflow-y-auto p-4">
               {selectedSkills.trim() ? (
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-1.5">
                   {selectedSkills
                     .split(",")
                     .map((skill: string, index: number) => (
                       <span
                         key={index}
-                        className="rounded-md border border-zinc-700/80 bg-zinc-800/60 px-3 py-1 text-xs text-zinc-200"
+                        className="rounded-md border border-zinc-800 bg-zinc-900 px-2.5 py-1 text-xs text-zinc-300"
                       >
                         {skill.trim()}
                       </span>
                     ))}
                 </div>
               ) : (
-                <div className="py-8 text-center">
-                  <Users size={32} className="mx-auto text-zinc-600" />
+                <div className="py-6 text-center">
+                  <Users size={28} className="mx-auto text-zinc-600" />
                   <p className="mt-2 text-xs text-zinc-500">
                     No skills extracted for this position.
                   </p>
@@ -715,10 +678,10 @@ const getScoreColor = (score: number) => {
               )}
             </div>
 
-            <div className="flex justify-end border-t border-zinc-800 px-5 py-3.5 bg-zinc-900/50">
+            <div className="flex justify-end border-t border-zinc-800 px-4 py-3 bg-zinc-950">
               <button
                 onClick={() => setShowSkills(false)}
-                className="rounded-lg bg-zinc-100 px-4 py-1.5 text-xs sm:text-sm font-medium text-zinc-900 transition hover:bg-zinc-300"
+                className="rounded-lg bg-zinc-100 px-3 py-1.5 text-xs font-medium text-black transition hover:bg-zinc-300"
               >
                 Close
               </button>
@@ -726,6 +689,6 @@ const getScoreColor = (score: number) => {
           </div>
         </div>
       )}
-    </main>
+    </div>
   );
 }
