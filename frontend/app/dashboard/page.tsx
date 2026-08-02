@@ -329,9 +329,9 @@ export default function Dashboard() {
   ];
 
   const quickButtons = [
-    { icon: Search, label: "Search Jobs", path: "/new-jobs" },
+    { icon: Search, label: "Search Jobs", path: "/agent" },
     { icon: FileCheck, label: "Resume Match", path: "/resume" },
-    { icon: BarChart3, label: "Analytics", path: "/analytics" },
+    { icon: BarChart3, label: "Walk-In Jobs", path: "/walkins" },
   ];
 
   const agentSteps = [
