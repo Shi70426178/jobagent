@@ -392,19 +392,23 @@ export default function AgentPage() {
                 Job Keywords
               </label>
 
-              <Select
-                options={keywordOptions}
-                isSearchable
-                isClearable
-                placeholder="Search job role..."
-                value={
-                  keywordOptions.find((option) => option.value === keywords) || null
-                }
-                onChange={(selected) => {
-                  setKeywords(selected?.value || "");
-                }}
-                styles={selectStyles}
-              />
+             <Select
+  options={keywordOptions}
+  isSearchable
+  isClearable
+  placeholder="Search job role..."
+  menuPortalTarget={
+    typeof window !== "undefined" ? document.body : undefined
+  }
+  menuPosition="fixed"
+  value={
+    keywordOptions.find((option) => option.value === keywords) || null
+  }
+  onChange={(selected) => {
+    setKeywords(selected?.value || "");
+  }}
+  styles={selectStyles}
+/>
             </div>
 
             {/* Location */}

@@ -29,7 +29,7 @@ export default function LoginPage() {
 
       setToken(response.data.access_token);
 
-      router.push("/dashboard");
+      router.push("/agent");
     } catch (err) {
       alert("Login failed");
     } finally {
