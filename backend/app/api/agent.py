@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 # from app.services.agent_service import search_jobs
 # from app.services.agent_service import scrape_wellfound
+# from app.services.agent_service import search_jobs
 from app.services.agent_service import search_jobs
 from sqlalchemy import func
 from app.models.job_keyword import JobKeyword
@@ -45,10 +46,6 @@ def start_agent(
             "message": "Please upload your resume first."
         }
     
-    print("================================")
-    print("Keyword received:", repr(data.keywords))
-    print("Location received:", repr(data.location))
-    print("================================")
 
     if data.search_id is not None:
 
@@ -172,8 +169,8 @@ def get_keywords(db: Session = Depends(get_db)):
 
     return [
         {
-            "value": row.search_value,   # <-- send search value
-            "label": row.keyword,        # <-- show label
+            "value": row.search_value,    
+            "label": row.keyword,        
         }
         for row in keywords
     ]

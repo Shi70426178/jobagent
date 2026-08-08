@@ -3,7 +3,7 @@ from sqlalchemy import Integer
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 from sqlalchemy.sql import func
 from app.db.database import Base
-
+# app/models/agent_search.py
 class AgentSearch(Base):
     __tablename__ = "agent_searches"
 

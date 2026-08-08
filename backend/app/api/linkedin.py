@@ -4,6 +4,7 @@ from app.services.gmail_service import (
     send_test_email,
     get_user_account
 )
+# from app.services.agent_service import search_jobs
 from typing import Optional
 from app.models.agent_search import AgentSearch
 from app.models.linkedin_job import LinkedInJob

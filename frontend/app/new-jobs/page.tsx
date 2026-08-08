@@ -5,7 +5,7 @@ import { api } from "@/lib/axios";
 import { useRouter, useSearchParams } from "next/navigation";
 import Swal from "sweetalert2";
 import Sidebar from "@/components/Sidebar";
-
+// import Sidebar from "@/components/Sidebar";
 import {
   Sparkles,
   Search,
