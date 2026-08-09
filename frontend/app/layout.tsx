@@ -82,3 +82,28 @@ export const metadata: Metadata = {
     icon: "/favicon.ico",
   },
 };
+
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
+  return (
+    <html lang="en">
+      <body className={`${inter.variable} ${geistMono.variable}`}>
+        {/* Dark Overlay */}
+        <div className="fixed inset-0 -z-10 bg-black/40" />
+
+        {/* Application */}
+        <GoogleProvider>
+          <AppLayout>{children}</AppLayout>
+        </GoogleProvider>
+
+        {/* Google Analytics - only rendered if GA ID exists */}
+        {process.env.NEXT_PUBLIC_GA_ID && (
+          <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
+        )}
+      </body>
+    </html>
+  );
+}
