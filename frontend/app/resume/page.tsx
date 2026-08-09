@@ -46,12 +46,30 @@ export default function ResumePage() {
       },
     });
 
-    await Swal.fire({
-      icon: "success",
-      title: "Resume Uploaded",
-      text: "Your resume has been uploaded and parsed successfully.",
-      confirmButtonText: "OK",
-    });
+ await Swal.fire({
+  icon: "success",
+  title: "Resume Uploaded",
+  text: "Your resume has been uploaded and parsed successfully.",
+  confirmButtonText: "Continue",
+
+  width: "420px",
+  background: "#0a0a0a",
+  color: "#ffffff",
+
+  backdrop: `
+    rgba(0, 0, 0, 0.75)
+  `,
+
+  customClass: {
+    popup: "resume-success-popup",
+    title: "resume-success-title",
+    htmlContainer: "resume-success-text",
+    confirmButton: "resume-success-button",
+    icon: "resume-success-icon",
+  },
+
+  buttonsStyling: false,
+});
 
     setFile(null);
     await loadResume();

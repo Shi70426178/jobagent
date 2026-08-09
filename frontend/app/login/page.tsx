@@ -33,14 +33,32 @@ export default function LoginPage() {
     } catch (err: any) {
   console.error("Login error:", err);
 
-  await Swal.fire({
-    icon: "error",
-    title: "Login Failed",
-    text:
-      err?.response?.data?.detail ||
-      "Invalid email or password. Please try again.",
-    confirmButtonText: "Try Again",
-  });
+await Swal.fire({
+  icon: "error",
+  title: "Login Failed",
+  text:
+    err?.response?.data?.detail ||
+    "Invalid email or password. Please try again.",
+  confirmButtonText: "Try Again",
+
+  width: "420px",
+  background: "#0a0a0a",
+  color: "#ffffff",
+
+  backdrop: `
+    rgba(0, 0, 0, 0.75)
+  `,
+
+  buttonsStyling: false,
+
+  customClass: {
+    popup: "resume-success-popup",
+    title: "resume-success-title",
+    htmlContainer: "resume-success-text",
+    confirmButton: "resume-success-button",
+    icon: "login-error-icon",
+  },
+});
 } finally {
       setLoading(false);
     }
