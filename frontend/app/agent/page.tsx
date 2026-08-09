@@ -219,6 +219,8 @@ export default function AgentPage() {
         page_size: 5,
       });
 
+      console.log("AGENT RESPONSE:", response.data);
+console.log("SEARCH ID RETURNED:", response.data.search_id);
       Swal.close();
 
       if (response.data.resume_uploaded === false) {
