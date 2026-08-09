@@ -3,7 +3,7 @@ import re
 import time
 from app.services.hackernews_db_service import save_hackernews_post
 from app.models.resume import Resume
-from app.services.job_match_service import calculate_match
+from app.services.job_match_service import calculate_matches
 from app.services.email_generator_service import generate_email
 
 
@@ -95,7 +95,7 @@ def get_hackernews_leads(db, user_id):
 
         if resume:
 
-            match = calculate_match(
+            match = calculate_matches(
                 resume.skills,
                 resume.experience,
                 summary,
