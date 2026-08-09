@@ -279,24 +279,53 @@ def get_recent_jobs(
 
     words = [word.strip() for word in keywords.split() if word.strip()]
 
-    keyword_filters = []
+    # --------------------------------------------------
+    # FAST PRE-FILTER
+    # --------------------------------------------------
+
+    contains_filters = []
 
     for word in words:
-        safe_word = re.escape(word)
-        pattern = rf"(^|[^a-zA-Z0-9]){safe_word}([^a-zA-Z0-9]|$)"
+        contains = f"%{word}%"
 
-        keyword_filters.extend([
-            LinkedInJob.job_title.op("~*")(pattern),
-            LinkedInJob.skills.op("~*")(pattern),
-            LinkedInJob.post_text.op("~*")(pattern)
+        contains_filters.extend([
+            LinkedInJob.job_title.ilike(contains),
+            LinkedInJob.skills.ilike(contains),
+            LinkedInJob.post_text.ilike(contains)
         ])
 
     query = (
         db.query(LinkedInJob)
         .filter(
             LinkedInJob.scraped_at >= last_7_days,
-            or_(*keyword_filters)
+            or_(*contains_filters)
         )
+    )
+
+    # --------------------------------------------------
+    # EXACT WHOLE-WORD FILTER
+    # Prevents "ai" from matching "maintenance"
+    # --------------------------------------------------
+
+    exact_filters = []
+
+    for word in words:
+        safe_word = re.escape(word)
+
+        pattern = (
+            rf"(^|[^a-zA-Z0-9])"
+            rf"{safe_word}"
+            rf"([^a-zA-Z0-9]|$)"
+        )
+
+        exact_filters.extend([
+            LinkedInJob.job_title.op("~*")(pattern),
+            LinkedInJob.skills.op("~*")(pattern),
+            LinkedInJob.post_text.op("~*")(pattern)
+        ])
+
+    query = query.filter(
+        or_(*exact_filters)
     )
 
     print("Keyword:", repr(keywords))
