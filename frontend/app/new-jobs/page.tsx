@@ -238,7 +238,7 @@ const nextPage = async () => {
           </h3>
 
           <p className="mt-2 text-sm leading-6 text-zinc-400">
-            AI Agent is processing the next jobs for you.
+            Processing the next jobs for you.
           </p>
 
           <p className="mt-3 text-xs text-zinc-500">
@@ -449,12 +449,13 @@ const nextPage = async () => {
                       <span>🕒 {post.posted_time || "N/A"}</span>
                     </div>
 
-                    <div className="mt-3 inline-flex items-center gap-2 rounded-lg border border-zinc-800/80 bg-zinc-900/50 px-2.5 py-1 text-xs text-zinc-300">
-                      <Mail size={13} className="text-zinc-500" />
-                      <span className="truncate">
-                        {post.email || "Email not found"}
-                      </span>
-                    </div>
+                  <div className="mt-3 flex w-full max-w-full items-center gap-2 rounded-lg border border-zinc-800/80 bg-zinc-900/50 px-2.5 py-1 text-xs text-zinc-300 overflow-hidden">
+  <Mail size={13} className="text-zinc-500 shrink-0" />
+
+  <span className="min-w-0 flex-1 truncate">
+    {post.email || "Email not found"}
+  </span>
+</div>
                   </div>
                 </div>
 
