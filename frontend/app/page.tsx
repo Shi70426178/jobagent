@@ -12,10 +12,11 @@ import {
   Zap,
 } from "lucide-react";
 import Image from "next/image";
-
+import SeoSchema from "@/components/SeoSchema";
 export default function Home() {
   return (
     <div className="relative min-h-screen overflow-x-hidden bg-black text-white font-sans selection:bg-white selection:text-black">
+      <SeoSchema />
       {/* Background Glow */}
       <div className="pointer-events-none absolute left-1/2 top-0 h-[500px] w-[800px] -translate-x-1/2 rounded-full bg-white/[0.03] blur-[140px]" />
 
