@@ -1,8 +1,9 @@
 from datetime import datetime, timedelta
+import re
+
 from sqlalchemy import or_, case
 from app.models.linkedin_post import LinkedInPost
 from app.models.linkedin_job import LinkedInJob
-
 
 # Location aliases (normalized to lowercase keys)
 LOCATION_MAP = {
@@ -276,15 +277,18 @@ def get_recent_jobs(
 
     last_7_days = datetime.utcnow() - timedelta(days=7)
 
-    words = keywords.split()
+    words = [word.strip() for word in keywords.split() if word.strip()]
 
     keyword_filters = []
 
     for word in words:
+        safe_word = re.escape(word)
+        pattern = rf"(^|[^a-zA-Z0-9]){safe_word}([^a-zA-Z0-9]|$)"
+
         keyword_filters.extend([
-            LinkedInJob.job_title.ilike(f"%{word}%"),
-            LinkedInJob.skills.ilike(f"%{word}%"),
-            LinkedInJob.post_text.ilike(f"%{word}%")
+            LinkedInJob.job_title.op("~*")(pattern),
+            LinkedInJob.skills.op("~*")(pattern),
+            LinkedInJob.post_text.op("~*")(pattern)
         ])
 
     query = (
@@ -358,16 +362,19 @@ def get_recent_jobs(
         if not word:
             continue
 
+        safe_word = re.escape(word)
+        pattern = rf"(^|[^a-zA-Z0-9]){safe_word}([^a-zA-Z0-9]|$)"
+
         title_conditions.append(
-            LinkedInJob.job_title.ilike(f"%{word}%")
+            LinkedInJob.job_title.op("~*")(pattern)
         )
 
         skills_conditions.append(
-            LinkedInJob.skills.ilike(f"%{word}%")
+            LinkedInJob.skills.op("~*")(pattern)
         )
 
         post_conditions.append(
-            LinkedInJob.post_text.ilike(f"%{word}%")
+            LinkedInJob.post_text.op("~*")(pattern)
         )
 
     job_priority = case(
