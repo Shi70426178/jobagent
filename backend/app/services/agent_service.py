@@ -1,6 +1,6 @@
 from app.services.linkedin_job_service import get_recent_jobs
 from app.services.linkedin_db_service import save_post
-from app.services.job_match_service import calculate_match
+from app.services.job_match_service import calculate_matches
 from app.services.email_generator_service import generate_email
 from datetime import datetime, timezone
 from app.models.linkedin_post import LinkedInPost
@@ -42,7 +42,6 @@ def search_jobs(
             db.query(LinkedInPost.linkedin_job_id)
             .filter(
                 LinkedInPost.user_id == user_id,
-                LinkedInPost.search_id == search_id,
                 LinkedInPost.linkedin_job_id.isnot(None)
             )
             .all()
@@ -73,17 +72,46 @@ def search_jobs(
     if not resume:
         return
 
-    for job in new_jobs:
+    # --------------------------------------------------
+    # CALCULATE MATCHES FOR ALL NEW JOBS AT ONCE
+    # --------------------------------------------------
 
-        print(f"Processing: {job.company} - {job.job_title}", flush=True)
+    matches = []
 
-        match = calculate_match(
-            resume.skills,
-            resume.experience,
-            job.post_text
+    if new_jobs:
+
+        print(
+            f"Calculating matches for {len(new_jobs)} jobs...",
+            flush=True
         )
 
-        print(f"Match score: {match['score']}", flush=True)
+        matches = calculate_matches(
+            skills=resume.skills,
+            experience=resume.experience,
+            jobs=new_jobs
+        )
+
+        print(
+            f"Match calculation completed for {len(matches)} jobs",
+            flush=True
+        )
+
+
+    # --------------------------------------------------
+    # SAVE JOBS
+    # --------------------------------------------------
+
+    for job, match in zip(new_jobs, matches):
+
+        print(
+            f"Processing: {job.company} - {job.job_title}",
+            flush=True
+        )
+
+        print(
+            f"Match score: {match['score']}",
+            flush=True
+        )
 
         diff = datetime.now(timezone.utc) - job.scraped_at
 
@@ -92,8 +120,10 @@ def search_jobs(
         if hours < 1:
             minutes = int(diff.total_seconds() // 60)
             current_posted_time = f"{minutes} mins ago"
+
         elif hours < 24:
             current_posted_time = f"{hours} hrs ago"
+
         else:
             days = hours // 24
             current_posted_time = f"{days} days ago"
@@ -117,7 +147,10 @@ def search_jobs(
             generated_email=""
         )
 
-        print("Saved post successfully", flush=True)
+        print(
+            "Saved post successfully",
+            flush=True
+        )
 
     return {
         "jobs": jobs,

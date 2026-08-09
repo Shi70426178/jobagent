@@ -39,9 +39,11 @@ function LinkedinPageContent() {
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
 
-  useEffect(() => {
-    loadPosts();
-  }, [searchId, page]);
+useEffect(() => {
+  if (!searchId) return;
+
+  loadPosts();
+}, [searchId, page]);
 
   useEffect(() => {
     loadSearches();
@@ -217,6 +219,14 @@ const nextPage = async () => {
   }
 };
 
+const handleSearchChange = (id: number) => {
+  setPosts([]);
+  setPage(1);
+  setTotalPages(1);
+
+  router.push(`/new-jobs?search_id=${id}`);
+};
+
  return (
   <div className="flex min-h-screen bg-black text-zinc-100 font-sans">
     <Sidebar />
@@ -279,20 +289,18 @@ const nextPage = async () => {
             <div className="flex flex-wrap gap-2">
               {searches.map((item: any) => (
                 <button
-                  key={item.id}
-                  onClick={() => {
-                    setPage(1);
-                    router.push(`/new-jobs?search_id=${item.id}`);
-                  }}
-                  className={`px-3 py-1 rounded-md text-xs font-medium transition ${
-                    Number(searchId) === item.id
-                      ? "bg-zinc-100 text-black font-semibold"
-                      : "bg-zinc-900 text-zinc-400 border border-zinc-800 hover:bg-zinc-800 hover:text-white"
-                  }`}
-                >
-                  {item.keywords}{" "}
-                  <span className="opacity-50">({item.total_jobs})</span>
-                </button>
+  key={item.id}
+  type="button"
+  onClick={() => handleSearchChange(Number(item.id))}
+  className={`px-3 py-1 rounded-md text-xs font-medium transition ${
+    Number(searchId) === Number(item.id)
+      ? "bg-zinc-100 text-black font-semibold"
+      : "bg-zinc-900 text-zinc-400 border border-zinc-800 hover:bg-zinc-800 hover:text-white"
+  }`}
+>
+  {item.keywords}{" "}
+  <span className="opacity-50">({item.total_jobs})</span>
+</button>
               ))}
             </div>
           </div>
