@@ -19,24 +19,21 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://onexjob.com"),
 
   title: {
-    default: "oneXjob - AI Job Search & Job Matching",
+    default: "oneXjob - AI Job Search & One-Click Job Applications",
     template: "%s | oneXjob",
   },
 
   description:
-    "Find relevant software and tech jobs faster with AI-powered job matching. Upload your resume, discover matching jobs, generate personalized emails, and apply faster.",
+    "Find software jobs faster with AI. Upload your resume, discover matching jobs, generate personalized emails, and apply in one click.",
 
   keywords: [
-    "AI job search",
-    "AI job matching",
-    "software developer jobs",
-    "software jobs",
-    "developer jobs",
-    "tech jobs",
-    "job search India",
-    "remote developer jobs",
-    "resume job matching",
-    "AI job agent",
+    "AI Job Search",
+    "AI Job Agent",
+    "Software Developer Jobs",
+    "Remote Jobs",
+    "Resume Matcher",
+    "AI Cover Letter",
+    "Job Search India",
     "oneXjob",
   ],
 
@@ -57,13 +54,12 @@ export const metadata: Metadata = {
   },
 
   openGraph: {
-    type: "website",
-    locale: "en_US",
+    title: "oneXjob - AI Job Search & One-Click Job Applications",
+    description:
+      "Find software jobs faster with AI. Upload your resume, discover matching jobs, generate personalized emails, and apply in one click.",
     url: "https://onexjob.com",
     siteName: "oneXjob",
-    title: "oneXjob - AI Job Search & Job Matching",
-    description:
-      "Find relevant software and tech jobs faster with AI-powered job matching.",
+    type: "website",
     images: [
       {
         url: "/og-image.png",
@@ -76,9 +72,9 @@ export const metadata: Metadata = {
 
   twitter: {
     card: "summary_large_image",
-    title: "oneXjob - AI Job Search & Job Matching",
+    title: "oneXjob - AI Job Search",
     description:
-      "Find relevant software and tech jobs faster with AI-powered job matching.",
+      "Find software jobs faster with AI and apply in one click.",
     images: ["/og-image.png"],
   },
 
