@@ -66,7 +66,16 @@ def start_agent(
 
     else:
 
-        # Check if the user already has the same search
+        print(
+            "START AGENT:",
+            "USER ID =", current_user.id,
+            "KEYWORDS =", repr(data.keywords),
+            "LOCATION =", repr(data.location),
+            "SEARCH ID FROM REQUEST =", data.search_id,
+            flush=True
+        )
+
+        # Check if this USER already has the same search
         search = (
             db.query(AgentSearch)
             .filter(
@@ -78,8 +87,17 @@ def start_agent(
             .first()
         )
 
+        print(
+            "EXISTING SEARCH FOUND:",
+            search.id if search else None,
+            "OWNER USER ID:",
+            search.user_id if search else None,
+            flush=True
+        )
+
         # If no existing search, create a new one
         if not search:
+
             search = AgentSearch(
                 user_id=current_user.id,
                 keywords=data.keywords,
@@ -89,6 +107,14 @@ def start_agent(
             db.add(search)
             db.commit()
             db.refresh(search)
+
+            print(
+                "CREATED NEW SEARCH:",
+                search.id,
+                "USER ID:",
+                search.user_id,
+                flush=True
+            )
 
     if data.page == 1 or data.page > search.last_scraped_page:
 
