@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
-
+import Swal from "sweetalert2";
 import { api } from "@/lib/axios";
 import { useAuthStore } from "@/store/authStore";
 import GoogleLoginButton from "@/components/GoogleLoginButton";
@@ -30,9 +30,18 @@ export default function LoginPage() {
       setToken(response.data.access_token);
 
       router.push("/agent");
-    } catch (err) {
-      alert("Login failed");
-    } finally {
+    } catch (err: any) {
+  console.error("Login error:", err);
+
+  await Swal.fire({
+    icon: "error",
+    title: "Login Failed",
+    text:
+      err?.response?.data?.detail ||
+      "Invalid email or password. Please try again.",
+    confirmButtonText: "Try Again",
+  });
+} finally {
       setLoading(false);
     }
   };

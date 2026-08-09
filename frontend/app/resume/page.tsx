@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Sidebar from "@/components/Sidebar";
 import { api } from "@/lib/axios";
+import Swal from "sweetalert2";
 import { 
   UploadCloud, 
   FileText, 
@@ -30,31 +31,38 @@ export default function ResumePage() {
     }
   };
 
-  const uploadResume = async () => {
-    if (!file) return;
+ const uploadResume = async () => {
+  if (!file) return;
 
-    try {
-      setUploading(true);
-      const formData = new FormData();
-      formData.append("file", file);
+  try {
+    setUploading(true);
 
-      await api.post("/resume/upload", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+    const formData = new FormData();
+    formData.append("file", file);
 
-      alert("Resume uploaded successfully");
-      setFile(null);
-      loadResume();
-    } catch (error) {
-      console.error(error);
-      alert("Failed to upload resume");
-    } finally {
-      setUploading(false);
-    }
-  };
+    await api.post("/resume/upload", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
 
+    await Swal.fire({
+      icon: "success",
+      title: "Resume Uploaded",
+      text: "Your resume has been uploaded and parsed successfully.",
+      confirmButtonText: "OK",
+    });
+
+    setFile(null);
+    await loadResume();
+
+  } catch (error) {
+    console.error(error);
+    alert("Failed to upload resume");
+  } finally {
+    setUploading(false);
+  }
+};
   return (
     <div className="flex min-h-screen bg-black text-white">
       <Sidebar />
