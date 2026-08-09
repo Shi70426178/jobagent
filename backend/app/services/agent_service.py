@@ -18,17 +18,50 @@ def search_jobs(
 ):
     print("Agent keyword:", keywords)
 
-    result = get_recent_jobs(
+    # --------------------------------------------------
+    # GET ALL MATCHING JOBS IN BATCHES
+    # --------------------------------------------------
+
+    batch_size = 5
+    all_jobs = []
+
+    first_result = get_recent_jobs(
         db=db,
         user_id=user_id,
         keywords=keywords,
         location=location,
-        page=page,
-        page_size=page_size
+        page=1,
+        page_size=batch_size
     )
 
-    jobs = result["jobs"]
-    total_jobs = result["total"]
+    total_jobs = first_result["total"]
+
+    print("Total matching jobs:", total_jobs, flush=True)
+
+    all_jobs.extend(first_result["jobs"])
+
+    total_pages = (total_jobs + batch_size - 1) // batch_size
+
+    for current_page in range(2, total_pages + 1):
+
+        result = get_recent_jobs(
+            db=db,
+            user_id=user_id,
+            keywords=keywords,
+            location=location,
+            page=current_page,
+            page_size=batch_size
+        )
+
+        all_jobs.extend(result["jobs"])
+
+    print(
+        "Total jobs collected:",
+        len(all_jobs),
+        flush=True
+    )
+
+    jobs = all_jobs
 
     print("Jobs found:", len(jobs))
 
@@ -42,6 +75,7 @@ def search_jobs(
             db.query(LinkedInPost.linkedin_job_id)
             .filter(
                 LinkedInPost.user_id == user_id,
+                LinkedInPost.search_id == search_id,
                 LinkedInPost.linkedin_job_id.isnot(None)
             )
             .all()
@@ -73,22 +107,27 @@ def search_jobs(
         return
 
     # --------------------------------------------------
-    # CALCULATE MATCHES FOR ALL NEW JOBS AT ONCE
+    # CALCULATE MATCHES + SAVE JOBS IN BATCHES
     # --------------------------------------------------
 
-    matches = []
+    batch_size = 5
 
-    if new_jobs:
+    for batch_start in range(0, len(new_jobs), batch_size):
+
+        batch = new_jobs[batch_start:batch_start + batch_size]
 
         print(
-            f"Calculating matches for {len(new_jobs)} jobs...",
+            f"Processing batch "
+            f"{batch_start + 1}-{batch_start + len(batch)} "
+            f"of {len(new_jobs)}",
             flush=True
         )
 
+        # One OpenAI request for 5 jobs
         matches = calculate_matches(
             skills=resume.skills,
             experience=resume.experience,
-            jobs=new_jobs
+            jobs=batch
         )
 
         print(
@@ -96,61 +135,61 @@ def search_jobs(
             flush=True
         )
 
+        # --------------------------------------------------
+        # SAVE BATCH
+        # --------------------------------------------------
 
-    # --------------------------------------------------
-    # SAVE JOBS
-    # --------------------------------------------------
+        for job, match in zip(batch, matches):
 
-    for job, match in zip(new_jobs, matches):
+            
+            print(
+                f"Processing: {job.company} - {job.job_title}",
+                flush=True
+            )
 
-        print(
-            f"Processing: {job.company} - {job.job_title}",
-            flush=True
-        )
+            print(
+                f"Match score: {match['score']}",
+                flush=True
+            )
 
-        print(
-            f"Match score: {match['score']}",
-            flush=True
-        )
+            diff = datetime.now(timezone.utc) - job.scraped_at
 
-        diff = datetime.now(timezone.utc) - job.scraped_at
+            hours = int(diff.total_seconds() // 3600)
 
-        hours = int(diff.total_seconds() // 3600)
+            if hours < 1:
+                minutes = int(diff.total_seconds() // 60)
+                current_posted_time = f"{minutes} mins ago"
 
-        if hours < 1:
-            minutes = int(diff.total_seconds() // 60)
-            current_posted_time = f"{minutes} mins ago"
+            elif hours < 24:
+                current_posted_time = f"{hours} hrs ago"
 
-        elif hours < 24:
-            current_posted_time = f"{hours} hrs ago"
+            else:
+                days = hours // 24
+                current_posted_time = f"{days} days ago"
 
-        else:
-            days = hours // 24
-            current_posted_time = f"{days} days ago"
+            save_post(
+                db=db,
+                user_id=user_id,
+                search_id=search_id,
+                linkedin_job_id=job.id,
+                recruiter_name=job.recruiter_name,
+                company=job.company,
+                email=job.email,
+                job_title=job.job_title,
+                location=job.location,
+                posted_time=current_posted_time,
+                experience=job.experience,
+                skills=job.skills,
+                post_text=job.post_text,
+                match_score=match["score"],
+                match_reason=match["reason"],
+                generated_email=""
+            )
 
-        save_post(
-            db=db,
-            user_id=user_id,
-            search_id=search_id,
-            linkedin_job_id=job.id,
-            recruiter_name=job.recruiter_name,
-            company=job.company,
-            email=job.email,
-            job_title=job.job_title,
-            location=job.location,
-            posted_time=current_posted_time,
-            experience=job.experience,
-            skills=job.skills,
-            post_text=job.post_text,
-            match_score=match["score"],
-            match_reason=match["reason"],
-            generated_email=""
-        )
-
-        print(
-            "Saved post successfully",
-            flush=True
-        )
+            print(
+                "Saved post successfully",
+                flush=True
+            )
 
     return {
         "jobs": jobs,
