@@ -2,7 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { api } from "@/lib/axios";
-
 import {
   Search,
   RefreshCw,
@@ -16,8 +15,9 @@ import {
   BadgeCheck,
   Cpu,
   Users,
-  Flame,
   CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 
 interface WalkInJob {
@@ -34,15 +34,23 @@ interface WalkInJob {
   contact_email: string;
 }
 
+const ITEMS_PER_PAGE = 10;
+
 export default function WalkInsPage() {
   const [jobs, setJobs] = useState<WalkInJob[]>([]);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
   const [refreshing, setRefreshing] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
     fetchJobs();
   }, []);
+
+  // Reset page to 1 whenever search query changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search]);
 
   async function fetchJobs() {
     try {
@@ -75,6 +83,13 @@ export default function WalkInsPage() {
     });
   }, [jobs, search]);
 
+  // Pagination Calculations
+  const totalPages = Math.ceil(filteredJobs.length / ITEMS_PER_PAGE) || 1;
+  const paginatedJobs = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredJobs.slice(start, start + ITEMS_PER_PAGE);
+  }, [filteredJobs, currentPage]);
+
   const totalCompanies = useMemo(() => {
     return new Set(jobs.map((x) => x.company)).size;
   }, [jobs]);
@@ -83,8 +98,7 @@ export default function WalkInsPage() {
     let total = 0;
 
     jobs.forEach((job) => {
-      if (Array.isArray(job.positions))
-        total += job.positions.length;
+      if (Array.isArray(job.positions)) total += job.positions.length;
       else if (job.positions)
         total += String(job.positions).split(",").filter(Boolean).length;
     });
@@ -93,1782 +107,465 @@ export default function WalkInsPage() {
   }, [jobs]);
 
   return (
-    <div className="min-h-screen bg-[#09090B] text-white">
-
-      <div className="mx-auto w-full max-w-7xl px-3 sm:px-5 lg:px-6 py-5">
-
-        {/* ================================================= */}
-
+    <div className="min-h-screen bg-black text-white px-5 sm:px-6 lg:px-8 xl:px-10 py-6 sm:py-8 lg:py-10">
+      <div className="mx-auto w-full max-w-7xl">
         {/* Header */}
-
-        {/* ================================================= */}
-
         <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
-
           <div>
-
-            <div className="inline-flex items-center gap-2 rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1">
-
-              <Sparkles
-                size={13}
-                className="text-violet-400"
-              />
-
-              <span className="text-[11px] font-medium uppercase tracking-[0.2em] text-violet-300">
-
+            <div className="inline-flex items-center gap-2 rounded-full border border-zinc-800 bg-zinc-900 px-4 py-1.5 mb-4">
+              <Sparkles size={14} className="text-zinc-400" />
+              <span className="text-xs tracking-wide text-zinc-300">
                 AI Curated Walk-ins
-
               </span>
-
             </div>
 
-            <h1 className="mt-4 text-3xl font-black tracking-tight sm:text-4xl">
-
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-black tracking-[-0.05em] leading-none">
               Walk-In Jobs
-
             </h1>
 
-            <p className="mt-2 max-w-2xl text-sm text-zinc-500">
-
+            <p className="mt-4 max-w-3xl lg:max-w-4xl text-sm sm:text-base leading-7 font-normal text-zinc-400">
               Discover verified walk-in opportunities collected from multiple
-              platforms in one premium dashboard.
-
+              platforms in one unified dashboard.
             </p>
-
           </div>
 
           <button
             onClick={refreshJobs}
             disabled={refreshing}
-            className="
-              inline-flex
-              items-center
-              gap-2
-              rounded-xl
-              bg-violet-600
-              px-5
-              py-3
-              text-sm
-              font-semibold
-              transition
-              hover:bg-violet-500
-              disabled:opacity-60
-            "
+            className="inline-flex items-center justify-center gap-2 rounded-xl border border-zinc-700 bg-white px-6 py-3 text-sm font-semibold text-black transition-all hover:bg-zinc-200 disabled:opacity-60"
           >
-
             <RefreshCw
               size={16}
-              className={refreshing ? "animate-spin" : ""}
+              className={refreshing ? "animate-spin text-black" : "text-black"}
             />
-
             {refreshing ? "Refreshing..." : "Refresh Jobs"}
-
           </button>
-
         </div>
 
-        {/* ================================================= */}
-
         {/* Search */}
-
-        {/* ================================================= */}
-
-        <div className="mt-7">
-
+        <div className="mt-8">
           <div className="relative max-w-md">
-
             <Search
               size={17}
               className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500"
             />
-
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search company, title or location..."
-              className="
-                h-12
-                w-full
-                rounded-xl
-                border
-                border-white/10
-                bg-zinc-900
-                pl-11
-                pr-4
-                text-sm
-                outline-none
-                transition
-                placeholder:text-zinc-500
-                focus:border-violet-500
-              "
+              className="h-12 w-full rounded-xl border border-zinc-800 bg-[#0a0a0a] pl-11 pr-4 text-sm text-white outline-none transition placeholder:text-zinc-600 focus:border-zinc-500"
             />
-
           </div>
-
         </div>
 
-        {/* ================================================= */}
-
         {/* Stats */}
-
-        {/* ================================================= */}
-
-        <div className="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
-
+        <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
           {/* Jobs */}
-
-          <div className="rounded-xl border border-white/10 bg-zinc-900/60 p-4">
-
+          <div className="rounded-2xl border border-zinc-800 bg-[#0a0a0a] p-5 sm:p-6 hover:border-zinc-700 transition-all">
             <div className="flex items-center justify-between">
-
               <div>
-
-                <p className="text-[11px] uppercase tracking-wider text-zinc-500">
-
+                <p className="text-xs uppercase tracking-wider text-zinc-500">
                   Walk-ins
-
                 </p>
-
-                <h2 className="mt-1 text-2xl font-bold">
-
+                <h2 className="mt-3 text-2xl sm:text-3xl font-bold text-white">
                   {filteredJobs.length}
-
                 </h2>
-
               </div>
-
-              <div className="rounded-lg bg-violet-500/10 p-3">
-
-                <BriefcaseBusiness
-                  size={20}
-                  className="text-violet-400"
-                />
-
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-zinc-900 border border-zinc-800">
+                <BriefcaseBusiness size={20} className="text-zinc-300" />
               </div>
-
             </div>
-
           </div>
 
           {/* Companies */}
-
-          <div className="rounded-xl border border-white/10 bg-zinc-900/60 p-4">
-
+          <div className="rounded-2xl border border-zinc-800 bg-[#0a0a0a] p-5 sm:p-6 hover:border-zinc-700 transition-all">
             <div className="flex items-center justify-between">
-
               <div>
-
-                <p className="text-[11px] uppercase tracking-wider text-zinc-500">
-
+                <p className="text-xs uppercase tracking-wider text-zinc-500">
                   Companies
-
                 </p>
-
-                <h2 className="mt-1 text-2xl font-bold">
-
+                <h2 className="mt-3 text-2xl sm:text-3xl font-bold text-white">
                   {totalCompanies}
-
                 </h2>
-
               </div>
-
-              <div className="rounded-lg bg-cyan-500/10 p-3">
-
-                <Building2
-                  size={20}
-                  className="text-cyan-400"
-                />
-
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-zinc-900 border border-zinc-800">
+                <Building2 size={20} className="text-zinc-300" />
               </div>
-
             </div>
-
           </div>
 
           {/* Positions */}
-
-          <div className="rounded-xl border border-white/10 bg-zinc-900/60 p-4">
-
+          <div className="rounded-2xl border border-zinc-800 bg-[#0a0a0a] p-5 sm:p-6 hover:border-zinc-700 transition-all">
             <div className="flex items-center justify-between">
-
               <div>
-
-                <p className="text-[11px] uppercase tracking-wider text-zinc-500">
-
+                <p className="text-xs uppercase tracking-wider text-zinc-500">
                   Positions
-
                 </p>
-
-                <h2 className="mt-1 text-2xl font-bold">
-
+                <h2 className="mt-3 text-2xl sm:text-3xl font-bold text-white">
                   {totalPositions}
-
                 </h2>
-
               </div>
-
-              <div className="rounded-lg bg-orange-500/10 p-3">
-
-                <Users
-                  size={20}
-                  className="text-orange-400"
-                />
-
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-zinc-900 border border-zinc-800">
+                <Users size={20} className="text-zinc-300" />
               </div>
-
             </div>
-
           </div>
 
-          {/* Live */}
-
-          <div className="rounded-xl border border-white/10 bg-zinc-900/60 p-4">
-
+          {/* Status */}
+          <div className="rounded-2xl border border-zinc-800 bg-[#0a0a0a] p-5 sm:p-6 hover:border-zinc-700 transition-all">
             <div className="flex items-center justify-between">
-
               <div>
-
-                <p className="text-[11px] uppercase tracking-wider text-zinc-500">
-
+                <p className="text-xs uppercase tracking-wider text-zinc-500">
                   Status
-
                 </p>
-
-                <h2 className="mt-1 text-xl font-bold text-emerald-400">
-
-                  Live
-
-                </h2>
-
+                <div className="mt-3 flex items-center gap-2">
+                  <span className="h-2.5 w-2.5 rounded-full bg-white animate-pulse" />
+                  <h2 className="text-2xl sm:text-3xl font-bold text-white">
+                    Live
+                  </h2>
+                </div>
               </div>
-
-              <div className="rounded-lg bg-emerald-500/10 p-3">
-
-                <Flame
-                  size={20}
-                  className="text-emerald-400"
-                />
-
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-zinc-900 border border-zinc-800">
+                <CheckCircle2 size={20} className="text-zinc-300" />
               </div>
-
             </div>
-
           </div>
-
         </div>
 
-        {/* ================================================= */}
-
-        {/* JOB LIST STARTS HERE */}
-
-        {/* ================================================= */}
-
-        <div className="mt-7 space-y-5">
-
-          {filteredJobs.map((job) => (
-
-
-            <div
-              key={job.id}
- className="
-group
-overflow-hidden
-rounded-3xl
-
-border
-border-white/40
-md:border-white/20
-
-bg-gradient-to-b
-from-[#111111]
-via-[#0d0d0d]
-to-black
-
-shadow-[0_0_0_1px_rgba(255,255,255,.10),0_0_24px_rgba(255,255,255,.10)]
-md:shadow-[0_0_0_1px_rgba(255,255,255,.04),0_0_18px_rgba(255,255,255,.04)]
-
-transition-all
-duration-300
-
-hover:border-white/50
-hover:shadow-[0_0_40px_rgba(255,255,255,.12)]
-"
-            >
-
-              <div className="p-5 lg:p-7">
-
-                {/* ================================================= */}
-
-                {/* HEADER */}
-
-                {/* ================================================= */}
-
-               <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-
-  {/* Left */}
-  <div className="flex flex-1 gap-4 min-w-0">
-
-    {/* Company Icon */}
-    <div
-      className="
-        flex
-        h-16
-        w-16
-        shrink-0
-        items-center
-        justify-center
-        rounded-2xl
-        border
-        border-violet-500/20
-        bg-violet-500/10
-      "
-    >
-      <Building2
-        size={28}
-        className="text-violet-400"
-      />
-    </div>
-
-    {/* Details */}
-    <div className="min-w-0 flex-1">
-
-      <h2 className="text-xl sm:text-2xl font-bold leading-tight text-white">
-        {job.job_title || "Walk-In Drive"}
-      </h2>
-
-      <div className="mt-2 flex items-center gap-2 text-zinc-400">
-        <Building2 size={15} />
-        <span className="truncate">
-          {job.company}
-        </span>
-      </div>
-
-      {/* Mobile Badges */}
-      <div className="mt-4 flex flex-wrap gap-2 lg:hidden">
-
-        <span
-          className="
-            inline-flex
-            items-center
-            gap-1.5
-            rounded-full
-            border
-            border-emerald-500/30
-            bg-emerald-500/10
-            px-3
-            py-1
-            text-xs
-            font-medium
-            text-emerald-400
-          "
-        >
-          <CheckCircle2 size={14} />
-          Walk-In
-        </span>
-
-        <span
-          className="
-            inline-flex
-            items-center
-            gap-1.5
-            rounded-full
-            border
-            border-sky-500/30
-            bg-sky-500/10
-            px-3
-            py-1
-            text-xs
-            font-medium
-            text-sky-400
-          "
-        >
-          <BadgeCheck size={14} />
-          Verified
-        </span>
-
-      </div>
-
-    </div>
-
-  </div>
-
-  {/* Desktop Badges */}
-  <div className="hidden lg:flex items-center gap-2 shrink-0">
-
-    <span
-      className="
-        inline-flex
-        items-center
-        gap-1.5
-        rounded-full
-        border
-        border-emerald-500/30
-        bg-emerald-500/10
-        px-3
-        py-1.5
-        text-xs
-        font-semibold
-        text-emerald-400
-      "
-    >
-      <CheckCircle2 size={14} />
-      Walk-In
-    </span>
-
-    <span
-      className="
-        inline-flex
-        items-center
-        gap-1.5
-        rounded-full
-        border
-        border-sky-500/30
-        bg-sky-500/10
-        px-3
-        py-1.5
-        text-xs
-        font-semibold
-        text-sky-400
-      "
-    >
-      <BadgeCheck size={14} />
-      Verified
-    </span>
-
-  </div>
-
-</div>
-
-                {/* Divider */}
-
-                <div className="relative my-7">
-
-                  <div className="border-t border-white/10" />
-
-                  <div
-                    className="
-absolute
-top-0
-left-0
-h-px
-w-28
-bg-gradient-to-r
-from-violet-500
-to-transparent
-"
-                  />
-
-                </div>
-
-                {/* ================================================= */}
-
-                {/* INFO GRID */}
-
-                {/* ================================================= */}
-
-                <div
-                  className="
-grid
-grid-cols-2
-lg:grid-cols-5
-gap-3
-"
-                >
-
-                  {/* Date */}
-
-                  <div
-                    className="
-rounded-2xl
-border
-border-white/10
-bg-zinc-900/60
-p-4
-hover:border-orange-500/30
-transition
-"
-                  >
-
-                    <div className="flex items-center gap-3">
-
-                      <div
-                        className="
-flex
-h-10
-w-10
-items-center
-justify-center
-rounded-xl
-bg-orange-500/10
-"
-                      >
-
-                        <CalendarDays
-                          size={18}
-                          className="text-orange-400"
-                        />
-
+        {/* JOB LIST */}
+        <div className="mt-8 space-y-6">
+          {!loading &&
+            paginatedJobs.map((job) => (
+              <div
+                key={job.id}
+                className="group overflow-hidden rounded-2xl border border-zinc-800 bg-[#0a0a0a] transition-all duration-300 hover:border-zinc-700"
+              >
+                <div className="p-5 lg:p-7">
+                  {/* HEADER */}
+                  <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+                    <div className="flex flex-1 gap-4 min-w-0">
+                      <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border border-zinc-800 bg-zinc-900">
+                        <Building2 size={24} className="text-zinc-300" />
                       </div>
 
-                      <div>
-
-                        <p className="text-[10px] uppercase tracking-widest text-zinc-500">
-
-                          Date
-
-                        </p>
-
-                        <p className="mt-1 text-sm font-semibold">
-
-                          {job.walkin_date || "N/A"}
-
-                        </p>
-
+                      <div className="min-w-0 flex-1">
+                        <h2 className="text-xl sm:text-2xl font-bold leading-tight text-white">
+                          {job.job_title || "Walk-In Drive"}
+                        </h2>
+                        <div className="mt-2 flex items-center gap-2 text-zinc-400">
+                          <Building2 size={15} />
+                          <span className="truncate">{job.company}</span>
+                        </div>
                       </div>
-
                     </div>
 
+                    <div className="flex items-center gap-2 shrink-0">
+                      <span className="inline-flex items-center gap-1.5 rounded-full border border-zinc-800 bg-zinc-900 px-3 py-1 text-xs font-medium text-zinc-300">
+                        <CheckCircle2 size={14} className="text-white" />
+                        Walk-In
+                      </span>
+                      <span className="inline-flex items-center gap-1.5 rounded-full border border-zinc-800 bg-zinc-900 px-3 py-1 text-xs font-medium text-zinc-300">
+                        <BadgeCheck size={14} className="text-white" />
+                        Verified
+                      </span>
+                    </div>
                   </div>
 
-                  {/* Time */}
+                  <div className="my-6 border-t border-zinc-800/80" />
 
-                  <div
-                    className="
-rounded-2xl
-border
-border-white/10
-bg-zinc-900/60
-p-4
-hover:border-cyan-500/30
-transition
-"
-                  >
-
-                    <div className="flex items-center gap-3">
-
-                      <div
-                        className="
-flex
-h-10
-w-10
-items-center
-justify-center
-rounded-xl
-bg-cyan-500/10
-"
-                      >
-
-                        <Clock3
-                          size={18}
-                          className="text-cyan-400"
-                        />
-
+                  {/* INFO GRID */}
+                  <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
+                    {/* Date */}
+                    <div className="rounded-xl border border-zinc-800/60 bg-zinc-900/40 p-4">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-zinc-800">
+                          <CalendarDays size={18} className="text-zinc-300" />
+                        </div>
+                        <div>
+                          <p className="text-[10px] uppercase tracking-widest text-zinc-500">
+                            Date
+                          </p>
+                          <p className="mt-1 text-sm font-semibold text-white">
+                            {job.walkin_date || "N/A"}
+                          </p>
+                        </div>
                       </div>
-
-                      <div>
-
-                        <p className="text-[10px] uppercase tracking-widest text-zinc-500">
-
-                          Time
-
-                        </p>
-
-                        <p className="mt-1 text-sm font-semibold">
-
-                          {job.walkin_time || "N/A"}
-
-                        </p>
-
-                      </div>
-
                     </div>
 
-                  </div>
-
-                  {/* Location */}
-
-                  <div
-                    className="
-rounded-2xl
-border
-border-white/10
-bg-zinc-900/60
-p-4
-hover:border-red-500/30
-transition
-"
-                  >
-
-                    <div className="flex items-center gap-3">
-
-                      <div
-                        className="
-flex
-h-10
-w-10
-items-center
-justify-center
-rounded-xl
-bg-red-500/10
-"
-                      >
-
-                        <MapPin
-                          size={18}
-                          className="text-red-400"
-                        />
-
+                    {/* Time */}
+                    <div className="rounded-xl border border-zinc-800/60 bg-zinc-900/40 p-4">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-zinc-800">
+                          <Clock3 size={18} className="text-zinc-300" />
+                        </div>
+                        <div>
+                          <p className="text-[10px] uppercase tracking-widest text-zinc-500">
+                            Time
+                          </p>
+                          <p className="mt-1 text-sm font-semibold text-white">
+                            {job.walkin_time || "N/A"}
+                          </p>
+                        </div>
                       </div>
-
-                      <div className="min-w-0">
-
-                        <p className="text-[10px] uppercase tracking-widest text-zinc-500">
-
-                          Location
-
-                        </p>
-
-     <p
-  className="
-    mt-1
-    text-sm
-    font-semibold
-    leading-5
-    whitespace-normal
-    break-words
-  "
->
-  {job.location || "N/A"}
-</p>
-                      </div>
-
                     </div>
 
-                  </div>
-
-                  {/* Venue */}
-
-                  <div
-                    className="
-rounded-2xl
-border
-border-white/10
-bg-zinc-900/60
-p-4
-hover:border-violet-500/30
-transition
-"
-                  >
-
-                    <div className="flex items-center gap-3">
-
-                      <div
-                        className="
-flex
-h-10
-w-10
-items-center
-justify-center
-rounded-xl
-bg-violet-500/10
-"
-                      >
-
-                        <Building2
-                          size={18}
-                          className="text-violet-400"
-                        />
-
+                    {/* Location */}
+                    <div className="rounded-xl border border-zinc-800/60 bg-zinc-900/40 p-4">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-zinc-800">
+                          <MapPin size={18} className="text-zinc-300" />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-[10px] uppercase tracking-widest text-zinc-500">
+                            Location
+                          </p>
+                          <p className="mt-1 text-sm font-semibold leading-5 text-white break-words">
+                            {job.location || "N/A"}
+                          </p>
+                        </div>
                       </div>
-
-                      <div className="min-w-0">
-
-                        <p className="text-[10px] uppercase tracking-widest text-zinc-500">
-
-                          Venue
-
-                        </p>
-
-                      <p
-  className="
-    mt-1
-    text-sm
-    font-semibold
-    leading-5
-    whitespace-normal
-    break-words
-  "
->
-  {job.venue || "N/A"}
-</p>
-
-                      </div>
-
                     </div>
 
-                  </div>
-
-                  {/* Experience */}
-
-                  <div
-                    className="
-rounded-2xl
-border
-border-white/10
-bg-zinc-900/60
-p-4
-hover:border-emerald-500/30
-transition
-"
-                  >
-
-                    <div className="flex items-center gap-3">
-
-                      <div
-                        className="
-flex
-h-10
-w-10
-items-center
-justify-center
-rounded-xl
-bg-emerald-500/10
-"
-                      >
-
-                        <BriefcaseBusiness
-                          size={18}
-                          className="text-emerald-400"
-                        />
-
+                    {/* Venue */}
+                    <div className="rounded-xl border border-zinc-800/60 bg-zinc-900/40 p-4">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-zinc-800">
+                          <Building2 size={18} className="text-zinc-300" />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-[10px] uppercase tracking-widest text-zinc-500">
+                            Venue
+                          </p>
+                          <p className="mt-1 text-sm font-semibold leading-5 text-white break-words">
+                            {job.venue || "N/A"}
+                          </p>
+                        </div>
                       </div>
-
-                      <div>
-
-                        <p className="text-[10px] uppercase tracking-widest text-zinc-500">
-
-                          Experience
-
-                        </p>
-
-                        <p className="mt-1 text-sm font-semibold">
-
-                          {job.experience || "N/A"}
-
-                        </p>
-
-                      </div>
-
                     </div>
 
+                    {/* Experience */}
+                    <div className="rounded-xl border border-zinc-800/60 bg-zinc-900/40 p-4">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-zinc-800">
+                          <BriefcaseBusiness size={18} className="text-zinc-300" />
+                        </div>
+                        <div>
+                          <p className="text-[10px] uppercase tracking-widest text-zinc-500">
+                            Experience
+                          </p>
+                          <p className="mt-1 text-sm font-semibold text-white">
+                            {job.experience || "N/A"}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
                   </div>
 
-                </div>
-                {/* ========================================================= */}
-
-                {/* OPEN POSITIONS */}
-
-                {/* ========================================================= */}
-
-                {job.positions &&
-                  (Array.isArray(job.positions)
-                    ? job.positions.length > 0
-                    : String(job.positions).trim() !== "") && (
-
-                    <div className="mt-8">
-
-                      <div className="flex flex-col gap-5 lg:flex-row lg:items-start">
-
-                        {/* Left */}
-
-                        <div className="flex items-center gap-4 shrink-0 lg:w-72">
-
-                          <div
-                            className="
-flex
-h-12
-w-12
-items-center
-justify-center
-rounded-2xl
-bg-violet-500/10
-border
-border-violet-500/20
-"
-                          >
-
-                            <BriefcaseBusiness
-                              size={22}
-                              className="text-violet-400"
-                            />
-
+                  {/* OPEN POSITIONS */}
+                  {job.positions &&
+                    (Array.isArray(job.positions)
+                      ? job.positions.length > 0
+                      : String(job.positions).trim() !== "") && (
+                      <div className="mt-6">
+                        <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
+                          <div className="flex items-center gap-3 shrink-0 lg:w-64">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-zinc-900 border border-zinc-800">
+                              <BriefcaseBusiness size={18} className="text-zinc-400" />
+                            </div>
+                            <div>
+                              <h3 className="text-sm font-bold text-white">
+                                Open Positions
+                              </h3>
+                              <p className="text-xs text-zinc-500">
+                                Roles Available
+                              </p>
+                            </div>
                           </div>
 
-                          <div>
+                          <div className="flex flex-wrap gap-2 flex-1">
+                            {(Array.isArray(job.positions)
+                              ? job.positions
+                              : String(job.positions).split(",")
+                            )
+                              .filter((x) => x.trim())
+                              .map((position: string, index: number) => (
+                                <span
+                                  key={index}
+                                  className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-800 bg-zinc-900/60 px-3 py-1.5 text-xs font-medium text-zinc-300"
+                                >
+                                  {position.trim()}
+                                </span>
+                              ))}
+                          </div>
+                        </div>
+                      </div>
+                    )}
 
-                            <h3 className="text-lg font-bold">
-
-                              Open Positions
-
-                            </h3>
-
-                            <p className="text-sm text-zinc-500">
-
-                              Hiring Roles Available
-
-                            </p>
-
+                  {/* REQUIRED SKILLS */}
+                  {job.skills &&
+                    (Array.isArray(job.skills)
+                      ? job.skills.length > 0
+                      : String(job.skills).trim() !== "") && (
+                      <div className="mt-6">
+                        <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
+                          <div className="flex items-center gap-3 shrink-0 lg:w-64">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-zinc-900 border border-zinc-800">
+                              <Cpu size={18} className="text-zinc-400" />
+                            </div>
+                            <div>
+                              <h3 className="text-sm font-bold text-white">
+                                Required Skills
+                              </h3>
+                              <p className="text-xs text-zinc-500">
+                                Key Technologies
+                              </p>
+                            </div>
                           </div>
 
+                          <div className="flex flex-wrap gap-2 flex-1">
+                            {(Array.isArray(job.skills)
+                              ? job.skills
+                              : String(job.skills).split(",")
+                            )
+                              .filter((x) => x.trim())
+                              .map((skill: string, index: number) => (
+                                <span
+                                  key={index}
+                                  className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-800 bg-zinc-900/60 px-3 py-1.5 text-xs font-medium text-zinc-300"
+                                >
+                                  {skill.trim()}
+                                </span>
+                              ))}
+                          </div>
                         </div>
+                      </div>
+                    )}
 
-                        {/* Right */}
-
-                        <div className="flex flex-wrap gap-3 flex-1">
-
-                          {(Array.isArray(job.positions)
-                            ? job.positions
-                            : String(job.positions).split(","))
-
-                            .filter((x) => x.trim())
-
-                            .map((position: string, index: number) => (
-
-                              <span
-                                key={index}
-                                className="
-inline-flex
-items-center
-gap-2
-
-rounded-full
-
-border
-border-violet-500/20
-
-bg-gradient-to-r
-from-violet-500/10
-to-cyan-500/10
-
-px-4
-py-2
-
-text-sm
-font-medium
-
-text-white
-
-transition-all
-duration-300
-
-hover:border-violet-400
-hover:scale-105
-hover:shadow-[0_0_20px_rgba(139,92,246,.18)]
-"
-                              >
-
-                                <BriefcaseBusiness
-                                  size={15}
-                                  className="text-violet-300"
-                                />
-
-                                {position.trim()}
-
-                              </span>
-
-                            ))}
-
+                  {/* CONTACT */}
+                  {job.contact_email && (
+                    <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between rounded-xl border border-zinc-800 bg-zinc-900/30 p-4">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-zinc-800">
+                          <Mail size={18} className="text-zinc-300" />
                         </div>
-
+                        <div>
+                          <p className="text-xs font-bold text-white">
+                            Recruiter Contact
+                          </p>
+                          <p className="text-xs text-zinc-400 break-all">
+                            {job.contact_email}
+                          </p>
+                        </div>
                       </div>
 
+                      <a
+                        href={`mailto:${job.contact_email}`}
+                        className="inline-flex items-center justify-center gap-2 rounded-lg bg-white px-4 py-2 text-xs font-semibold text-black transition hover:bg-zinc-200"
+                      >
+                        <Mail size={14} />
+                        Send Email
+                      </a>
                     </div>
-
                   )}
-
-                {/* Divider */}
-
-                <div className="relative my-8">
-
-                  <div className="border-t border-white/10" />
-
-                  <div
-                    className="
-absolute
-top-0
-left-0
-h-px
-w-24
-bg-gradient-to-r
-from-cyan-500
-to-transparent
-"
-                  />
-
                 </div>
-
-                {/* ========================================================= */}
-
-                {/* REQUIRED SKILLS */}
-
-                {/* ========================================================= */}
-
-                {job.skills &&
-                  (Array.isArray(job.skills)
-                    ? job.skills.length > 0
-                    : String(job.skills).trim() !== "") && (
-
-                    <div>
-
-                      <div className="flex flex-col gap-5 lg:flex-row lg:items-start">
-
-                        {/* Left */}
-
-                        <div className="flex items-center gap-4 shrink-0 lg:w-72">
-
-                          <div
-                            className="
-flex
-h-12
-w-12
-items-center
-justify-center
-rounded-2xl
-
-bg-yellow-500/10
-
-border
-border-yellow-500/20
-"
-                          >
-
-                            <Cpu
-                              size={22}
-                              className="text-yellow-400"
-                            />
-
-                          </div>
-
-                          <div>
-
-                            <h3 className="text-lg font-bold">
-
-                              Required Skills
-
-                            </h3>
-
-                            <p className="text-sm text-zinc-500">
-
-                              Technologies & Expertise
-
-                            </p>
-
-                          </div>
-
-                        </div>
-
-                        {/* Right */}
-
-                        <div className="flex flex-wrap gap-3 flex-1">
-
-                          {(Array.isArray(job.skills)
-                            ? job.skills
-                            : String(job.skills).split(","))
-
-                            .filter((x) => x.trim())
-
-                            .map((skill: string, index: number) => (
-
-                              <span
-                                key={index}
-                                className="
-inline-flex
-items-center
-gap-2
-
-rounded-full
-
-border
-border-yellow-500/20
-
-bg-gradient-to-r
-from-yellow-500/10
-to-orange-500/10
-
-px-4
-py-2
-
-text-sm
-
-font-medium
-
-transition-all
-duration-300
-
-hover:border-yellow-400
-hover:scale-105
-hover:shadow-[0_0_20px_rgba(234,179,8,.18)]
-"
-                              >
-
-                                <Sparkles
-                                  size={13}
-                                  className="text-yellow-400"
-                                />
-
-                                {skill.trim()}
-
-                              </span>
-
-                            ))}
-
-                        </div>
-
-                      </div>
-
-                    </div>
-
-                  )}
-
-                {/* Divider */}
-
-                <div className="relative my-8">
-
-                  <div className="border-t border-white/10" />
-
-                  <div
-                    className="
-absolute
-top-0
-left-0
-h-px
-w-24
-bg-gradient-to-r
-from-emerald-500
-to-transparent
-"
-                  />
-
-                </div>
-
-                {/* ========================================================= */}
-
-                {/* CONTACT */}
-
-                {/* ========================================================= */}
-
-                {job.contact_email && (
-
-                  <div
-                    className="
-flex
-flex-col
-
-gap-5
-
-lg:flex-row
-lg:items-center
-lg:justify-between
-
-rounded-2xl
-
-border
-border-white/10
-
-bg-zinc-900/40
-
-p-5
-"
-                  >
-
-                    <div className="flex items-center gap-4">
-
-                      <div
-                        className="
-flex
-
-h-12
-w-12
-
-items-center
-justify-center
-
-rounded-2xl
-
-bg-cyan-500/10
-
-border
-border-cyan-500/20
-"
-                      >
-
-                        <Mail
-                          size={22}
-                          className="text-cyan-400"
-                        />
-
-                      </div>
-
-                      <div>
-
-                        <h3 className="text-lg font-bold">
-
-                          Recruiter Contact
-
-                        </h3>
-
-                        <p className="text-sm text-zinc-500">
-
-                          Direct recruiter email
-
-                        </p>
-
-                        <div className="mt-2 text-sm text-white break-all">
-
-                          {job.contact_email}
-
-                        </div>
-
-                      </div>
-
-                    </div>
-
-                    <a
-                      href={`mailto:${job.contact_email}`}
-                      className="
-inline-flex
-
-items-center
-
-justify-center
-
-gap-2
-
-rounded-xl
-
-bg-white
-
-px-6
-py-3
-
-font-semibold
-
-text-black
-
-transition-all
-
-hover:scale-[1.03]
-
-hover:bg-zinc-200
-"
-                    >
-
-                      <Mail size={17} />
-
-                      Send Email
-
-                    </a>
-
-                  </div>
-
-                )}
-
               </div>
-
-            </div>
-
-          ))}
-          {/* ================================================= */}
+            ))}
 
           {/* EMPTY STATE */}
-
-          {/* ================================================= */}
-
           {filteredJobs.length === 0 && !loading && (
-
-            <div
-              className="
-rounded-3xl
-border
-border-white/10
-
-bg-gradient-to-b
-from-[#121212]
-via-[#0d0d0d]
-to-black
-
-px-6
-py-20
-
-text-center
-
-shadow-[0_0_30px_rgba(255,255,255,.03)]
-"
-            >
-
-              <div
-                className="
-mx-auto
-
-flex
-h-24
-w-24
-
-items-center
-justify-center
-
-rounded-3xl
-
-bg-violet-500/10
-
-border
-border-violet-500/20
-"
-              >
-
-                <Search
-                  size={38}
-                  className="text-violet-400"
-                />
-
+            <div className="rounded-2xl border border-zinc-800 bg-[#0a0a0a] px-6 py-16 text-center">
+              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-zinc-900 border border-zinc-800">
+                <Search size={28} className="text-zinc-400" />
               </div>
-
-              <h2
-                className="
-mt-8
-text-3xl
-font-black
-tracking-tight
-"
-              >
-
+              <h2 className="mt-6 text-xl sm:text-2xl font-bold text-white">
                 No Walk-In Jobs Found
-
               </h2>
-
-              <p
-                className="
-mx-auto
-mt-4
-max-w-xl
-
-text-sm
-leading-7
-
-text-zinc-500
-"
-              >
-
-                We couldn't find any walk-in opportunities matching your search.
-                Try another company name, designation or location.
-
+              <p className="mx-auto mt-2 max-w-md text-sm text-zinc-400">
+                We couldn't find any walk-in opportunities matching your
+                search filter.
               </p>
-
-              <div
-                className="
-mt-8
-
-flex
-flex-wrap
-
-justify-center
-
-gap-3
-"
-              >
-
+              <div className="mt-6 flex justify-center gap-3">
                 <button
                   onClick={() => setSearch("")}
-                  className="
-rounded-xl
-
-border
-border-white/10
-
-bg-zinc-900
-
-px-6
-py-3
-
-font-medium
-
-transition
-
-hover:border-violet-500
-hover:bg-zinc-800
-"
+                  className="rounded-xl border border-zinc-800 bg-zinc-900 px-5 py-2.5 text-xs font-medium text-white transition hover:bg-zinc-800"
                 >
-
                   Clear Search
-
                 </button>
-
-                <button
-                  onClick={refreshJobs}
-                  className="
-rounded-xl
-
-bg-violet-600
-
-px-6
-py-3
-
-font-semibold
-
-transition
-
-hover:bg-violet-500
-"
-                >
-
-                  Refresh Jobs
-
-                </button>
-
               </div>
-
             </div>
-
           )}
 
-          {/* ================================================= */}
-
-          {/* LOADING */}
-
-          {/* ================================================= */}
-
+          {/* LOADING STATE */}
           {loading && (
-
-            <div
-              className="
-rounded-3xl
-
-border
-border-white/10
-
-bg-zinc-900/40
-
-p-10
-"
-            >
-
-              <div className="flex flex-col items-center">
-
-                <div className="relative h-24 w-24">
-
-                  <div
-                    className="
-absolute
-inset-0
-
-rounded-full
-
-border-2
-border-white/10
-"
-                  />
-
-                  <div
-                    className="
-absolute
-inset-0
-
-rounded-full
-
-border-t-2
-border-violet-500
-
-animate-spin
-"
-                  />
-
-                  <div
-                    className="
-absolute
-inset-4
-
-rounded-full
-
-border
-border-white/10
-"
-                  />
-
-                  <div
-                    className="
-absolute
-inset-4
-
-rounded-full
-
-border-t-2
-border-cyan-500
-
-animate-spin
-"
-                    style={{
-                      animationDuration: "2s",
-                    }}
-                  />
-
-                  <div
-                    className="
-absolute
-inset-8
-
-flex
-items-center
-justify-center
-
-rounded-full
-
-bg-white
-
-text-black
-"
-                  >
-
-                    <Building2 size={22} />
-
-                  </div>
-
-                </div>
-
-                <h2 className="mt-8 text-2xl font-bold">
-
-                  Fetching Walk-In Jobs
-
-                </h2>
-
-                <p
-                  className="
-mt-3
-
-max-w-md
-
-text-center
-
-text-sm
-
-leading-7
-
-text-zinc-500
-"
-                >
-
-                  Please wait while we collect the latest walk-in opportunities.
-
-                </p>
-
+            <div className="space-y-4">
+              {[1, 2, 3].map((item) => (
                 <div
-                  className="
-mt-12
-
-grid
-
-w-full
-
-gap-4
-"
+                  key={item}
+                  className="animate-pulse rounded-2xl border border-zinc-800 bg-[#0a0a0a] p-6"
                 >
-
-                  {[1, 2, 3].map((item) => (
-
-                    <div
-                      key={item}
-                      className="
-animate-pulse
-
-rounded-3xl
-
-border
-border-white/10
-
-bg-zinc-900
-
-p-6
-"
-                    >
-
-                      <div className="h-7 w-56 rounded bg-white/10" />
-
-                      <div className="mt-5 h-5 w-40 rounded bg-white/10" />
-
-                      <div
-                        className="
-mt-8
-
-grid
-
-gap-3
-
-md:grid-cols-5
-"
-                      >
-
-                        {[1, 2, 3, 4, 5].map((x) => (
-
-                          <div
-                            key={x}
-                            className="
-h-24
-
-rounded-2xl
-
-bg-white/10
-"
-                          />
-
-                        ))}
-
-                      </div>
-
-                      <div className="mt-8 flex gap-3 flex-wrap">
-
-                        {[1, 2, 3, 4].map((x) => (
-
-                          <div
-                            key={x}
-                            className="
-h-10
-w-40
-
-rounded-full
-
-bg-white/10
-"
-                          />
-
-                        ))}
-
-                      </div>
-
-                    </div>
-
-                  ))}
-
+                  <div className="h-6 w-48 rounded bg-zinc-800" />
+                  <div className="mt-3 h-4 w-32 rounded bg-zinc-800" />
+                  <div className="mt-6 grid grid-cols-2 lg:grid-cols-5 gap-3">
+                    {[1, 2, 3, 4, 5].map((x) => (
+                      <div key={x} className="h-16 rounded-xl bg-zinc-900" />
+                    ))}
+                  </div>
                 </div>
-
-              </div>
-
+              ))}
             </div>
-
           )}
-
-          {/* ================================================= */}
-
-          {/* FOOTER */}
-
-          {/* ================================================= */}
-
-          <div
-            className="
-mt-10
-
-rounded-3xl
-
-border
-border-white/10
-
-bg-gradient-to-b
-from-[#101010]
-via-[#0c0c0c]
-to-black
-
-p-6
-"
-          >
-
-            <div
-              className="
-flex
-
-flex-col
-
-gap-8
-
-lg:flex-row
-lg:justify-between
-lg:items-center
-"
-            >
-
-              <div className="flex flex-wrap gap-6">
-
-                <div className="flex items-center gap-3">
-
-                  <div
-                    className="
-flex
-
-h-12
-w-12
-
-items-center
-justify-center
-
-rounded-xl
-
-bg-violet-500/10
-"
-                  >
-
-                    <BriefcaseBusiness
-                      size={22}
-                      className="text-violet-400"
-                    />
-
-                  </div>
-
-                  <div>
-
-                    <p className="text-xs uppercase tracking-widest text-zinc-500">
-
-                      Walk-In Jobs
-
-                    </p>
-
-                    <h3 className="text-lg font-bold">
-
-                      {filteredJobs.length}
-
-                    </h3>
-
-                  </div>
-
-                </div>
-
-                <div className="hidden h-10 w-px bg-white/10 lg:block" />
-
-                <div className="flex items-center gap-3">
-
-                  <div
-                    className="
-flex
-
-h-12
-w-12
-
-items-center
-justify-center
-
-rounded-xl
-
-bg-emerald-500/10
-"
-                  >
-
-                    <CheckCircle2
-                      size={22}
-                      className="text-emerald-400"
-                    />
-
-                  </div>
-
-                  <div>
-
-                    <p className="text-xs uppercase tracking-widest text-zinc-500">
-
-                      Status
-
-                    </p>
-
-                    <h3 className="font-semibold text-emerald-400">
-
-                      Live Collection
-
-                    </h3>
-
-                  </div>
-
-                </div>
-
-              </div>
-
-              <div className="flex flex-wrap gap-3">
-
-                <span
-                  className="
-rounded-full
-
-bg-violet-500/10
-
-border
-border-violet-500/20
-
-px-4
-py-2
-
-text-xs
-
-font-medium
-
-text-violet-300
-"
-                >
-
-                  AI Curated
-
-                </span>
-
-                <span
-                  className="
-rounded-full
-
-bg-cyan-500/10
-
-border
-border-cyan-500/20
-
-px-4
-py-2
-
-text-xs
-
-font-medium
-
-text-cyan-300
-"
-                >
-
-                  Updated Live
-
-                </span>
-
-                <span
-                  className="
-rounded-full
-
-bg-emerald-500/10
-
-border
-border-emerald-500/20
-
-px-4
-py-2
-
-text-xs
-
-font-medium
-
-text-emerald-300
-"
-                >
-
-                  Responsive UI
-
-                </span>
-
-              </div>
-
-            </div>
-
-          </div>
-
         </div>
 
+        {/* PAGINATION CONTROLS */}
+        {!loading && totalPages > 1 && (
+          <div className="mt-10 flex flex-col sm:flex-row items-center justify-between gap-4 rounded-2xl border border-zinc-800 bg-[#0a0a0a] p-4">
+            <p className="text-xs text-zinc-400">
+              Showing{" "}
+              <span className="font-semibold text-white">
+                {(currentPage - 1) * ITEMS_PER_PAGE + 1}
+              </span>{" "}
+              to{" "}
+              <span className="font-semibold text-white">
+                {Math.min(currentPage * ITEMS_PER_PAGE, filteredJobs.length)}
+              </span>{" "}
+              of{" "}
+              <span className="font-semibold text-white">
+                {filteredJobs.length}
+              </span>{" "}
+              jobs
+            </p>
+
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="flex h-9 items-center gap-1 rounded-lg border border-zinc-800 bg-zinc-900 px-3 text-xs font-medium text-white transition hover:bg-zinc-800 disabled:opacity-40"
+              >
+                <ChevronLeft size={14} />
+                Previous
+              </button>
+
+              <div className="flex items-center gap-1 px-2 text-xs text-zinc-400">
+                <span>Page</span>
+                <span className="font-semibold text-white">{currentPage}</span>
+                <span>of</span>
+                <span className="font-semibold text-white">{totalPages}</span>
+              </div>
+
+              <button
+                onClick={() =>
+                  setCurrentPage((prev) => Math.min(prev + 1, totalPages))
+                }
+                disabled={currentPage === totalPages}
+                className="flex h-9 items-center gap-1 rounded-lg border border-zinc-800 bg-zinc-900 px-3 text-xs font-medium text-white transition hover:bg-zinc-800 disabled:opacity-40"
+              >
+                Next
+                <ChevronRight size={14} />
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
-
   );
 }
