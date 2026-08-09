@@ -93,15 +93,31 @@ export default function ResumePage() {
               px-4 text-center group
             "
           >
-            <UploadCloud className="w-10 h-10 text-zinc-400 mb-3 group-hover:scale-110 group-hover:text-white transition-all duration-200" />
+           {resume ? (
+  <>
+    <CheckCircle2 className="w-10 h-10 text-emerald-400 mb-3" />
 
-            <p className="text-base sm:text-lg font-bold text-zinc-200 group-hover:text-white">
-              Click to upload your resume
-            </p>
+    <p className="text-base sm:text-lg font-bold text-emerald-400">
+      Resume Uploaded
+    </p>
 
-            <p className="text-xs text-zinc-500 mt-1">
-              PDF only • Max 5 MB
-            </p>
+    <p className="text-xs text-zinc-400 mt-1">
+      Your resume has been uploaded and parsed successfully.
+    </p>
+  </>
+) : (
+  <>
+    <UploadCloud className="w-10 h-10 text-zinc-400 mb-3 group-hover:scale-110 group-hover:text-white transition-all duration-200" />
+
+    <p className="text-base sm:text-lg font-bold text-zinc-200 group-hover:text-white">
+      Click to upload your resume
+    </p>
+
+    <p className="text-xs text-zinc-500 mt-1">
+      PDF only • Max 5 MB
+    </p>
+  </>
+)}
 
             {file && (
               <div className="mt-4 flex items-center gap-2 rounded-lg bg-zinc-800 border border-zinc-700 px-3 py-1.5 text-zinc-200 text-xs font-semibold">
@@ -130,7 +146,11 @@ export default function ResumePage() {
               disabled:bg-zinc-800 disabled:text-zinc-500 disabled:shadow-none disabled:cursor-not-allowed
             "
           >
-            {uploading ? "Uploading & Parsing Resume..." : "Upload Resume"}
+            {uploading
+  ? "Uploading & Parsing Resume..."
+  : resume
+    ? "Replace Resume"
+    : "Upload Resume"}
           </button>
         </section>
 

@@ -26,7 +26,7 @@ def save_post(
         db.query(LinkedInPost)
         .filter(
             LinkedInPost.user_id == user_id,
-            LinkedInPost.email == email,
+            LinkedInPost.search_id == search_id,
             LinkedInPost.linkedin_job_id == linkedin_job_id
         )
         .first()

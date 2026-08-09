@@ -3,7 +3,7 @@ from app.services.linkedin_db_service import save_post
 from app.services.job_match_service import calculate_match
 from app.services.email_generator_service import generate_email
 from datetime import datetime, timezone
-
+from app.models.linkedin_post import LinkedInPost
 from app.models.resume import Resume
 
 
@@ -32,6 +32,33 @@ def search_jobs(
 
     print("Jobs found:", len(jobs))
 
+        # --------------------------------------------------
+    # FIND JOBS ALREADY PROCESSED FOR THIS SEARCH
+    # --------------------------------------------------
+
+    saved_job_ids = {
+        row[0]
+        for row in (
+            db.query(LinkedInPost.linkedin_job_id)
+            .filter(
+                LinkedInPost.user_id == user_id,
+                LinkedInPost.search_id == search_id,
+                LinkedInPost.linkedin_job_id.isnot(None)
+            )
+            .all()
+        )
+    }
+
+    print("Already saved jobs:", len(saved_job_ids), flush=True)
+
+    new_jobs = [
+        job
+        for job in jobs
+        if job.id not in saved_job_ids
+    ]
+
+    print("New jobs to process:", len(new_jobs), flush=True)
+
    
 
     resume = (
@@ -46,7 +73,7 @@ def search_jobs(
     if not resume:
         return
 
-    for job in jobs:
+    for job in new_jobs:
 
         print(f"Processing: {job.company} - {job.job_title}", flush=True)
 

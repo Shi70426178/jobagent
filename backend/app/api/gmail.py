@@ -87,77 +87,136 @@ def gmail_callback(
     request: Request,
     db: Session = Depends(get_db),
 ):
-
     global CODE_VERIFIER
 
     print("CALLBACK START")
-
-    code = request.query_params.get("code")
-
-    flow = Flow.from_client_config(
-        {
-            "web": {
-                "client_id": os.getenv(
-                    "GOOGLE_CLIENT_ID"
-                ),
-                "client_secret": os.getenv(
-                    "GOOGLE_CLIENT_SECRET"
-                ),
-                "auth_uri":
-                    "https://accounts.google.com/o/oauth2/auth",
-                "token_uri":
-                    "https://oauth2.googleapis.com/token",
-            }
-        },
-        scopes=SCOPES,
-    )
-
-    flow.redirect_uri = os.getenv(
-        "GOOGLE_REDIRECT_URI"
-    )
-
-    flow.code_verifier = CODE_VERIFIER
-
-    flow.fetch_token(
-        code=code
-    )
-
-    credentials = flow.credentials
-    print("TOKEN FETCHED")
-
-    id_info = id_token.verify_oauth2_token(
-        credentials.id_token,
-        GoogleRequest(),
-        os.getenv("GOOGLE_CLIENT_ID")
-    )
-
-    email = id_info["email"]
-
-    user_id = int(
-        request.query_params.get("state")
-    )
-
-    print("USER ID:", user_id)
-    print("EMAIL:", email)
-
-    save_gmail_account(
-        db=db,
-        user_id=user_id,
-        email=email,
-        access_token=credentials.token,
-        refresh_token=credentials.refresh_token,
-    )
 
     frontend_url = os.getenv(
         "FRONTEND_URL",
         "http://localhost:3000"
     )
 
-    return RedirectResponse(
-        url=f"{frontend_url}/gmail"
-    )
+    try:
+        code = request.query_params.get("code")
+        state = request.query_params.get("state")
+        error = request.query_params.get("error")
 
+        # User cancelled Google OAuth
+        if error:
+            print("GOOGLE OAUTH ERROR:", error)
 
+            return RedirectResponse(
+                url=(
+                    f"{frontend_url}/gmail"
+                    f"?gmail_error=cancelled"
+                )
+            )
+
+        if not code:
+            print("NO AUTHORIZATION CODE")
+
+            return RedirectResponse(
+                url=(
+                    f"{frontend_url}/gmail"
+                    f"?gmail_error=connection_failed"
+                )
+            )
+
+        if not state:
+            print("NO STATE")
+
+            return RedirectResponse(
+                url=(
+                    f"{frontend_url}/gmail"
+                    f"?gmail_error=connection_failed"
+                )
+            )
+
+        flow = Flow.from_client_config(
+            {
+                "web": {
+                    "client_id": os.getenv(
+                        "GOOGLE_CLIENT_ID"
+                    ),
+                    "client_secret": os.getenv(
+                        "GOOGLE_CLIENT_SECRET"
+                    ),
+                    "auth_uri":
+                        "https://accounts.google.com/o/oauth2/auth",
+                    "token_uri":
+                        "https://oauth2.googleapis.com/token",
+                }
+            },
+            scopes=SCOPES,
+        )
+
+        flow.redirect_uri = os.getenv(
+            "GOOGLE_REDIRECT_URI"
+        )
+
+        flow.code_verifier = CODE_VERIFIER
+
+        flow.fetch_token(
+            code=code
+        )
+
+        credentials = flow.credentials
+
+        print("TOKEN FETCHED")
+
+        if not credentials.id_token:
+            print("NO ID TOKEN")
+
+            return RedirectResponse(
+                url=(
+                    f"{frontend_url}/gmail"
+                    f"?gmail_error=connection_failed"
+                )
+            )
+
+        id_info = id_token.verify_oauth2_token(
+            credentials.id_token,
+            GoogleRequest(),
+            os.getenv("GOOGLE_CLIENT_ID")
+        )
+
+        email = id_info["email"]
+
+        user_id = int(state)
+
+        print("USER ID:", user_id)
+        print("EMAIL:", email)
+
+        save_gmail_account(
+            db=db,
+            user_id=user_id,
+            email=email,
+            access_token=credentials.token,
+            refresh_token=credentials.refresh_token,
+        )
+
+        print("GMAIL ACCOUNT SAVED")
+
+        return RedirectResponse(
+            url=f"{frontend_url}/gmail"
+        )
+
+    except Exception as e:
+
+        print("GMAIL CALLBACK ERROR:", repr(e))
+
+        # Rollback DB transaction if something failed
+        try:
+            db.rollback()
+        except Exception:
+            pass
+
+        return RedirectResponse(
+            url=(
+                f"{frontend_url}/gmail"
+                f"?gmail_error=connection_failed"
+            )
+        )
 @router.get("/profile")
 def gmail_profile(
     db: Session = Depends(get_db),

@@ -66,17 +66,31 @@ def start_agent(
 
     else:
 
-        search = AgentSearch(
-            user_id=current_user.id,
-            keywords=data.keywords,
-            location=data.location
+        # Check if the user already has the same search
+        search = (
+            db.query(AgentSearch)
+            .filter(
+                AgentSearch.user_id == current_user.id,
+                AgentSearch.keywords == data.keywords,
+                AgentSearch.location == data.location
+            )
+            .order_by(AgentSearch.id.desc())
+            .first()
         )
 
-        db.add(search)
-        db.commit()
-        db.refresh(search)
+        # If no existing search, create a new one
+        if not search:
+            search = AgentSearch(
+                user_id=current_user.id,
+                keywords=data.keywords,
+                location=data.location
+            )
 
-    if data.page > search.last_scraped_page:
+            db.add(search)
+            db.commit()
+            db.refresh(search)
+
+    if data.page == 1 or data.page > search.last_scraped_page:
 
         result = search_jobs(
             db=db,
@@ -89,7 +103,11 @@ def start_agent(
         )
 
         search.total_jobs = result["total"]
-        search.last_scraped_page = data.page
+
+        # Only move forward when a new page is processed
+        if data.page > search.last_scraped_page:
+            search.last_scraped_page = data.page
+
         db.commit()
 
     else:

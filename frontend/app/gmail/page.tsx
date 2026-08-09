@@ -20,10 +20,24 @@ export default function GmailPage() {
   const [emailsSent] = useState(0);
   const [replies] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [connectionError, setConnectionError] = useState("");
 
-  useEffect(() => {
-    loadProfile();
-  }, []);
+useEffect(() => {
+  const params = new URLSearchParams(window.location.search);
+  const gmailError = params.get("gmail_error");
+
+  if (gmailError === "cancelled") {
+    setConnectionError(
+      "Gmail connection was cancelled. Please try again or use a different Gmail account."
+    );
+  } else if (gmailError === "connection_failed") {
+    setConnectionError(
+      "Unable to connect this Gmail account. Please try again or use a different Gmail account."
+    );
+  }
+
+  loadProfile();
+}, []);
 
   const loadProfile = async () => {
     try {
@@ -43,15 +57,33 @@ export default function GmailPage() {
     }
   };
 
-  const connectGmail = async () => {
-    try {
-      const response = await api.get("/gmail/connect");
-      window.location.href = response.data.auth_url;
-    } catch (error) {
-      console.error(error);
-      alert("Failed to connect Gmail");
+const connectGmail = async () => {
+  try {
+    setConnectionError("");
+
+    const response = await api.get("/gmail/connect");
+
+    if (!response.data?.auth_url) {
+      setConnectionError(
+        "Unable to connect Gmail. Please try again or use a different Gmail account."
+      );
+      return;
     }
-  };
+
+    window.location.href = response.data.auth_url;
+  } catch (error: any) {
+    console.error("Gmail connection error:", error);
+
+    const message =
+      error?.response?.data?.detail ||
+      error?.response?.data?.message;
+
+    setConnectionError(
+      message ||
+        "Unable to connect this Gmail account. Please try again or use a different Gmail account."
+    );
+  }
+};
 
   const disconnectGmail = async () => {
     if (
@@ -160,6 +192,23 @@ export default function GmailPage() {
 
         {/* Main Section */}
         <div className="bg-[#0a0a0a] border border-zinc-800/80 rounded-2xl p-6 sm:p-8">
+        {connectionError && (
+  <div className="mb-6 rounded-xl border border-amber-500/30 bg-amber-500/10 p-4">
+    <div className="flex items-start gap-3">
+      <AlertCircle className="h-5 w-5 text-amber-400 mt-0.5 shrink-0" />
+
+      <div>
+        <h3 className="text-sm font-semibold text-amber-300">
+          Gmail connection failed
+        </h3>
+
+        <p className="text-sm text-zinc-400 mt-1">
+          {connectionError}
+        </p>
+      </div>
+    </div>
+  </div>
+)}
           <h2 className="text-xl font-bold text-white mb-2">
             Gmail Account Configuration
           </h2>

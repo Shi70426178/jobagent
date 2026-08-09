@@ -217,11 +217,39 @@ const nextPage = async () => {
   }
 };
 
-  return (
-    <div className="flex min-h-screen bg-black text-zinc-100 font-sans">
-      <Sidebar />
+ return (
+  <div className="flex min-h-screen bg-black text-zinc-100 font-sans">
+    <Sidebar />
 
-      <main className="flex-1 p-8 w-full bg-black">
+    {/* NEXT PAGE LOADER */}
+    {loadingNext && (
+      <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm">
+        <div className="flex w-[320px] flex-col items-center rounded-2xl border border-zinc-800 bg-[#0a0a0a] px-8 py-8 text-center shadow-2xl">
+
+          <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-full border border-zinc-700 bg-zinc-900">
+            <RefreshCw
+              size={24}
+              className="animate-spin text-zinc-300"
+            />
+          </div>
+
+          <h3 className="text-base font-semibold text-white">
+            Please wait a while
+          </h3>
+
+          <p className="mt-2 text-sm leading-6 text-zinc-400">
+            AI Agent is processing the next jobs for you.
+          </p>
+
+          <p className="mt-3 text-xs text-zinc-500">
+            This may take a few moments...
+          </p>
+
+        </div>
+      </div>
+    )}
+
+    <main className="flex-1 p-8 w-full bg-black">
         {/* Header Bar */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 border-b border-zinc-800/80 pb-5">
           <div>
