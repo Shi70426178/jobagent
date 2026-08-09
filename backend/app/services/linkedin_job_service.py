@@ -280,31 +280,7 @@ def get_recent_jobs(
     words = [word.strip() for word in keywords.split() if word.strip()]
 
     # --------------------------------------------------
-    # FAST PRE-FILTER
-    # --------------------------------------------------
-
-    contains_filters = []
-
-    for word in words:
-        contains = f"%{word}%"
-
-        contains_filters.extend([
-            LinkedInJob.job_title.ilike(contains),
-            LinkedInJob.skills.ilike(contains),
-            LinkedInJob.post_text.ilike(contains)
-        ])
-
-    query = (
-        db.query(LinkedInJob)
-        .filter(
-            LinkedInJob.scraped_at >= last_7_days,
-            or_(*contains_filters)
-        )
-    )
-
-    # --------------------------------------------------
-    # EXACT WHOLE-WORD FILTER
-    # Prevents "ai" from matching "maintenance"
+    # EXACT WHOLE-WORD SEARCH
     # --------------------------------------------------
 
     exact_filters = []
@@ -324,13 +300,20 @@ def get_recent_jobs(
             LinkedInJob.post_text.op("~*")(pattern)
         ])
 
-    query = query.filter(
-        or_(*exact_filters)
+    query = (
+        db.query(LinkedInJob)
+        .filter(
+            LinkedInJob.scraped_at >= last_7_days,
+            or_(*exact_filters)
+        )
     )
+
+    # print("Keyword:", repr(keywords))
+    # print("Location:", repr(location))
 
     print("Keyword:", repr(keywords))
     print("Location:", repr(location))
-    print("After keyword filter:", query.count())
+    # print("After keyword filter:", query.count())
 
     # Location filter
     if location and location.strip():
@@ -350,7 +333,7 @@ def get_recent_jobs(
                 ]
             )
         )
-        print("After location filter:", query.count())
+        # print("After location filter:", query.count())
 
     # shown_jobs = (
     #     db.query(LinkedInPost.linkedin_job_id)
@@ -381,29 +364,33 @@ def get_recent_jobs(
     # 3. Keyword in POST/DESCRIPTION
     # --------------------------------------------------
 
+    # --------------------------------------------------
+    # PRIORITY
+    # 1. Keyword in JOB TITLE
+    # 2. Keyword in SKILLS
+    # 3. Keyword in POST/DESCRIPTION
+    #
+    # Use ILIKE here because the exact filtering
+    # has already been done above.
+    # --------------------------------------------------
+
     title_conditions = []
     skills_conditions = []
     post_conditions = []
 
     for word in words:
-        word = word.strip()
-
-        if not word:
-            continue
-
-        safe_word = re.escape(word)
-        pattern = rf"(^|[^a-zA-Z0-9]){safe_word}([^a-zA-Z0-9]|$)"
+        contains = f"%{word}%"
 
         title_conditions.append(
-            LinkedInJob.job_title.op("~*")(pattern)
+            LinkedInJob.job_title.ilike(contains)
         )
 
         skills_conditions.append(
-            LinkedInJob.skills.op("~*")(pattern)
+            LinkedInJob.skills.ilike(contains)
         )
 
         post_conditions.append(
-            LinkedInJob.post_text.op("~*")(pattern)
+            LinkedInJob.post_text.ilike(contains)
         )
 
     job_priority = case(
