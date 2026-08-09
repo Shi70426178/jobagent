@@ -2,7 +2,7 @@ from app.models.master_hackernews_job import MasterHackerNewsJob
 from app.models.user_hackernews_post import UserHackerNewsPost
 from app.models.resume import Resume
 
-from app.services.job_match_service import calculate_match
+from app.services.job_match_service import calculate_matches
 from app.services.email_generator_service import generate_email
 
 
@@ -52,7 +52,7 @@ def sync_user_jobs(
 
     for job in jobs:
 
-        match = calculate_match(
+        match = calculate_matches(
             resume.skills,
             resume.experience,
             job.raw_text,

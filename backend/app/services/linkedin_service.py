@@ -3,7 +3,7 @@ from playwright.sync_api import sync_playwright
 from app.services.linkedin_db_service import save_post
 from app.services.openai_service import extract_job_details
 from app.models.resume import Resume
-from app.services.job_match_service import calculate_match
+from app.services.job_match_service import calculate_matches
 from app.services.email_generator_service import generate_email
 from urllib.parse import quote
 SESSION_FILE = "linkedin.json"
@@ -115,11 +115,23 @@ def open_linkedin(
 
                     if resume:
 
-                        match = calculate_match(
+                        match_results = calculate_matches(
                             resume.skills,
                             resume.experience,
-                            post
+                            [
+                                type(
+                                    "Job",
+                                    (),
+                                    {
+                                        "job_title": job_data.get("job_title", ""),
+                                        "company": job_data.get("company", ""),
+                                        "post_text": post
+                                    }
+                                )()
+                            ]
                         )
+
+                        match = match_results[0]
 
                     print(
                         f"Match Score: {match['score']}"
