@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta
-from sqlalchemy import or_
+from sqlalchemy import or_, case
 from app.models.linkedin_post import LinkedInPost
 from app.models.linkedin_job import LinkedInJob
 
@@ -283,7 +283,6 @@ def get_recent_jobs(
     for word in words:
         keyword_filters.extend([
             LinkedInJob.job_title.ilike(f"%{word}%"),
-            LinkedInJob.search_keyword.ilike(f"%{word}%"),
             LinkedInJob.skills.ilike(f"%{word}%"),
             LinkedInJob.post_text.ilike(f"%{word}%")
         ])
@@ -342,13 +341,81 @@ def get_recent_jobs(
     # print("After excluding shown jobs:", query.count())
     total_jobs = query.count()
 
+    # --------------------------------------------------
+    # PRIORITY:
+    # 1. Keyword in JOB TITLE
+    # 2. Keyword in SKILLS
+    # 3. Keyword in POST/DESCRIPTION
+    # 4. Keyword only in SEARCH KEYWORD
+    # --------------------------------------------------
+
+    title_conditions = []
+    skills_conditions = []
+    post_conditions = []
+    search_keyword_conditions = []
+
+    for word in words:
+        word = word.strip()
+
+        if not word:
+            continue
+
+        title_conditions.append(
+            LinkedInJob.job_title.ilike(f"%{word}%")
+        )
+
+        skills_conditions.append(
+            LinkedInJob.skills.ilike(f"%{word}%")
+        )
+
+        post_conditions.append(
+            LinkedInJob.post_text.ilike(f"%{word}%")
+        )
+
+        search_keyword_conditions.append(
+            LinkedInJob.search_keyword.ilike(f"%{word}%")
+        )
+
+
+    job_priority = case(
+        (
+            or_(*title_conditions),
+            1
+        ),
+        (
+            or_(*skills_conditions),
+            2
+        ),
+        (
+            or_(*post_conditions),
+            3
+        ),
+        (
+            or_(*search_keyword_conditions),
+            4
+        ),
+        else_=5
+    )
+
     jobs = (
         query
-        .order_by(LinkedInJob.scraped_at.desc())
+        .order_by(
+            job_priority.asc(),
+            LinkedInJob.scraped_at.desc()
+        )
         .offset((page - 1) * page_size)
         .limit(page_size)
         .all()
     )
+
+    print("Jobs returned:", len(jobs))
+
+    for job in jobs:
+        print(
+            f"JOB ID={job.id}, "
+            f"TITLE={job.job_title}, "
+            f"COMPANY={job.company}"
+        )
 
     print("Jobs returned:", len(jobs))
     for job in jobs:

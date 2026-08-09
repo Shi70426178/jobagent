@@ -32,6 +32,47 @@ def search_jobs(
 
     print("Jobs found:", len(jobs))
 
+    # -----------------------------------------
+    # PRIORITIZE JOBS BY SEARCH KEYWORD
+    # -----------------------------------------
+    search_keywords = [
+        keyword.strip().lower()
+        for keyword in (keywords or "").split(",")
+        if keyword.strip()
+    ]
+
+    def get_job_priority(job):
+        title = (job.job_title or "").lower()
+        skills = (job.skills or "").lower()
+        post_text = (job.post_text or "").lower()
+
+        # Priority 1: Keyword found in job title
+        if any(keyword in title for keyword in search_keywords):
+            return 1
+
+        # Priority 2: Keyword found in skills
+        if any(keyword in skills for keyword in search_keywords):
+            return 2
+
+        # Priority 3: Keyword found in job description/post
+        if any(keyword in post_text for keyword in search_keywords):
+            return 3
+
+        # Priority 4: Everything else
+        return 4
+
+
+    jobs.sort(key=get_job_priority)
+
+    print("Jobs after keyword prioritization:", flush=True)
+
+    for job in jobs:
+        print(
+            f"Priority {get_job_priority(job)}: "
+            f"{job.job_title}",
+            flush=True
+        )
+
     resume = (
         db.query(Resume)
         .filter(
