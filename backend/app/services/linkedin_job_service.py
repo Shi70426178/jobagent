@@ -346,13 +346,11 @@ def get_recent_jobs(
     # 1. Keyword in JOB TITLE
     # 2. Keyword in SKILLS
     # 3. Keyword in POST/DESCRIPTION
-    # 4. Keyword only in SEARCH KEYWORD
     # --------------------------------------------------
 
     title_conditions = []
     skills_conditions = []
     post_conditions = []
-    search_keyword_conditions = []
 
     for word in words:
         word = word.strip()
@@ -372,11 +370,6 @@ def get_recent_jobs(
             LinkedInJob.post_text.ilike(f"%{word}%")
         )
 
-        search_keyword_conditions.append(
-            LinkedInJob.search_keyword.ilike(f"%{word}%")
-        )
-
-
     job_priority = case(
         (
             or_(*title_conditions),
@@ -390,11 +383,7 @@ def get_recent_jobs(
             or_(*post_conditions),
             3
         ),
-        (
-            or_(*search_keyword_conditions),
-            4
-        ),
-        else_=5
+        else_=4
     )
 
     jobs = (
@@ -417,9 +406,9 @@ def get_recent_jobs(
             f"COMPANY={job.company}"
         )
 
-    print("Jobs returned:", len(jobs))
-    for job in jobs:
-        print(f"JOB ID={job.id}, TITLE={job.job_title}, COMPANY={job.company}")
+    # print("Jobs returned:", len(jobs))
+    # for job in jobs:
+    #     print(f"JOB ID={job.id}, TITLE={job.job_title}, COMPANY={job.company}")
 
     return {
         "jobs": jobs,

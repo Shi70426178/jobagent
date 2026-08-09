@@ -91,7 +91,7 @@ def get_posts(
 
     posts = (
         query
-        .order_by(LinkedInPost.id.desc())
+        .order_by(LinkedInPost.id.asc())
         .offset(offset)
         .limit(page_size)
         .all()

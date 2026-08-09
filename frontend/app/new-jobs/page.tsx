@@ -188,23 +188,34 @@ function LinkedinPageContent() {
     });
   }, [posts, search, filter, highestMatch]);
 
-  const nextPage = async () => {
-    try {
-      setLoadingNext(true);
-      const next = page + 1;
+const nextPage = async () => {
+  try {
+    setLoadingNext(true);
 
-      await api.post("/agent/start", {
-        search_id: Number(searchId),
-        page: next,
-        page_size: 5,
-      });
+    const next = page + 1;
 
-      setPage(next);
-      await loadPosts();
-    } finally {
-      setLoadingNext(false);
-    }
-  };
+    await api.post("/agent/start", {
+      search_id: Number(searchId),
+      page: next,
+      page_size: 5,
+    });
+
+    setPage(next);
+  } catch (error) {
+    console.error("Error loading next page:", error);
+
+    Swal.fire({
+      icon: "error",
+      title: "Unable to load next page",
+      text: "Something went wrong while loading more jobs.",
+      background: "#09090b",
+      color: "#f4f4f5",
+      confirmButtonColor: "#27272a",
+    });
+  } finally {
+    setLoadingNext(false);
+  }
+};
 
   return (
     <div className="flex min-h-screen bg-black text-zinc-100 font-sans">
