@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState, Suspense } from "react";
 import { api } from "@/lib/axios";
 import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
 import Swal from "sweetalert2";
 import Sidebar from "@/components/Sidebar";
 // import Sidebar from "@/components/Sidebar";
@@ -281,30 +282,41 @@ const handleSearchChange = (id: number) => {
         </div>
 
         {/* My Searches Pills */}
-        {searches.length > 0 && (
-          <div className="mb-6">
-            <h2 className="text-xs font-medium text-zinc-500 mb-2">
-              My Searches
-            </h2>
-            <div className="flex flex-wrap gap-2">
-              {searches.map((item: any) => (
-                <button
-  key={item.id}
-  type="button"
-  onClick={() => handleSearchChange(Number(item.id))}
-  className={`px-3 py-1 rounded-md text-xs font-medium transition ${
-    Number(searchId) === Number(item.id)
-      ? "bg-zinc-100 text-black font-semibold"
-      : "bg-zinc-900 text-zinc-400 border border-zinc-800 hover:bg-zinc-800 hover:text-white"
-  }`}
->
-  {item.keywords}{" "}
-  <span className="opacity-50">({item.total_jobs})</span>
-</button>
-              ))}
-            </div>
-          </div>
-        )}
+      {searches.length > 0 && (
+  <div className="mb-6">
+    <h2 className="text-xs font-medium text-zinc-300 mb-2">
+      Your Jobs
+    </h2>
+
+    <div className="flex flex-wrap gap-2">
+      {searches.map((item: any) => {
+        const isActive = Number(searchId) === Number(item.id);
+
+        return (
+          <Link
+            key={item.id}
+            href={`/new-jobs?search_id=${item.id}`}
+            className={`px-3.5 py-1.5 rounded-lg text-xs font-medium transition-all duration-200 ${
+              isActive
+                ? "bg-zinc-100 text-black border border-zinc-100 font-semibold shadow-sm"
+                : "bg-zinc-900 text-zinc-200 border border-zinc-700 hover:bg-zinc-800 hover:border-zinc-500 hover:text-white"
+            }`}
+          >
+            {item.keywords}
+
+            <span
+              className={`ml-1 ${
+                isActive ? "text-zinc-600" : "text-zinc-400"
+              }`}
+            >
+              ({item.total_jobs})
+            </span>
+          </Link>
+        );
+      })}
+    </div>
+  </div>
+)}
 
         {/* Search & Filter Bar */}
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
