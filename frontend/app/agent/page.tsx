@@ -12,11 +12,8 @@ import {
   Loader2,
 } from "lucide-react";
 import Swal from "sweetalert2";
-import dynamic from "next/dynamic";
+import Select from "react-select";
 
-const Select = dynamic(() => import("react-select"), {
-  ssr: false,
-});
 const swalTheme = {
   width: "300px",
   padding: "1rem",
