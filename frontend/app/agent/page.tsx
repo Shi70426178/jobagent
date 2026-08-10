@@ -12,8 +12,11 @@ import {
   Loader2,
 } from "lucide-react";
 import Swal from "sweetalert2";
-import Select from "react-select";
+import dynamic from "next/dynamic";
 
+const Select = dynamic(() => import("react-select"), {
+  ssr: false,
+});
 const swalTheme = {
   width: "300px",
   padding: "1rem",
@@ -51,9 +54,8 @@ export default function AgentPage() {
   };
 
   const locationOptions = [
-    { value: "", label: "All Locations" },
-    { value: "Remote", label: "🌍 Remote" },
-    { value: "Anywhere", label: "🌎 Anywhere" },
+    // { value: "", label: "All Locations" },
+    // { value: "Anywhere", label: "🌎 Anywhere" },
     { value: "Bangalore", label: "Bangalore" },
     { value: "Hyderabad", label: "Hyderabad" },
     { value: "Pune", label: "Pune" },
@@ -93,6 +95,8 @@ export default function AgentPage() {
     { value: "Singapore", label: "Singapore" },
     { value: "London", label: "London" },
     { value: "United States", label: "United States" },
+    { value: "Remote", label: "🌍 Remote" },
+
   ];
 
   useEffect(() => {
@@ -192,6 +196,16 @@ export default function AgentPage() {
         icon: "warning",
         title: "Job Keyword Required",
         text: "Please enter job keywords.",
+        confirmButtonColor: "#27272a",
+        ...swalTheme,
+      });
+      return;
+    }
+  if (!location.trim()) {
+      Swal.fire({
+        icon: "warning",
+        title: "Location Required",
+        text: "Please select a preferred location.",
         confirmButtonColor: "#27272a",
         ...swalTheme,
       });
