@@ -1,3 +1,3 @@
-# TalentifyX
+# oneXjob
 
 AI JobCopilot scaffold.
