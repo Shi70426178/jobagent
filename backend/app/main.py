@@ -26,6 +26,7 @@ from app.models.scheduler_keyword import SchedulerKeyword
 from app.models.linkedin_job import LinkedInJob
 from app.api.scheduler import router as scheduler_router
 from app.api import walkin
+from app.api.recommendations import router as recommendations_router
 app = FastAPI()
 
 # print("DATABASE BASE TABLES")
@@ -96,6 +97,7 @@ app.include_router(
     prefix="/scheduler",
     tags=["Scheduler"]
 )
+app.include_router(recommendations_router)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[

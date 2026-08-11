@@ -49,6 +49,6 @@ class LinkedInPost(Base):
     search_id = Column(
     Integer,
     ForeignKey("agent_searches.id"),
-    nullable=False
+    nullable=True
 )
     
