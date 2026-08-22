@@ -1,10 +1,17 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* =========================
-   oneXjob Global Theme
+   oneXjob Theme
    ========================= */
 
 :root {
+  --background: #ffffff;
+  --foreground: #09090b;
+}
+
+.dark {
   --background: #030712;
   --foreground: #ffffff;
 }
@@ -13,33 +20,117 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
 
-  /* Matches layout.tsx */
   --font-sans: var(--font-inter);
   --font-mono: var(--font-geist-mono);
 }
 
-/* Force dark theme */
+/* =========================
+   Global
+   ========================= */
 
 html,
 body {
   min-height: 100%;
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-inter), Arial, Helvetica, sans-serif;
 }
 
-/* Better text rendering */
+body {
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
 
 * {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Prevent blue tap highlight on mobile */
-
 * {
   -webkit-tap-highlight-color: transparent;
 }
+
+/* =========================
+   Scrollbar - Light
+   ========================= */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f4f4f5;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d4d4d8;
+  border-radius: 999px;
+  border: 1px solid #e4e4e7;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a1a1aa;
+}
+
+::-webkit-scrollbar-corner {
+  background: #f4f4f5;
+}
+
+/* =========================
+   Scrollbar - Dark
+   ========================= */
+
+.dark ::-webkit-scrollbar-track {
+  background: #030712;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: linear-gradient(
+    to bottom,
+    rgba(70, 70, 80, 0.9),
+    rgba(35, 35, 40, 0.9)
+  );
+
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    to bottom,
+    rgba(90, 90, 100, 1),
+    rgba(55, 55, 65, 1)
+  );
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #d4d4d8 #f4f4f5;
+}
+
+.dark * {
+  scrollbar-color: rgba(70, 70, 80, 0.9) #030712;
+}
+
+/* =========================
+   Selection
+   ========================= */
+
+::selection {
+  background: rgba(6, 182, 212, 0.25);
+  color: #09090b;
+}
+
+.dark ::selection {
+  background: rgba(6, 182, 212, 0.35);
+  color: #ffffff;
+}
+
+/* =========================
+   SweetAlert
+   ========================= */
+
 .swal2-popup.dark-popup {
   background: #0b1220 !important;
   border: 1px solid rgba(6, 182, 212, 0.25);
@@ -60,9 +151,7 @@ body {
   background: #06b6d4 !important;
   border-radius: 10px !important;
 }
-/* =========================
-   Premium AI Scrollbar
-   ========================= */
+
 .swal-small-icon {
   transform: scale(0.65);
 }
@@ -91,58 +180,14 @@ body {
   width: 1.8em !important;
   height: 1.8em !important;
 }
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: #030712;
-}
-
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(
-    to bottom,
-    rgba(70, 70, 80, 0.9),
-    rgba(35, 35, 40, 0.9)
-  );
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(
-    to bottom,
-    rgba(90, 90, 100, 1),
-    rgba(55, 55, 65, 1)
-  );
-}
-
-::-webkit-scrollbar-corner {
-  background: #030712;
-}
-
-/* Firefox */
-
-* {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(70, 70, 80, 0.9) #030712;
-}
-
-/* Selection */
-
-::selection {
-  background: rgba(6, 182, 212, 0.35);
-  color: #ffffff;
-}
 
 /* =========================
-   Premium App Background
+   App Background
    ========================= */
 
 .app-bg {
   position: relative;
-  background: #050505;
+  background: #ffffff;
   overflow: hidden;
   isolation: isolate;
 }
@@ -155,15 +200,22 @@ body {
   z-index: 0;
 
   background:
-    radial-gradient(circle at 50% -10%,
-      rgba(139, 92, 246, 0.10),
-      transparent 38%),
-    radial-gradient(circle at 8% 92%,
-      rgba(6, 182, 212, 0.08),
-      transparent 28%),
-    radial-gradient(circle at 92% 25%,
-      rgba(99, 102, 241, 0.10),
-      transparent 30%);
+    radial-gradient(
+      circle at 50% -10%,
+      rgba(139, 92, 246, 0.05),
+      transparent 38%
+    ),
+    radial-gradient(
+      circle at 8% 92%,
+      rgba(6, 182, 212, 0.04),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at 92% 25%,
+      rgba(99, 102, 241, 0.05),
+      transparent 30%
+    );
+
   filter: blur(12px);
 }
 
@@ -177,14 +229,53 @@ body {
   background:
     radial-gradient(
       circle at top,
-      rgba(255,255,255,.05),
+      rgba(0, 0, 0, 0.02),
       transparent 55%
     ),
     linear-gradient(
       to bottom,
-      rgba(0,0,0,0),
-      rgba(0,0,0,.20),
-      rgba(0,0,0,.70)
+      rgba(255, 255, 255, 0),
+      rgba(255, 255, 255, 0.15)
+    );
+}
+
+/* Dark app background */
+
+.dark .app-bg {
+  background: #050505;
+}
+
+.dark .app-bg::before {
+  background:
+    radial-gradient(
+      circle at 50% -10%,
+      rgba(139, 92, 246, 0.10),
+      transparent 38%
+    ),
+    radial-gradient(
+      circle at 8% 92%,
+      rgba(6, 182, 212, 0.08),
+      transparent 28%
+    ),
+    radial-gradient(
+      circle at 92% 25%,
+      rgba(99, 102, 241, 0.10),
+      transparent 30%
+    );
+}
+
+.dark .app-bg::after {
+  background:
+    radial-gradient(
+      circle at top,
+      rgba(255, 255, 255, 0.05),
+      transparent 55%
+    ),
+    linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0),
+      rgba(0, 0, 0, 0.20),
+      rgba(0, 0, 0, 0.70)
     );
 }
 

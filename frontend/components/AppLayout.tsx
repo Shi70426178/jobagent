@@ -22,20 +22,25 @@ export default function AppLayout({
   ].includes(pathname);
 
   return (
-    <div className="relative z-10 min-h-screen bg-black">
+    <div className="relative z-10 min-h-screen bg-white text-zinc-900 transition-colors duration-300 dark:bg-black dark:text-white">
+
       {!hideSidebar && <Sidebar />}
 
       <main
         className={`
           min-h-screen
-          bg-black
+          bg-white
+          text-zinc-900
           transition-all
           duration-300
+          dark:bg-black
+          dark:text-white
           ${hideSidebar ? "" : "pt-16 lg:pt-0 lg:ml-64"}
         `}
       >
         {children}
       </main>
+
     </div>
   );
 }

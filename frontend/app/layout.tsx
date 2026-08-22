@@ -34,6 +34,9 @@ export const metadata: Metadata = {
     "Resume Matcher",
     "AI Cover Letter",
     "Job Search India",
+    "Walk-in Jobs",
+    "Walk-in Interview Jobs",
+    "Fresher Jobs",
     "oneXjob",
   ],
 
@@ -56,7 +59,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "oneXjob - AI Job Search & One-Click Job Applications",
     description:
-      "Find software jobs faster with AI. Upload your resume, discover matching jobs, generate personalized emails, and apply in one click.",
+      "Find software jobs, walk-in interviews and fresher jobs with oneXjob.",
     url: "https://onexjob.com",
     siteName: "oneXjob",
     type: "website",
@@ -74,7 +77,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "oneXjob - AI Job Search",
     description:
-      "Find software jobs faster with AI and apply in one click.",
+      "Find software jobs, walk-in interviews and fresher jobs with oneXjob.",
     images: ["/og-image.png"],
   },
 
@@ -89,17 +92,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" className="light" suppressHydrationWarning>
       <body className={`${inter.variable} ${geistMono.variable}`}>
-        {/* Dark Overlay */}
-        <div className="fixed inset-0 -z-10 bg-black/40" />
-
-        {/* Application */}
         <GoogleProvider>
           <AppLayout>{children}</AppLayout>
         </GoogleProvider>
 
-        {/* Google Analytics - only rendered if GA ID exists */}
         {process.env.NEXT_PUBLIC_GA_ID && (
           <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID} />
         )}
